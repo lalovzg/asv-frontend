@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a3a6b">
+<title>SS de ASV · Registro de Asistencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --navy:   #0f2a52;
+    --blue:   #1e6bb8;
+    --sky:    #2b9fd4;
+    --light:  #7ecef0;
+    --white:  #ffffff;
+    --gray:   #64748b;
+    --border: #d1e3f8;
+    --surface:#f0f6ff;
+    --success:#16a34a;
+    --error:  #dc2626;
+    --text:   #111827;
+    --bg:     #f0f6ff;
+    --card:   #ffffff;
+    --shadow: 0 4px 24px rgba(15,42,82,0.10);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 0 40px;
+  }
+
+  /* ─── HEADER ─── */
+  .top-bar {
+    width: 100%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    padding: 20px 20px 28px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .top-bar::before {
+    content: '';
+    position: absolute; top: -50px; right: -50px;
+    width: 180px; height: 180px; border-radius: 50%;
+    background: rgba(43,159,212,0.12);
+  }
+  .top-bar::after {
+    content: '';
+    position: absolute; bottom: -30px; left: -20px;
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  .org-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 99px;
+    padding: 6px 14px;
+    margin-bottom: 12px;
+  }
+  .org-badge-text {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: var(--light);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .top-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px; font-weight: 800;
+    color: white; line-height: 1.2;
+    position: relative; z-index: 1;
+  }
+  .top-subtitle {
+    font-size: 13px; color: rgba(255,255,255,0.65);
+    margin-top: 6px; position: relative; z-index: 1;
+  }
+
+  /* ─── EVENT CHIP ─── */
+  .event-chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin: -16px 20px 0;
+    box-shadow: var(--shadow);
+    display: flex; align-items: center; gap: 12px;
+    position: relative; z-index: 2;
+    width: calc(100% - 40px);
+    max-width: 440px;
+  }
+  .event-chip-icon {
+    width: 42px; height: 42px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .event-chip-name {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700; color: var(--text);
+  }
+  .event-chip-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .event-chip-hrs {
+    margin-left: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    text-align: center; flex-shrink: 0;
+  }
+  .event-chip-hrs-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px; font-weight: 800; color: var(--blue);
+    line-height: 1;
+  }
+  .event-chip-hrs-lbl { font-size: 9px; color: var(--gray); }
+
+  /* ─── FORM CARD ─── */
+  .form-wrap {
+    width: 100%; max-width: 440px;
+    padding: 24px 20px 0;
+  }
+
+  .step-indicator {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700;
+    transition: background 0.3s, color 0.3s;
+  }
+  .step-dot.active { background: var(--blue); color: white; }
+  .step-dot.done   { background: var(--success); color: white; }
+  .step-dot.pending { background: var(--border); color: var(--gray); }
+  .step-line {
+    flex: 1; height: 2px; border-radius: 99px;
+    background: var(--border); transition: background 0.3s;
+  }
+  .step-line.done { background: var(--success); }
+
+  .field-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: var(--gray); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 8px;
+    display: block;
+  }
+
+  .input-wrap { position: relative; margin-bottom: 6px; }
+  .input-field {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+  .input-field:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(30,107,184,0.12);
+  }
+  .input-field.error { border-color: var(--error); }
+  .input-field.valid { border-color: var(--success); }
+
+  .input-icon {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px; pointer-events: none;
+  }
+
+  .field-hint {
+    font-size: 11px; color: var(--gray);
+    margin-bottom: 16px; padding-left: 2px;
+  }
+  .field-error {
+    font-size: 11px; color: var(--error);
+    margin-bottom: 16px; padding-left: 2px;
+    display: none;
+  }
+
+  /* ─── DROPDOWN ─── */
+  .dropdown-wrap {
+    position: relative; margin-bottom: 6px;
+  }
+  .dropdown-field {
+    width: 100%;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; color: var(--gray);
+    outline: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-user-select: none; user-select: none;
+  }
+  .dropdown-field.open, .dropdown-field:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(30,107,184,0.12);
+  }
+  .dropdown-field.selected { color: var(--text); }
+  .dropdown-field.valid { border-color: var(--success); }
+  .dropdown-field.disabled {
+    opacity: 0.45; cursor: not-allowed;
+    background: var(--surface);
+  }
+  .dropdown-arrow { font-size: 12px; transition: transform 0.2s; flex-shrink: 0; }
+  .dropdown-field.open .dropdown-arrow { transform: rotate(180deg); }
+
+  .dropdown-list {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: var(--card);
+    border: 1.5px solid var(--blue);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(15,42,82,0.15);
+    z-index: 50; overflow: hidden;
+    max-height: 220px; overflow-y: auto;
+    display: none;
+    animation: dropIn 0.2s ease;
+  }
+  @keyframes dropIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .dropdown-list.open { display: block; }
+  .dropdown-option {
+    padding: 13px 16px;
+    font-size: 14px; color: var(--text);
+    cursor: pointer; border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .dropdown-option:last-child { border-bottom: none; }
+  .dropdown-option:active, .dropdown-option:hover { background: var(--surface); }
+  .dropdown-option.disabled-opt {
+    opacity: 0.4; cursor: not-allowed; font-style: italic;
+  }
+  .dropdown-option .opt-mat {
+    font-family: 'Sora', monospace;
+    font-size: 11px; color: var(--gray);
+    background: var(--surface);
+    border-radius: 6px; padding: 2px 6px;
+    flex-shrink: 0;
+  }
+
+  /* ─── MISMATCH WARNING ─── */
+  .mismatch-box {
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: flex-start; gap: 10px;
+  }
+  .mismatch-box.show { display: flex; }
+  .mismatch-icon { font-size: 20px; flex-shrink: 0; }
+  .mismatch-text { font-size: 12px; color: #dc2626; line-height: 1.5; }
+  .mismatch-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; }
+
+  /* ─── MATCH BOX ─── */
+  .match-box {
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center; gap: 10px;
+  }
+  .match-box.show { display: flex; }
+  .match-avatar {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: white; font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .match-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: #15803d; }
+  .match-sub { font-size: 11px; color: #16a34a; }
+
+  /* ─── BUTTON ─── */
+  .btn-confirm {
+    width: 100%;
+    background: linear-gradient(135deg, var(--blue), var(--sky));
+    color: white; border: none; border-radius: 14px;
+    padding: 16px; font-family: 'Sora', sans-serif;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 4px 16px rgba(30,107,184,0.35);
+    transition: opacity 0.2s, transform 0.15s;
+    margin-top: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-confirm:disabled {
+    opacity: 0.35; cursor: not-allowed; box-shadow: none;
+  }
+  .btn-confirm:not(:disabled):active { opacity: 0.85; transform: scale(0.98); }
+
+  /* ─── SUCCESS SCREEN ─── */
+  .success-screen {
+    display: none;
+    flex-direction: column; align-items: center;
+    padding: 40px 20px; text-align: center;
+    width: 100%; max-width: 440px;
+    animation: fadeUp 0.5s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .success-circle {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(22,163,74,0.3);
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .success-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 24px; font-weight: 800; color: var(--text);
+    margin-bottom: 8px;
+  }
+  .success-sub { font-size: 14px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
+  .success-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 20px;
+    width: 100%; box-shadow: var(--shadow); margin-bottom: 16px;
+  }
+  .success-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .success-row:last-child { border-bottom: none; }
+  .success-row-label { color: var(--gray); }
+  .success-row-value {
+    font-family: 'Sora', sans-serif; font-weight: 600;
+    color: var(--text); text-align: right;
+  }
+  .whatsapp-note {
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    border-radius: 12px; padding: 12px 16px;
+    font-size: 12px; color: #15803d; width: 100%;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ─── ERROR SCREEN ─── */
+  .error-screen {
+    display: none;
+    flex-direction: column; align-items: center;
+    padding: 40px 20px; text-align: center;
+    width: 100%; max-width: 440px;
+  }
+  .error-circle {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px; margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(220,38,38,0.3);
+  }
+  .error-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 8px;
+  }
+  .error-sub { font-size: 13px; color: var(--gray); margin-bottom: 24px; line-height: 1.5; }
+  .btn-retry {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px 32px;
+    font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--blue); cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-retry:active { background: var(--border); }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; width: 100%; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top-bar">
+  <div class="org-badge">
+    <span>🐾</span>
+    <span class="org-badge-text">Ángeles sin Voz A.C.</span>
+  </div>
+  <div class="top-title">Registro de Asistencia</div>
+  <div class="top-subtitle">Servicio Social · Brigadas y Campañas</div>
+</div>
+
+<!-- EVENT CHIP -->
+<div class="event-chip">
+  <div class="event-chip-icon">✂️</div>
+  <div style="min-width:0; flex:1;">
+    <div class="event-chip-name" id="eventName">Campaña de Esterilización</div>
+    <div class="event-chip-meta" id="eventMeta">Sáb 12 Abr · 09:00 – 13:00</div>
+  </div>
+  <div class="event-chip-hrs">
+    <div class="event-chip-hrs-num" id="eventHrs">4</div>
+    <div class="event-chip-hrs-lbl">horas</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-wrap" id="formSection">
+
+  <!-- Step indicator -->
+  <div class="step-indicator" style="margin-top:24px;">
+    <div class="step-dot active" id="dot1">1</div>
+    <div class="step-line" id="line1"></div>
+    <div class="step-dot pending" id="dot2">2</div>
+    <div class="step-line" id="line2"></div>
+    <div class="step-dot pending" id="dot3">✓</div>
+  </div>
+
+  <!-- Campo matrícula -->
+  <label class="field-label" for="matricula">Matrícula</label>
+  <div class="input-wrap">
+    <input
+      class="input-field"
+      id="matricula"
+      type="text"
+      placeholder="Ej. SS001"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="characters"
+      spellcheck="false"
+      maxlength="10"
+      oninput="onMatriculaInput()"
+    >
+    <span class="input-icon" id="matIcon"></span>
+  </div>
+  <div class="field-hint" id="matHint">Escribe tu matrícula tal como está registrada</div>
+  <div class="field-error" id="matError">Matrícula no encontrada en este evento</div>
+
+  <!-- Campo nombre -->
+  <label class="field-label" for="nombreDropdown">Confirma tu nombre</label>
+  <div class="dropdown-wrap">
+    <div class="dropdown-field disabled" id="nombreDropdown" onclick="toggleDropdown()">
+      <span id="dropdownText">Primero ingresa tu matrícula</span>
+      <span class="dropdown-arrow">▼</span>
+    </div>
+    <div class="dropdown-list" id="dropdownList"></div>
+  </div>
+  <div class="field-hint" id="nombreHint">Selecciona tu nombre completo de la lista</div>
+  <div class="field-error" id="nombreError">El nombre no coincide con la matrícula ingresada</div>
+
+  <!-- Mismatch warning -->
+  <div class="mismatch-box" id="mismatchBox">
+    <span class="mismatch-icon">⚠️</span>
+    <div class="mismatch-text">
+      <div class="mismatch-title">Datos no coinciden</div>
+      La matrícula y el nombre seleccionado no corresponden al mismo estudiante. Verifica tus datos e intenta de nuevo. El token sigue siendo válido.
+    </div>
+  </div>
+
+  <!-- Match confirmation -->
+  <div class="match-box" id="matchBox">
+    <div class="match-avatar" id="matchAvatar">--</div>
+    <div>
+      <div class="match-name" id="matchName">—</div>
+      <div class="match-sub" id="matchSub">—</div>
+    </div>
+  </div>
+
+  <!-- Botón confirmar -->
+  <button class="btn-confirm" id="btnConfirm" disabled onclick="confirmAttendance()">
+    <span>Confirmar asistencia</span>
+    <span>→</span>
+  </button>
+
+</div>
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="success-circle">✓</div>
+  <div class="success-title">¡Asistencia registrada!</div>
+  <div class="success-sub">Tu entrada quedó confirmada con hora exacta del servidor. Ya puedes cerrar esta página.</div>
+
+  <div class="success-card">
+    <div class="success-row">
+      <span class="success-row-label">Nombre</span>
+      <span class="success-row-value" id="successName">—</span>
+    </div>
+    <div class="success-row">
+      <span class="success-row-label">Matrícula</span>
+      <span class="success-row-value" id="successMat">—</span>
+    </div>
+    <div class="success-row">
+      <span class="success-row-label">Evento</span>
+      <span class="success-row-value" id="successEvent">—</span>
+    </div>
+    <div class="success-row">
+      <span class="success-row-label">Hora de entrada</span>
+      <span class="success-row-value" id="successTime">—</span>
+    </div>
+    <div class="success-row">
+      <span class="success-row-label">Horas acreditadas</span>
+      <span class="success-row-value" id="successHrs">—</span>
+    </div>
+  </div>
+
+  <div class="whatsapp-note">
+    <span style="font-size:18px;">💬</span>
+    <span>Recibirás confirmación por WhatsApp en breve</span>
+  </div>
+
+  <button class="btn-retry" onclick="closePage()" style="margin-top:16px; color:var(--gray);">
+    Cerrar esta página
+  </button>
+</div>
+
+<!-- DONE SCREEN -->
+<div class="error-screen" id="doneScreen" style="display:none;">
+  <div style="font-size:64px; margin-bottom:20px;">🔒</div>
+  <div class="error-title" style="color:var(--navy);">Sesión finalizada</div>
+  <div class="error-sub">Tu asistencia ya quedó registrada. Cierra esta pestaña completamente para concluir.</div>
+</div>
+
+<!-- ERROR -->
+<div class="error-screen" id="errorScreen">
+  <div class="error-circle">✕</div>
+  <div class="error-title" id="errorTitle">Token inválido</div>
+  <div class="error-sub" id="errorSub">Este código QR ya fue usado o expiró. Solicita a la coordinadora que genere un nuevo QR.</div>
+  <button class="btn-retry" onclick="location.reload()">Reintentar</button>
+</div>
+
+<script>
+
+<script>
+// CONFIG
+const API = 'https://asv-backend.onrender.com/api';
+
+// STATE
+let selectedStudent = null;
+let dropdownOpen = false;
+let validatedMat = null;
+let currentToken = null;
+let currentEvent = null;
+let mockStudents = [];
+
+// INIT
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  currentToken = params.get('t');
+
+  if (!currentToken) {
+    showError('Token invalido', 'Este QR no contiene un token valido. Solicita a la coordinadora un nuevo QR.');
+    return;
+  }
+
+  document.getElementById('eventName').textContent = 'Verificando...';
+  document.getElementById('formSection').style.opacity = '0.4';
+
+  try {
+    const res = await fetch(API + '/event/' + currentToken);
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (res.status === 410) showError('QR ya usado', 'Este codigo ya fue escaneado. Solicita a la coordinadora un nuevo QR.');
+      else if (res.status === 403) showError('Check-in pausado', 'El registro esta pausado. Espera indicaciones de la coordinadora.');
+      else showError('Token invalido', data.error || 'Solicita a la coordinadora un nuevo QR.');
+      return;
+    }
+
+    currentEvent = data.evento;
+    mockStudents = data.estudiantes.map(function(e) {
+      return { id: e.id, name: e.nombre_completo, mat: e.matricula };
+    });
+
+    var fecha = new Date(currentEvent.fecha + 'T12:00:00');
+    var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
+    document.getElementById('eventName').textContent = currentEvent.nombre;
+    document.getElementById('eventMeta').textContent = fechaStr + ' · ' + currentEvent.hora_inicio.slice(0,5) + ' - ' + currentEvent.hora_fin.slice(0,5);
+    document.getElementById('eventHrs').textContent = currentEvent.horas_acredita;
+    document.getElementById('formSection').style.opacity = '1';
+
+  } catch(e) {
+    showError('Error de conexion', 'No se pudo conectar con el servidor. Verifica tu internet.');
+  }
+})();
+
+// MATRICULA INPUT
+function onMatriculaInput() {
+  var val = document.getElementById('matricula').value.trim().toUpperCase();
+  document.getElementById('matricula').value = val;
+  selectedStudent = null;
+  validatedMat = null;
+  resetDropdown();
+  hideBoxes();
+  document.getElementById('btnConfirm').disabled = true;
+  document.getElementById('matIcon').textContent = '';
+  document.getElementById('matError').style.display = 'none';
+  document.getElementById('matHint').style.display = 'block';
+  document.getElementById('matricula').classList.remove('error', 'valid');
+  if (val.length < 3) return;
+  var match = mockStudents.find(function(s) { return s.mat === val; });
+  if (match) {
+    validatedMat = val;
+    document.getElementById('matricula').classList.add('valid');
+    document.getElementById('matIcon').textContent = 'V';
+    document.getElementById('matHint').style.display = 'none';
+    enableDropdown(match);
+    updateStepDot(2, 'active');
+  } else {
+    document.getElementById('matricula').classList.add('error');
+    document.getElementById('matIcon').textContent = 'X';
+    document.getElementById('matError').style.display = 'block';
+    document.getElementById('matHint').style.display = 'none';
+    updateStepDot(2, 'pending');
+  }
+}
+
+// DROPDOWN
+function enableDropdown(matchedStudent) {
+  var dd = document.getElementById('nombreDropdown');
+  dd.classList.remove('disabled');
+  var list = document.getElementById('dropdownList');
+  list.innerHTML = '';
+  var sorted = [matchedStudent].concat(mockStudents.filter(function(s) { return s.mat !== matchedStudent.mat; }));
+  sorted.forEach(function(s) {
+    var div = document.createElement('div');
+    div.className = 'dropdown-option';
+    div.innerHTML = '<span>' + s.name + '</span><span class="opt-mat">' + s.mat + '</span>';
+    div.onclick = function() { selectName(s); };
+    list.appendChild(div);
+  });
+}
+
+function toggleDropdown() {
+  var dd = document.getElementById('nombreDropdown');
+  if (dd.classList.contains('disabled')) return;
+  dropdownOpen = !dropdownOpen;
+  dd.classList.toggle('open', dropdownOpen);
+  document.getElementById('dropdownList').classList.toggle('open', dropdownOpen);
+}
+
+function selectName(student) {
+  dropdownOpen = false;
+  var dd = document.getElementById('nombreDropdown');
+  dd.classList.remove('open');
+  document.getElementById('dropdownList').classList.remove('open');
+  document.getElementById('dropdownText').textContent = student.name;
+  dd.classList.add('selected');
+  document.getElementById('nombreHint').style.display = 'none';
+  selectedStudent = student;
+  validatePair();
+}
+
+function resetDropdown() {
+  var dd = document.getElementById('nombreDropdown');
+  dd.classList.add('disabled');
+  dd.classList.remove('open', 'selected', 'valid');
+  dropdownOpen = false;
+  document.getElementById('dropdownList').classList.remove('open');
+  document.getElementById('dropdownList').innerHTML = '';
+  document.getElementById('dropdownText').textContent = 'Primero ingresa tu matricula';
+  document.getElementById('nombreHint').style.display = 'block';
+  document.getElementById('nombreError').style.display = 'none';
+}
+
+// VALIDATE PAIR
+function validatePair() {
+  hideBoxes();
+  if (!selectedStudent || !validatedMat) return;
+  if (selectedStudent.mat === validatedMat) {
+    document.getElementById('nombreDropdown').classList.add('valid');
+    var initials = selectedStudent.name.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2);
+    document.getElementById('matchAvatar').textContent = initials;
+    document.getElementById('matchName').textContent = selectedStudent.name;
+    document.getElementById('matchSub').textContent = 'Matricula ' + selectedStudent.mat + ' · ' + (currentEvent ? currentEvent.horas_acredita : '?') + ' horas a acreditar';
+    document.getElementById('matchBox').classList.add('show');
+    document.getElementById('btnConfirm').disabled = false;
+    document.getElementById('nombreError').style.display = 'none';
+    updateStepDot(2, 'done');
+    updateStepDot(3, 'active');
+  } else {
+    document.getElementById('nombreDropdown').classList.remove('valid');
+    document.getElementById('mismatchBox').classList.add('show');
+    document.getElementById('btnConfirm').disabled = true;
+    document.getElementById('nombreError').style.display = 'block';
+    updateStepDot(2, 'active');
+    updateStepDot(3, 'pending');
+  }
+}
+
+function hideBoxes() {
+  document.getElementById('matchBox').classList.remove('show');
+  document.getElementById('mismatchBox').classList.remove('show');
+}
+
+// STEPS
+function updateStepDot(num, state) {
+  var dot = document.getElementById('dot' + num);
+  dot.className = 'step-dot ' + state;
+  if (num > 1) {
+    var line = document.getElementById('line' + (num-1));
+    if (state === 'done' || state === 'active') line.classList.add('done');
+    else line.classList.remove('done');
+  }
+}
+
+// CONFIRM
+async function confirmAttendance() {
+  if (!selectedStudent || !validatedMat || selectedStudent.mat !== validatedMat) {
+    document.getElementById('mismatchBox').classList.add('show');
+    return;
+  }
+
+  var btn = document.getElementById('btnConfirm');
+  btn.disabled = true;
+  btn.innerHTML = '<span>Registrando...</span>';
+
+  try {
+    var res = await fetch(API + '/checkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: currentToken,
+        matricula: selectedStudent.mat,
+        estudiante_id: selectedStudent.id
+      })
+    });
+
+    var data = await res.json();
+
+    if (!res.ok) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
+      if (res.status === 409) {
+        showError('Ya registrado', 'Ya tienes asistencia registrada en este evento.');
+      } else if (res.status === 410) {
+        showError('QR expirado', 'Este token ya fue usado. Solicita a la coordinadora un nuevo QR.');
+      } else {
+        showError('Error', data.error || 'Ocurrio un error al registrar. Intenta de nuevo.');
+      }
+      return;
+    }
+
+    // Exito
+    var now = new Date(data.asistencia.timestamp);
+    var timeStr = now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    var dateStr = now.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
+
+    document.getElementById('formSection').style.display = 'none';
+    var ss = document.getElementById('successScreen');
+    ss.style.display = 'flex';
+    document.getElementById('successName').textContent = data.asistencia.nombre;
+    document.getElementById('successMat').textContent = data.asistencia.matricula;
+    document.getElementById('successEvent').textContent = data.asistencia.evento;
+    document.getElementById('successTime').textContent = timeStr + ' · ' + dateStr;
+    document.getElementById('successHrs').textContent = '+' + data.asistencia.horas_acreditadas + ' horas';
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
+    showError('Error de conexion', 'No se pudo conectar. Verifica tu internet e intenta de nuevo.');
+  }
+}
+
+function closePage() {
+  window.close();
+  setTimeout(function() {
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('doneScreen').style.display = 'flex';
+  }, 300);
+}
+
+// ERROR SCREEN
+function showError(title, sub) {
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('errorTitle').textContent = title;
+  document.getElementById('errorSub').textContent = sub;
+  document.getElementById('errorScreen').style.display = 'flex';
+}
+
+// Cerrar dropdown al tocar fuera
+document.addEventListener('click', function(e) {
+  var wrap = document.querySelector('.dropdown-wrap');
+  if (wrap && !wrap.contains(e.target) && dropdownOpen) {
+    dropdownOpen = false;
+    document.getElementById('nombreDropdown').classList.remove('open');
+    document.getElementById('dropdownList').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
