@@ -552,8 +552,6 @@
 </div>
 
 <script>
-
-<script>
 // CONFIG
 const API = 'https://asv-backend.onrender.com/api';
 
@@ -571,7 +569,7 @@ let mockStudents = [];
   currentToken = params.get('t');
 
   if (!currentToken) {
-    showError('Token invalido', 'Este QR no contiene un token valido. Solicita a la coordinadora un nuevo QR.');
+    showError('Token inválido', 'Este QR no contiene un token válido.');
     return;
   }
 
@@ -583,78 +581,103 @@ let mockStudents = [];
     const data = await res.json();
 
     if (!res.ok) {
-      if (res.status === 410) showError('QR ya usado', 'Este codigo ya fue escaneado. Solicita a la coordinadora un nuevo QR.');
-      else if (res.status === 403) showError('Check-in pausado', 'El registro esta pausado. Espera indicaciones de la coordinadora.');
-      else showError('Token invalido', data.error || 'Solicita a la coordinadora un nuevo QR.');
+      if (res.status === 410) showError('QR ya usado', 'Este código ya fue escaneado.');
+      else if (res.status === 403) showError('Check-in pausado', 'El registro está pausado.');
+      else showError('Error', data.error || 'Token no válido.');
       return;
     }
 
+    // Guardamos los datos que vienen del backend
     currentEvent = data.evento;
-    mockStudents = data.estudiantes.map(function(e) {
-      return { id: e.id, name: e.nombre_completo, mat: e.matricula };
-    });
+    mockStudents = data.estudiantes; // Ya vienen como {id, nombre_completo, matricula}
 
-    var fecha = new Date(currentEvent.fecha + 'T12:00:00');
-    var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
+    // Llenar interfaz
+    const fecha = new Date(currentEvent.fecha + 'T12:00:00');
+    const fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
     document.getElementById('eventName').textContent = currentEvent.nombre;
     document.getElementById('eventMeta').textContent = fechaStr + ' · ' + currentEvent.hora_inicio.slice(0,5) + ' - ' + currentEvent.hora_fin.slice(0,5);
     document.getElementById('eventHrs').textContent = currentEvent.horas_acredita;
     document.getElementById('formSection').style.opacity = '1';
 
   } catch(e) {
-    showError('Error de conexion', 'No se pudo conectar con el servidor. Verifica tu internet.');
+    console.error(e);
+    showError('Error de conexión', 'No se pudo conectar con el servidor.');
   }
 })();
 
 // MATRICULA INPUT
 function onMatriculaInput() {
-  var val = document.getElementById('matricula').value.trim().toUpperCase();
+  const val = document.getElementById('matricula').value.trim().toUpperCase();
   document.getElementById('matricula').value = val;
+  
+  // Reset de estados
   selectedStudent = null;
   validatedMat = null;
   resetDropdown();
   hideBoxes();
-  document.getElementById('btnConfirm').disabled = true;
-  document.getElementById('matIcon').textContent = '';
-  document.getElementById('matError').style.display = 'none';
-  document.getElementById('matHint').style.display = 'block';
-  document.getElementById('matricula').classList.remove('error', 'valid');
+  
+  const inputEl = document.getElementById('matricula');
+  const iconEl = document.getElementById('matIcon');
+  const errorEl = document.getElementById('matError');
+  const hintEl = document.getElementById('matHint');
+  const btn = document.getElementById('btnConfirm');
+
+  btn.disabled = true;
+  inputEl.classList.remove('error', 'valid');
+  iconEl.textContent = '';
+  errorEl.style.display = 'none';
+  hintEl.style.display = 'block';
+
   if (val.length < 3) return;
-  var match = mockStudents.find(function(s) { return s.mat === val; });
+
+  // BUSCAMOS SI LA MATRÍCULA EXISTE EN ESTE EVENTO
+  const match = mockStudents.find(s => s.matricula === val);
+
   if (match) {
     validatedMat = val;
-    document.getElementById('matricula').classList.add('valid');
-    document.getElementById('matIcon').textContent = 'V';
-    document.getElementById('matHint').style.display = 'none';
-    enableDropdown(match);
+    inputEl.classList.add('valid');
+    iconEl.textContent = '✓';
+    iconEl.style.color = 'var(--success)';
+    hintEl.style.display = 'none';
+    enableDropdown(match); // Pasamos el alumno encontrado
     updateStepDot(2, 'active');
   } else {
-    document.getElementById('matricula').classList.add('error');
-    document.getElementById('matIcon').textContent = 'X';
-    document.getElementById('matError').style.display = 'block';
-    document.getElementById('matHint').style.display = 'none';
+    // Si no está en la lista de este evento
+    if (val.length >= 5) { // Solo marcar error si ya escribió suficiente
+       inputEl.classList.add('error');
+       iconEl.textContent = '✕';
+       iconEl.style.color = 'var(--error)';
+       errorEl.style.display = 'block';
+       hintEl.style.display = 'none';
+    }
     updateStepDot(2, 'pending');
   }
 }
 
 // DROPDOWN
 function enableDropdown(matchedStudent) {
-  var dd = document.getElementById('nombreDropdown');
+  const dd = document.getElementById('nombreDropdown');
   dd.classList.remove('disabled');
-  var list = document.getElementById('dropdownList');
+  const list = document.getElementById('dropdownList');
   list.innerHTML = '';
-  var sorted = [matchedStudent].concat(mockStudents.filter(function(s) { return s.mat !== matchedStudent.mat; }));
-  sorted.forEach(function(s) {
-    var div = document.createElement('div');
+
+  // Ponemos al alumno que coincide primero, pero mostramos todos por si acaso
+  const sorted = [matchedStudent].concat(mockStudents.filter(s => s.matricula !== matchedStudent.matricula));
+  
+  sorted.forEach(s => {
+    const div = document.createElement('div');
     div.className = 'dropdown-option';
-    div.innerHTML = '<span>' + s.name + '</span><span class="opt-mat">' + s.mat + '</span>';
-    div.onclick = function() { selectName(s); };
+    div.innerHTML = `<span>${s.nombre_completo}</span><span class="opt-mat">${s.matricula}</span>`;
+    div.onclick = (e) => {
+      e.stopPropagation(); // Evita conflictos de clicks
+      selectName(s);
+    };
     list.appendChild(div);
   });
 }
 
 function toggleDropdown() {
-  var dd = document.getElementById('nombreDropdown');
+  const dd = document.getElementById('nombreDropdown');
   if (dd.classList.contains('disabled')) return;
   dropdownOpen = !dropdownOpen;
   dd.classList.toggle('open', dropdownOpen);
@@ -663,48 +686,50 @@ function toggleDropdown() {
 
 function selectName(student) {
   dropdownOpen = false;
-  var dd = document.getElementById('nombreDropdown');
+  const dd = document.getElementById('nombreDropdown');
   dd.classList.remove('open');
   document.getElementById('dropdownList').classList.remove('open');
-  document.getElementById('dropdownText').textContent = student.name;
+  
+  document.getElementById('dropdownText').textContent = student.nombre_completo;
   dd.classList.add('selected');
   document.getElementById('nombreHint').style.display = 'none';
+  
   selectedStudent = student;
   validatePair();
 }
 
 function resetDropdown() {
-  var dd = document.getElementById('nombreDropdown');
+  const dd = document.getElementById('nombreDropdown');
   dd.classList.add('disabled');
   dd.classList.remove('open', 'selected', 'valid');
   dropdownOpen = false;
   document.getElementById('dropdownList').classList.remove('open');
-  document.getElementById('dropdownList').innerHTML = '';
-  document.getElementById('dropdownText').textContent = 'Primero ingresa tu matricula';
-  document.getElementById('nombreHint').style.display = 'block';
-  document.getElementById('nombreError').style.display = 'none';
+  document.getElementById('dropdownText').textContent = 'Primero ingresa tu matrícula';
 }
 
-// VALIDATE PAIR
+// LA VALIDACIÓN DE "TRAMPA"
 function validatePair() {
   hideBoxes();
   if (!selectedStudent || !validatedMat) return;
-  if (selectedStudent.mat === validatedMat) {
+
+  // Comparamos la matrícula escrita vs la matrícula del nombre seleccionado
+  if (selectedStudent.matricula === validatedMat) {
     document.getElementById('nombreDropdown').classList.add('valid');
-    var initials = selectedStudent.name.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2);
+    const initials = selectedStudent.nombre_completo.split(' ').map(w => w[0]).join('').slice(0,2);
+    
     document.getElementById('matchAvatar').textContent = initials;
-    document.getElementById('matchName').textContent = selectedStudent.name;
-    document.getElementById('matchSub').textContent = 'Matricula ' + selectedStudent.mat + ' · ' + (currentEvent ? currentEvent.horas_acredita : '?') + ' horas a acreditar';
+    document.getElementById('matchName').textContent = selectedStudent.nombre_completo;
+    document.getElementById('matchSub').textContent = `Matrícula ${selectedStudent.matricula} · ${currentEvent.horas_acredita} horas`;
     document.getElementById('matchBox').classList.add('show');
     document.getElementById('btnConfirm').disabled = false;
-    document.getElementById('nombreError').style.display = 'none';
+    
     updateStepDot(2, 'done');
     updateStepDot(3, 'active');
   } else {
+    // AQUÍ CAE SI QUIEREN HACER TRAMPA O SE EQUIVOCARON
     document.getElementById('nombreDropdown').classList.remove('valid');
     document.getElementById('mismatchBox').classList.add('show');
     document.getElementById('btnConfirm').disabled = true;
-    document.getElementById('nombreError').style.display = 'block';
     updateStepDot(2, 'active');
     updateStepDot(3, 'pending');
   }
@@ -715,84 +740,62 @@ function hideBoxes() {
   document.getElementById('mismatchBox').classList.remove('show');
 }
 
-// STEPS
 function updateStepDot(num, state) {
-  var dot = document.getElementById('dot' + num);
+  const dot = document.getElementById('dot' + num);
+  if (!dot) return;
   dot.className = 'step-dot ' + state;
   if (num > 1) {
-    var line = document.getElementById('line' + (num-1));
-    if (state === 'done' || state === 'active') line.classList.add('done');
-    else line.classList.remove('done');
+    const line = document.getElementById('line' + (num-1));
+    if (line) {
+        if (state === 'done' || state === 'active') line.classList.add('done');
+        else line.classList.remove('done');
+    }
   }
 }
 
-// CONFIRM
+// CONFIRMACIÓN FINAL
 async function confirmAttendance() {
-  if (!selectedStudent || !validatedMat || selectedStudent.mat !== validatedMat) {
-    document.getElementById('mismatchBox').classList.add('show');
-    return;
-  }
-
-  var btn = document.getElementById('btnConfirm');
+  const btn = document.getElementById('btnConfirm');
   btn.disabled = true;
   btn.innerHTML = '<span>Registrando...</span>';
 
   try {
-    var res = await fetch(API + '/checkin', {
+    const res = await fetch(API + '/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: currentToken,
-        matricula: selectedStudent.mat,
+        matricula: selectedStudent.matricula,
         estudiante_id: selectedStudent.id
       })
     });
 
-    var data = await res.json();
+    const data = await res.json();
 
     if (!res.ok) {
       btn.disabled = false;
       btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
-      if (res.status === 409) {
-        showError('Ya registrado', 'Ya tienes asistencia registrada en este evento.');
-      } else if (res.status === 410) {
-        showError('QR expirado', 'Este token ya fue usado. Solicita a la coordinadora un nuevo QR.');
-      } else {
-        showError('Error', data.error || 'Ocurrio un error al registrar. Intenta de nuevo.');
-      }
+      showError('Atención', data.error || 'No se pudo registrar.');
       return;
     }
 
-    // Exito
-    var now = new Date(data.asistencia.timestamp);
-    var timeStr = now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-    var dateStr = now.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short', year:'numeric' });
-
+    // Mostrar pantalla de éxito
+    const now = new Date(data.asistencia.timestamp);
     document.getElementById('formSection').style.display = 'none';
-    var ss = document.getElementById('successScreen');
-    ss.style.display = 'flex';
+    document.getElementById('successScreen').style.display = 'flex';
     document.getElementById('successName').textContent = data.asistencia.nombre;
     document.getElementById('successMat').textContent = data.asistencia.matricula;
     document.getElementById('successEvent').textContent = data.asistencia.evento;
-    document.getElementById('successTime').textContent = timeStr + ' · ' + dateStr;
-    document.getElementById('successHrs').textContent = '+' + data.asistencia.horas_acreditadas + ' horas';
+    document.getElementById('successTime').textContent = now.toLocaleTimeString();
+    document.getElementById('successHrs').textContent = '+' + data.asistencia.horas_acreditadas + ' h';
 
   } catch(e) {
     btn.disabled = false;
     btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
-    showError('Error de conexion', 'No se pudo conectar. Verifica tu internet e intenta de nuevo.');
+    showError('Error de red', 'Revisa tu conexión a internet.');
   }
 }
 
-function closePage() {
-  window.close();
-  setTimeout(function() {
-    document.getElementById('successScreen').style.display = 'none';
-    document.getElementById('doneScreen').style.display = 'flex';
-  }, 300);
-}
-
-// ERROR SCREEN
 function showError(title, sub) {
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('errorTitle').textContent = title;
@@ -800,13 +803,10 @@ function showError(title, sub) {
   document.getElementById('errorScreen').style.display = 'flex';
 }
 
-// Cerrar dropdown al tocar fuera
-document.addEventListener('click', function(e) {
-  var wrap = document.querySelector('.dropdown-wrap');
-  if (wrap && !wrap.contains(e.target) && dropdownOpen) {
-    dropdownOpen = false;
-    document.getElementById('nombreDropdown').classList.remove('open');
-    document.getElementById('dropdownList').classList.remove('open');
+// Cerrar al hacer click fuera
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.dropdown-wrap') && dropdownOpen) {
+    toggleDropdown();
   }
 });
 </script>
