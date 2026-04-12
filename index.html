@@ -546,10 +546,10 @@
       <div class="event-dot"></div>
       <div>
         <div class="event-label">Evento activo</div>
-        <div class="event-name" id="headerEventName">Campaña de Esterilización · Abr 12</div>
+        <div class="event-name" id="headerEventName">Seleccione un evento activo</div>
       </div>
     </div>
-    <div class="event-time" id="headerEventTime">09:00 – 13:00</div>
+    <div class="event-time" id="headerEventTime">--:--</div>
   </div>
 </header>
 
@@ -563,7 +563,7 @@
     <div class="section-title">Resumen del evento</div>
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-num" id="statTotal">14</div>
+        <div class="stat-num" id="statTotal">0</div>
         <div class="stat-lbl">Registrados</div>
       </div>
       <div class="stat-card">
@@ -571,7 +571,7 @@
         <div class="stat-lbl">Presentes</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num red" id="statAbsent">14</div>
+        <div class="stat-num red" id="statAbsent">0</div>
         <div class="stat-lbl">Pendientes</div>
       </div>
     </div>
@@ -625,10 +625,11 @@
       </div>
     </div>
 
-    <!-- Simulación -->
+    <!-- Simulación --
     <button class="btn-secondary" onclick="simulateCheckin()" style="margin-top:16px;">
       🧪 Simular escaneo (demo)
     </button>
+	-- Fin Simulación -->
 
   </div>
 
@@ -710,23 +711,22 @@ var currentEventData = null;
 var currentToken = null;
 var qrInstance = null;
 var eventPaused = false;
-var attendedToday = [];
-var eventStudents = [];
+var totalRegistrados = 0; // Para el cálculo de pendientes
 var pollInterval = null;
 
-// INIT - cargar eventos desde el backend
+// INIT - cargar lista de eventos para el modal
 async function init() {
   await loadEvents();
 }
 
-// CARGAR EVENTOS
+// CARGAR EVENTOS (Ruta general)
 async function loadEvents() {
   try {
     var res = await fetch(API + '/eventos');
     var data = await res.json();
     renderEventModal(data.eventos || []);
   } catch(e) {
-    showToast('Error al cargar eventos', 'error');
+    showToast('Error al conectar con el servidor', 'error');
   }
 }
 
@@ -742,7 +742,7 @@ function renderEventModal(eventos) {
   if (!eventos || eventos.length === 0) {
     var empty = document.createElement('div');
     empty.style.cssText = 'text-align:center;padding:32px;color:var(--gray);font-size:13px;';
-    empty.textContent = 'No hay eventos activos. Agrega uno en Supabase.';
+    empty.textContent = 'No hay eventos activos en Supabase.';
     sheet.appendChild(empty);
     return;
   }
@@ -763,37 +763,40 @@ function renderEventModal(eventos) {
   });
 }
 
-// SELECCIONAR EVENTO
+// SELECCIONAR EVENTO (Actualizado con conteo de registrados)
 async function selectEvent(ev) {
   currentEventId = ev.id;
   currentEventData = ev;
   eventPaused = ev.pausado || false;
 
+  // Actualizar textos de cabecera
   var fecha = new Date(ev.fecha + 'T12:00:00');
   var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
   document.getElementById('headerEventName').textContent = ev.nombre + ' · ' + fechaStr;
   document.getElementById('headerEventTime').textContent = ev.hora_inicio.slice(0,5) + ' - ' + ev.hora_fin.slice(0,5);
   document.getElementById('eventModal').classList.remove('show');
 
-  // Cargar estudiantes del evento
   try {
-    var res = await fetch(API + '/event/DUMMY_LOAD_' + ev.id);
-    // Usamos el endpoint de asistencias para la lista de presentes
-  } catch(e) {}
+    // 1. Obtener el TOTAL de alumnos asignados a este evento
+    var resStats = await fetch(API + '/event-stats/' + ev.id);
+    var dataStats = await resStats.json();
+    totalRegistrados = dataStats.total || 0;
+    document.getElementById('statTotal').textContent = totalRegistrados;
 
-  await generateNewQR();
-  await loadAsistencias();
-  startPolling();
-  showToast('Evento seleccionado', 'success');
+    // 2. Ejecutar procesos de check-in
+    await generateNewQR();
+    await loadAsistencias();
+    startPolling();
+    showToast('Iniciando: ' + ev.nombre, 'success');
+  } catch(e) {
+    console.error(e);
+    showToast('Error al cargar estadísticas del evento', 'error');
+  }
 }
 
-// GENERAR QR
+// GENERAR QR (Genera token nuevo y dibuja QR)
 async function generateNewQR() {
-  if (!currentEventId) {
-    showToast('Selecciona un evento primero', 'error');
-    openEventModal();
-    return;
-  }
+  if (!currentEventId) return;
 
   try {
     var res = await fetch(API + '/token/generate', {
@@ -824,15 +827,14 @@ async function generateNewQR() {
       correctLevel: QRCode.CorrectLevel.M
     });
 
-    var fill = document.getElementById('timerFill');
-    fill.style.width = '100%';
+    document.getElementById('timerFill').style.width = '100%';
 
   } catch(e) {
-    showToast('Error de conexion con el servidor', 'error');
+    showToast('Error de conexión con el servidor', 'error');
   }
 }
 
-// CARGAR ASISTENCIAS DEL EVENTO
+// CARGAR ASISTENCIAS (Presentes hoy)
 async function loadAsistencias() {
   if (!currentEventId) return;
   try {
@@ -841,16 +843,22 @@ async function loadAsistencias() {
     var asistencias = data.asistencias || [];
     renderLog(asistencias);
     updateStats(asistencias);
-  } catch(e) {}
+  } catch(e) {
+    console.error("Error en polling asistencias");
+  }
 }
 
-// POLLING CADA 10s
-function startPolling() {
-  if (pollInterval) clearInterval(pollInterval);
-  pollInterval = setInterval(loadAsistencias, 10000);
+// UPDATE STATS (Cálculo real de Pendientes)
+function updateStats(asistencias) {
+  var presentes = asistencias.length;
+  var pendientes = totalRegistrados - presentes;
+  if (pendientes < 0) pendientes = 0; 
+
+  document.getElementById('statPresent').textContent = presentes;
+  document.getElementById('statAbsent').textContent = pendientes;
 }
 
-// RENDER LOG
+// RENDER LOG (Historial de la derecha)
 function renderLog(asistencias) {
   var logList = document.getElementById('logList');
   document.getElementById('logCount').textContent = asistencias.length;
@@ -878,16 +886,9 @@ function renderLog(asistencias) {
   });
 }
 
-// UPDATE STATS
-function updateStats(asistencias) {
-  var presentes = asistencias.length;
-  document.getElementById('statPresent').textContent = presentes;
-  // statTotal y statAbsent se actualizan cuando tengamos la lista de asignados
-}
-
 // PAUSAR / REANUDAR
 async function togglePause() {
-  if (!currentEventId) { showToast('Selecciona un evento primero', 'error'); return; }
+  if (!currentEventId) return;
 
   var nuevoPausado = !eventPaused;
   try {
@@ -897,7 +898,7 @@ async function togglePause() {
       body: JSON.stringify({ evento_id: currentEventId, pausado: nuevoPausado })
     });
 
-    if (!res.ok) { showToast('Error al cambiar estado', 'error'); return; }
+    if (!res.ok) throw new Error();
 
     eventPaused = nuevoPausado;
     var btn = document.getElementById('btnPause');
@@ -906,93 +907,55 @@ async function togglePause() {
 
     if (eventPaused) {
       btn.innerHTML = '&#9654; Reanudar evento';
-      btn.style.color = 'var(--success)';
-      btn.style.borderColor = '#bbf7d0';
       banner.style.display = 'flex';
       qrFrame.style.opacity = '0.3';
       qrFrame.style.filter = 'grayscale(1)';
-      showToast('Check-in pausado', 'error');
     } else {
       btn.innerHTML = '&#9208; Pausar evento';
-      btn.style.color = '';
-      btn.style.borderColor = '';
       banner.style.display = 'none';
       qrFrame.style.opacity = '1';
       qrFrame.style.filter = '';
       await generateNewQR();
-      showToast('Check-in reanudado', 'success');
     }
   } catch(e) {
-    showToast('Error de conexion', 'error');
+    showToast('Error al cambiar estado', 'error');
   }
 }
 
-// THEME
+// POLLING
+function startPolling() {
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(loadAsistencias, 10000);
+}
+
+// UI HELPERS
 function toggleTheme() {
   var body = document.body;
   var isDark = body.getAttribute('data-theme') === 'dark';
   body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.querySelector('.icon-btn').textContent = isDark ? '🌙' : '☀️';
 }
 
-// NAV
 function switchView(name) {
   document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
   document.getElementById('view-' + name).classList.add('active');
   document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'estudiantes') renderStudents();
 }
 
-// MODAL
 function openEventModal() {
   loadEvents();
   document.getElementById('eventModal').classList.add('show');
 }
+
 function closeEventModal(e) {
   if (e.target === document.getElementById('eventModal'))
     document.getElementById('eventModal').classList.remove('show');
 }
 
-// STUDENTS VIEW
-function renderStudents() {
-  var list = document.getElementById('studentList');
-  if (!currentEventId) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Selecciona un evento primero</div>';
-    return;
-  }
-  fetch(API + '/asistencias/' + currentEventId)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      var presentIds = (data.asistencias || []).map(function(a) { return a.estudiante_id; });
-      list.innerHTML = '';
-      (data.asistencias || []).forEach(function(a) {
-        var nombre = a.estudiantes ? a.estudiantes.nombre_completo : 'Desconocido';
-        var mat = a.estudiantes ? a.estudiantes.matricula : '';
-        var initials = nombre.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2);
-        var div = document.createElement('div');
-        div.className = 'student-item';
-        div.innerHTML =
-          '<div class="student-avatar">' + initials + '</div>' +
-          '<div style="flex:1;min-width:0;">' +
-            '<div class="student-name">' + nombre + '</div>' +
-            '<div class="student-hours">' + mat + '</div>' +
-          '</div>' +
-          '<div class="student-status">✅</div>';
-        list.appendChild(div);
-      });
-      if (data.asistencias.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Sin registros aun en este evento</div>';
-      }
-    });
-}
-
-// TOAST
 function showToast(msg, type) {
-  type = type || '';
   var t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast show ' + type;
+  t.className = 'toast show ' + (type || '');
   setTimeout(function() { t.className = 'toast'; }, 2800);
 }
 
