@@ -379,11 +379,12 @@
     animation: fadeUp 0.4s ease;
   }
   .error-circle {
-    width: 100px; height: 100px; border-radius: 50%;
-    background: #fef2f2; border: 2px solid #fee2e2;
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, #dc2626, #ef4444); /* Rojo vibrante */
     display: flex; align-items: center; justify-content: center;
-    font-size: 48px; margin-bottom: 24px;
-    box-shadow: 0 10px 25px rgba(220,38,38,0.1);
+    font-size: 42px; color: white !important; /* X en blanco */
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(220,38,38,0.3);
   }
   .error-title {
     font-family: 'Sora', sans-serif;
@@ -565,9 +566,9 @@
 
 <!-- DONE SCREEN -->
 <div class="error-screen" id="doneScreen" style="display:none;">
-  <div style="font-size:64px; margin-bottom:20px;">🔒</div>
-  <div class="error-title" style="color:var(--navy);">Sesión finalizada</div>
-  <div class="error-sub">Tu asistencia ya quedó registrada. Cierra esta pestaña completamente para concluir.</div>
+  <div style="font-size:64px; margin-bottom:20px;" id="doneIcon">🔒</div>
+  <div class="error-title" style="color:var(--navy);" id="doneTitle">Sesión finalizada</div>
+  <div class="error-sub" id="doneSub">Ya puedes cerrar esta pestaña.</div>
 </div>
 
 <!-- ERROR -->
@@ -642,36 +643,44 @@ let mockStudents = [];
   }
 })();
 
-// Función para el botón "Cerrar" o "Finalizar"
-function closePage() {
+// Función para cerrar el flujo con un mensaje personalizado
+function closePage(type) {
+  const title = document.getElementById('doneTitle');
+  const sub = document.getElementById('doneSub');
+  const icon = document.getElementById('doneIcon');
+
+  if (type === 'error') {
+    icon.textContent = '❌';
+    title.textContent = 'Proceso cancelado';
+    sub.textContent = 'Hubo un problema con el acceso. Cierra esta pestaña y vuelve a escanear el QR vigente.';
+  } else {
+    icon.textContent = '🔒';
+    title.textContent = 'Sesión finalizada';
+    sub.textContent = 'Tu asistencia ha sido procesada. Cierra esta pestaña completamente para concluir.';
+  }
+
   document.getElementById('successScreen').style.display = 'none';
   document.getElementById('errorScreen').style.display = 'none';
   document.getElementById('doneScreen').style.display = 'flex';
 }
 
-// ERROR SCREEN (Actualizada con lógica de botón)
+// Actualizamos showError para pasar el tipo 'error'
 function showError(title, sub, canRetry) {
   document.getElementById('formSection').style.display = 'none';
   document.getElementById('errorTitle').textContent = title;
   document.getElementById('errorSub').textContent = sub;
   
-  // Seleccionamos el botón de la pantalla de error
   const btn = document.querySelector('#errorScreen .btn-retry');
   
   if (canRetry) {
-    // Caso: Error de internet o pausa (Se puede reintentar)
     btn.textContent = 'Intentar de nuevo';
     btn.style.background = 'var(--blue)';
     btn.onclick = () => location.reload();
   } else {
-    // Caso: Token quemado o inválido (No sirve de nada reintentar)
     btn.textContent = 'Entendido, volver a escanear';
     btn.style.background = 'var(--navy)';
-    // Al picar, lo mandamos a la pantalla de "Sesión Finalizada"
-    btn.onclick = () => {
-       document.getElementById('errorScreen').style.display = 'none';
-       document.getElementById('doneScreen').style.display = 'flex';
-    };
+    // LLAMAMOS CON TIPO ERROR
+    btn.onclick = () => closePage('error'); 
   }
   
   document.getElementById('errorScreen').style.display = 'flex';
