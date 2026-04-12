@@ -769,7 +769,7 @@ async function selectEvent(ev) {
   currentEventData = ev;
   eventPaused = ev.pausado || false;
 
-  // Actualizar textos de cabecera
+  // Actualizar textos visuales
   var fecha = new Date(ev.fecha + 'T12:00:00');
   var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
   document.getElementById('headerEventName').textContent = ev.nombre + ' · ' + fechaStr;
@@ -777,20 +777,21 @@ async function selectEvent(ev) {
   document.getElementById('eventModal').classList.remove('show');
 
   try {
-    // 1. Obtener el TOTAL de alumnos asignados a este evento
+    // AQUÍ ESTÁ EL TRUCO: Pedimos el conteo real al backend
     var resStats = await fetch(API + '/event-stats/' + ev.id);
     var dataStats = await resStats.json();
-    totalRegistrados = dataStats.total || 0;
+    
+    // Guardamos el número en la variable global
+    totalRegistrados = dataStats.total || 0; 
     document.getElementById('statTotal').textContent = totalRegistrados;
 
-    // 2. Ejecutar procesos de check-in
+    // Ya con el total guardado, generamos el QR y cargamos presentes
     await generateNewQR();
     await loadAsistencias();
     startPolling();
-    showToast('Iniciando: ' + ev.nombre, 'success');
+    showToast('Evento seleccionado', 'success');
   } catch(e) {
-    console.error(e);
-    showToast('Error al cargar estadísticas del evento', 'error');
+    showToast('Error al cargar estadísticas', 'error');
   }
 }
 
