@@ -973,35 +973,65 @@ function closeEventModal(e) {
     document.getElementById('eventModal').classList.remove('show');
 }
 
-function renderStudents() {
+// NUEVA FUNCIÓN: Muestra Alumnos Esperados vs Registrados
+async function renderStudents() {
   var list = document.getElementById('studentList');
   if (!currentEventId) {
     list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Selecciona un evento primero</div>';
     return;
   }
-  fetch(API + '/asistencias/' + currentEventId)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      list.innerHTML = '';
-      (data.asistencias || []).forEach(function(a) {
-        var nombre = a.estudiantes ? a.estudiantes.nombre_completo : 'Desconocido';
-        var mat = a.estudiantes ? a.estudiantes.matricula : '';
-        var initials = nombre.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2);
-        var div = document.createElement('div');
-        div.className = 'student-item';
-        div.innerHTML =
-          '<div class="student-avatar">' + initials + '</div>' +
-          '<div style="flex:1;min-width:0;">' +
-            '<div class="student-name">' + nombre + '</div>' +
-            '<div class="student-hours">' + mat + '</div>' +
-          '</div>' +
-          '<div class="student-status">✅</div>';
-        list.appendChild(div);
-      });
-      if (!data.asistencias || data.asistencias.length === 0) {
-        list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Sin registros aún</div>';
-      }
+
+  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Cargando lista...</div>';
+
+  try {
+    // Consultamos ambas listas al mismo tiempo para ganar velocidad
+    const [resAll, resAsis] = await Promise.all([
+      fetch(API + '/event-students/' + currentEventId),
+      fetch(API + '/asistencias/' + currentEventId)
+    ]);
+
+    const dataAll = await resAll.json();
+    const dataAsis = await resAsis.json();
+
+    const alumnosEsperados = dataAll.estudiantes || [];
+    const asistenciasHoy = dataAsis.asistencias || [];
+
+    // Creamos un set de IDs de los que YA registraron para buscar rápido
+    const idsPresentes = new Set(asistenciasHoy.map(a => a.estudiante_id));
+
+    list.innerHTML = '';
+
+    if (alumnosEsperados.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">No hay alumnos asignados a este evento.</div>';
+      return;
+    }
+
+    // Dibujamos la lista completa
+    alumnosEsperados.forEach(function(s) {
+      const yaLlego = idsPresentes.has(s.id);
+      const initials = s.nombre_completo.split(' ').map(w => w[0]).join('').slice(0,2);
+      
+      const div = document.createElement('div');
+      div.className = 'student-item';
+      
+      // Si no ha llegado, le bajamos un poco la opacidad al avatar
+      const avatarStyle = yaLlego ? '' : 'style="filter: grayscale(1); opacity: 0.5;"';
+
+      div.innerHTML =
+        '<div class="student-avatar" ' + avatarStyle + '>' + initials + '</div>' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="student-name">' + s.nombre_completo + '</div>' +
+          '<div class="student-hours">' + s.matricula + '</div>' +
+        '</div>' +
+        '<div class="student-status">' + (yaLlego ? '✅' : '⏳') + '</div>';
+      
+      list.appendChild(div);
     });
+
+  } catch(e) {
+    console.error(e);
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--error);font-size:13px;">Error al cargar la lista.</div>';
+  }
 }
 
 function showToast(msg, type) {
