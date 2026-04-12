@@ -724,7 +724,7 @@ async function loadEvents() {
   try {
     var res = await fetch(API + '/event/PRUEBA01'); // PRUEBAS CON BASE DE DATOS
     var data = await res.json();
-    renderEventModal(data.eventos || []);
+    renderEventModal(data.evento || []);
   } catch(e) {
     showToast('Error al cargar eventos', 'error');
   }
