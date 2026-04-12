@@ -569,7 +569,7 @@ let mockStudents = [];
   currentToken = params.get('t');
 
   if (!currentToken) {
-    showError('Token inválido', 'Este QR no contiene un token válido.');
+    showError('Token inexistente', 'Este enlace no es válido. Escanea el QR desde la app de la directora.', false);
     return;
   }
 
@@ -581,17 +581,22 @@ let mockStudents = [];
     const data = await res.json();
 
     if (!res.ok) {
-      if (res.status === 410) showError('QR ya usado', 'Este código ya fue escaneado.');
-      else if (res.status === 403) showError('Check-in pausado', 'El registro está pausado.');
-      else showError('Error', data.error || 'Token no válido.');
+      // Si el token ya se usó o no existe, el botón de "Reintentar" no debe salir
+      if (res.status === 410) {
+        showError('QR ya utilizado', 'Este código ya registró una asistencia. Solicita un nuevo QR a la coordinación.', false);
+      } else if (res.status === 404) {
+        showError('Token inválido', 'El código escaneado no existe o es muy antiguo.', false);
+      } else if (res.status === 403) {
+        showError('Registro pausado', 'La directora ha pausado temporalmente el registro.', true);
+      } else {
+        showError('Atención', data.error || 'No se pudo validar el acceso.', true);
+      }
       return;
     }
 
-    // Guardamos los datos que vienen del backend
     currentEvent = data.evento;
-    mockStudents = data.estudiantes; // Ya vienen como {id, nombre_completo, matricula}
+    mockStudents = data.estudiantes;
 
-    // Llenar interfaz
     const fecha = new Date(currentEvent.fecha + 'T12:00:00');
     const fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
     document.getElementById('eventName').textContent = currentEvent.nombre;
@@ -600,17 +605,42 @@ let mockStudents = [];
     document.getElementById('formSection').style.opacity = '1';
 
   } catch(e) {
-    console.error(e);
-    showError('Error de conexión', 'No se pudo conectar con el servidor.');
+    // Error de RED: Aquí sí dejamos el botón de reintentar
+    showError('Error de conexión', 'No pudimos conectar con el servidor. Revisa tu internet.', true);
   }
 })();
 
-// MATRICULA INPUT
+// Función para el botón "Cerrar" o "Finalizar"
+function closePage() {
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('errorScreen').style.display = 'none';
+  document.getElementById('doneScreen').style.display = 'flex';
+}
+
+// ERROR SCREEN (Actualizada con lógica de botón)
+function showError(title, sub, canRetry) {
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('errorTitle').textContent = title;
+  document.getElementById('errorSub').textContent = sub;
+  
+  const btnRetry = document.querySelector('.btn-retry');
+  if (canRetry) {
+    btnRetry.textContent = 'Reintentar';
+    btnRetry.onclick = () => location.reload();
+  } else {
+    // Si no puede reintentar, cambiamos el flujo a cerrar sesión
+    btnRetry.textContent = 'Entendido / Escanear otro';
+    btnRetry.onclick = () => closePage();
+  }
+  
+  document.getElementById('errorScreen').style.display = 'flex';
+}
+
+// --- RESTO DE FUNCIONES (Matrícula, Dropdown, Confirmación) ---
+
 function onMatriculaInput() {
   const val = document.getElementById('matricula').value.trim().toUpperCase();
   document.getElementById('matricula').value = val;
-  
-  // Reset de estados
   selectedStudent = null;
   validatedMat = null;
   resetDropdown();
@@ -630,20 +660,17 @@ function onMatriculaInput() {
 
   if (val.length < 3) return;
 
-  // BUSCAMOS SI LA MATRÍCULA EXISTE EN ESTE EVENTO
   const match = mockStudents.find(s => s.matricula === val);
-
   if (match) {
     validatedMat = val;
     inputEl.classList.add('valid');
     iconEl.textContent = '✓';
     iconEl.style.color = 'var(--success)';
     hintEl.style.display = 'none';
-    enableDropdown(match); // Pasamos el alumno encontrado
+    enableDropdown(match);
     updateStepDot(2, 'active');
   } else {
-    // Si no está en la lista de este evento
-    if (val.length >= 5) { // Solo marcar error si ya escribió suficiente
+    if (val.length >= 5) {
        inputEl.classList.add('error');
        iconEl.textContent = '✕';
        iconEl.style.color = 'var(--error)';
@@ -654,24 +681,17 @@ function onMatriculaInput() {
   }
 }
 
-// DROPDOWN
 function enableDropdown(matchedStudent) {
   const dd = document.getElementById('nombreDropdown');
   dd.classList.remove('disabled');
   const list = document.getElementById('dropdownList');
   list.innerHTML = '';
-
-  // Ponemos al alumno que coincide primero, pero mostramos todos por si acaso
   const sorted = [matchedStudent].concat(mockStudents.filter(s => s.matricula !== matchedStudent.matricula));
-  
   sorted.forEach(s => {
     const div = document.createElement('div');
     div.className = 'dropdown-option';
     div.innerHTML = `<span>${s.nombre_completo}</span><span class="opt-mat">${s.matricula}</span>`;
-    div.onclick = (e) => {
-      e.stopPropagation(); // Evita conflictos de clicks
-      selectName(s);
-    };
+    div.onclick = (e) => { e.stopPropagation(); selectName(s); };
     list.appendChild(div);
   });
 }
@@ -686,79 +706,39 @@ function toggleDropdown() {
 
 function selectName(student) {
   dropdownOpen = false;
-  const dd = document.getElementById('nombreDropdown');
-  dd.classList.remove('open');
+  document.getElementById('nombreDropdown').classList.remove('open');
   document.getElementById('dropdownList').classList.remove('open');
-  
   document.getElementById('dropdownText').textContent = student.nombre_completo;
-  dd.classList.add('selected');
+  document.getElementById('nombreDropdown').classList.add('selected');
   document.getElementById('nombreHint').style.display = 'none';
-  
   selectedStudent = student;
   validatePair();
 }
 
-function resetDropdown() {
-  const dd = document.getElementById('nombreDropdown');
-  dd.classList.add('disabled');
-  dd.classList.remove('open', 'selected', 'valid');
-  dropdownOpen = false;
-  document.getElementById('dropdownList').classList.remove('open');
-  document.getElementById('dropdownText').textContent = 'Primero ingresa tu matrícula';
-}
-
-// LA VALIDACIÓN DE "TRAMPA"
 function validatePair() {
   hideBoxes();
   if (!selectedStudent || !validatedMat) return;
-
-  // Comparamos la matrícula escrita vs la matrícula del nombre seleccionado
   if (selectedStudent.matricula === validatedMat) {
     document.getElementById('nombreDropdown').classList.add('valid');
     const initials = selectedStudent.nombre_completo.split(' ').map(w => w[0]).join('').slice(0,2);
-    
     document.getElementById('matchAvatar').textContent = initials;
     document.getElementById('matchName').textContent = selectedStudent.nombre_completo;
-    document.getElementById('matchSub').textContent = `Matrícula ${selectedStudent.matricula} · ${currentEvent.horas_acredita} horas`;
+    document.getElementById('matchSub').textContent = `Matrícula ${selectedStudent.matricula}`;
     document.getElementById('matchBox').classList.add('show');
     document.getElementById('btnConfirm').disabled = false;
-    
     updateStepDot(2, 'done');
     updateStepDot(3, 'active');
   } else {
-    // AQUÍ CAE SI QUIEREN HACER TRAMPA O SE EQUIVOCARON
     document.getElementById('nombreDropdown').classList.remove('valid');
     document.getElementById('mismatchBox').classList.add('show');
     document.getElementById('btnConfirm').disabled = true;
-    updateStepDot(2, 'active');
-    updateStepDot(3, 'pending');
   }
 }
 
-function hideBoxes() {
-  document.getElementById('matchBox').classList.remove('show');
-  document.getElementById('mismatchBox').classList.remove('show');
-}
-
-function updateStepDot(num, state) {
-  const dot = document.getElementById('dot' + num);
-  if (!dot) return;
-  dot.className = 'step-dot ' + state;
-  if (num > 1) {
-    const line = document.getElementById('line' + (num-1));
-    if (line) {
-        if (state === 'done' || state === 'active') line.classList.add('done');
-        else line.classList.remove('done');
-    }
-  }
-}
-
-// CONFIRMACIÓN FINAL
 async function confirmAttendance() {
   const btn = document.getElementById('btnConfirm');
   btn.disabled = true;
   btn.innerHTML = '<span>Registrando...</span>';
-
   try {
     const res = await fetch(API + '/checkin', {
       method: 'POST',
@@ -769,17 +749,14 @@ async function confirmAttendance() {
         estudiante_id: selectedStudent.id
       })
     });
-
     const data = await res.json();
-
     if (!res.ok) {
+      if (res.status === 409) { closePage(); return; } // Ya registrado
       btn.disabled = false;
       btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
-      showError('Atención', data.error || 'No se pudo registrar.');
+      showError('Atención', data.error || 'No se pudo registrar.', false);
       return;
     }
-
-    // Mostrar pantalla de éxito
     const now = new Date(data.asistencia.timestamp);
     document.getElementById('formSection').style.display = 'none';
     document.getElementById('successScreen').style.display = 'flex';
@@ -788,26 +765,32 @@ async function confirmAttendance() {
     document.getElementById('successEvent').textContent = data.asistencia.evento;
     document.getElementById('successTime').textContent = now.toLocaleTimeString();
     document.getElementById('successHrs').textContent = '+' + data.asistencia.horas_acreditadas + ' h';
-
   } catch(e) {
     btn.disabled = false;
     btn.innerHTML = '<span>Confirmar asistencia</span><span>→</span>';
-    showError('Error de red', 'Revisa tu conexión a internet.');
+    showError('Error de red', 'Verifica tu internet e intenta de nuevo.', true);
   }
 }
 
-function showError(title, sub) {
-  document.getElementById('formSection').style.display = 'none';
-  document.getElementById('errorTitle').textContent = title;
-  document.getElementById('errorSub').textContent = sub;
-  document.getElementById('errorScreen').style.display = 'flex';
+function resetDropdown() {
+  const dd = document.getElementById('nombreDropdown');
+  dd.classList.add('disabled');
+  dd.classList.remove('open', 'selected', 'valid');
+  document.getElementById('dropdownText').textContent = 'Primero ingresa tu matrícula';
 }
 
-// Cerrar al hacer click fuera
+function hideBoxes() {
+  document.getElementById('matchBox').classList.remove('show');
+  document.getElementById('mismatchBox').classList.remove('show');
+}
+
+function updateStepDot(num, state) {
+  const dot = document.getElementById('dot' + num);
+  if (dot) dot.className = 'step-dot ' + state;
+}
+
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dropdown-wrap') && dropdownOpen) {
-    toggleDropdown();
-  }
+  if (!e.target.closest('.dropdown-wrap') && dropdownOpen) toggleDropdown();
 });
 </script>
 </body>
