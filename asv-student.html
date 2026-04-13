@@ -69,7 +69,14 @@
       if(!res.ok) return showErr('Acceso Denegado', data.error || 'Token no válido', false);
       students = data.estudiantes;
       document.getElementById('evName').textContent = data.evento.nombre;
-      document.getElementById('evMeta').textContent = `${data.evento.fecha} · ${data.evento.horas_acredita} hrs`;
+      // 1. Obtenemos los componentes de la fecha (año, mes, día)
+			const [year, month, day] = data.evento.fecha.split('-');
+			// 2. Definimos los meses en el formato que necesitas
+			const mesesAbbr = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+			// 3. Construimos la fecha formateada
+			const fechaFormateada = `${day}/${mesesAbbr[parseInt(month) - 1]}/${year}`;
+			// 4. Lo asignamos al elemento
+			document.getElementById('evMeta').textContent = `${fechaFormateada} · ${data.evento.horas_acredita} hrs`;
       if(isOut){
         document.getElementById('evIcon').textContent = '🏁';
         document.querySelector('.top-title').textContent = 'Registro de Salida';
