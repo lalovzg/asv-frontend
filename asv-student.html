@@ -134,9 +134,38 @@
 
 <div class="success-screen" id="successScreen">
   <div style="width:90px; height:90px; border-radius:50%; background:#f0fdf4; color:var(--success); display:flex; align-items:center; justify-content:center; font-size:42px; margin-bottom:20px; box-shadow:0 8px 32px rgba(22,163,74,0.2);">✓</div>
-  <h2 style="font-family:'Sora'; font-size:24px; font-weight:800;" id="sTitle">¡Registrado!</h2>
-  <p style="font-size:16px; color:var(--gray); margin-top:12px; line-height:1.5;" id="sSub"></p>
-  <button class="btn-action" onclick="closePage('success')">Finalizar y Cerrar</button>
+  <h2 style="font-family:'Sora'; font-size:24px; font-weight:800;" id="sTitle">¡Asistencia registrada!</h2>
+  <p style="font-size:14px; color:var(--gray); margin-top:8px;" id="sSub">Tu registro quedó confirmado con hora exacta del servidor.</p>
+
+  <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 20px; width:100%; box-shadow:var(--shadow); margin:24px 0 16px; text-align:left;">
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
+      <span style="color:var(--gray);">Nombre</span>
+      <span style="font-weight:600;" id="resNombre">—</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
+      <span style="color:var(--gray);">Matrícula</span>
+      <span style="font-weight:600;" id="resMatricula">—</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
+      <span style="color:var(--gray);">Evento</span>
+      <span style="font-weight:600;" id="resEvento">—</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
+      <span style="color:var(--gray);" id="lblTime">Hora de entrada</span>
+      <span style="font-weight:600;" id="resTime">—</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:13px;">
+      <span style="color:var(--gray);" id="lblHrs">Horas acreditadas</span>
+      <span style="font-weight:600; color:var(--blue);" id="resHrs">—</span>
+    </div>
+  </div>
+
+  <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px 16px; font-size:12px; color:#15803d; width:100%; display:flex; align-items:center; gap:8px;">
+    <span>💬</span>
+    <span>Recibirás confirmación por WhatsApp en breve</span>
+  </div>
+
+  <button class="btn-action" onclick="closePage('success')">Cerrar esta página</button>
 </div>
 
 <div class="error-screen" id="errorScreen">
@@ -245,24 +274,47 @@
   }
 
   async function confirmAttendance(){
-    const btn = document.getElementById('btnConfirm');
-    btn.disabled = true; btn.textContent = 'Procesando...';
+		const btn = document.getElementById('btnConfirm');
+		btn.disabled = true; btn.textContent = 'Verificando...';
 
-    try {
-      const endpoint = isOut ? '/checkout' : '/checkin';
-      const res = await fetch(API + endpoint, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
-      });
-      const data = await res.json();
-      
-      if(!res.ok) return showErr(res.status === 409 ? 'Ya registrado' : 'Atención', data.error, res.status === 409);
+		try {
+			const endpoint = isOut ? '/checkout' : '/checkin';
+			const res = await fetch(API + endpoint, {
+				method:'POST', headers:{'Content-Type':'application/json'},
+				body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
+			});
+			const data = await res.json();
+			
+			if(!res.ok) return showErr(res.status === 409 ? 'Ya registrado' : 'Atención', data.error, res.status === 409);
 
-      document.getElementById('formSection').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'flex';
-      document.getElementById('sSub').textContent = isOut ? `Tu salida ha sido grabada correctamente. Tiempo calculado.` : `¡Entrada exitosa! Tu turno ha comenzado para ${selected.nombre_completo.split(' ')[0]}.`;
-    } catch(e){ showErr('Error de servidor','Intenta confirmar de nuevo.', true); }
-  }
+			// OCULTAR FORMULARIO Y MOSTRAR ÉXITO
+			document.getElementById('formSection').style.display = 'none';
+			document.getElementById('successScreen').style.display = 'flex';
+
+			// LLENAR LA TABLA DE RESULTADOS
+			document.getElementById('resNombre').textContent = data.asistencia.nombre;
+			document.getElementById('resMatricula').textContent = data.asistencia.matricula;
+			document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
+
+			if(isOut) {
+				document.getElementById('sTitle').textContent = "¡Salida registrada!";
+				document.getElementById('lblTime').textContent = "Tiempo total";
+				document.getElementById('resTime').textContent = data.asistencia.horas_reales + " horas";
+				document.getElementById('lblHrs').textContent = "Meta del evento";
+				document.getElementById('resHrs').textContent = data.asistencia.horas_esperadas + " h";
+			} else {
+				// Formatear hora de entrada para evitar "Invalid Date"
+				const fechaAsis = new Date(data.asistencia.timestamp);
+				const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+				
+				document.getElementById('resTime').textContent = horaLegible;
+				document.getElementById('resHrs').textContent = "+" + data.asistencia.horas_acreditadas + " h";
+			}
+		} catch(e){ 
+			console.error(e);
+			showErr('Error de servidor','No pudimos procesar tu registro. Intenta de nuevo.', true); 
+		}
+	}
 
   function toggleDD(){ 
     if(document.getElementById('nameDrop').classList.contains('disabled')) return;
