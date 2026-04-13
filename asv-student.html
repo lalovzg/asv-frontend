@@ -20,7 +20,7 @@
 
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 0 40px; }
 
-  /* ─── HEADER (RESTAURADO) ─── */
+  /* ─── HEADER ─── */
   .top-bar { width: 100%; background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 20px 20px 28px; text-align: center; position: relative; overflow: hidden; }
   .top-bar::before { content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background: rgba(43,159,212,0.12); }
   .top-bar::after { content: ''; position: absolute; bottom: -30px; left: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05); }
@@ -30,7 +30,7 @@
   .top-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: white; line-height: 1.2; position: relative; z-index: 1; }
   .top-subtitle { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 6px; position: relative; z-index: 1; }
 
-  /* ─── EVENT CHIP (RESTAURADO) ─── */
+  /* ─── EVENT CHIP ─── */
   .event-chip { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 18px; margin: -16px 20px 0; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; width: calc(100% - 40px); max-width: 440px; z-index: 2; }
   .event-chip-icon { width: 42px; height: 42px; background: linear-gradient(135deg, var(--navy), var(--blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
   .event-chip-hrs { margin-left: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; text-align: center; flex-shrink: 0; }
@@ -218,6 +218,11 @@
     const icon = document.getElementById('matIcon');
     const drop = document.getElementById('nameDrop');
 
+    // SOLUCIÓN AL BUG VISUAL: Limpiar estados de error/éxito cada vez que escriben
+    input.classList.remove('valid', 'error');
+    icon.textContent = '';
+    document.getElementById('matError').style.display = 'none';
+
     resetUIState();
 
     if(val.length < 3) return;
@@ -227,7 +232,6 @@
       icon.textContent = '✓'; icon.style.color = 'var(--success)';
       drop.classList.remove('disabled');
       document.getElementById('dropText').textContent = "Busca tu nombre en la lista";
-      document.getElementById('matError').style.display = 'none';
       renderDD(match);
       updateDot(2, 'active');
     } else if(val.length >= 5){
@@ -274,47 +278,47 @@
   }
 
   async function confirmAttendance(){
-		const btn = document.getElementById('btnConfirm');
-		btn.disabled = true; btn.textContent = 'Verificando...';
+    const btn = document.getElementById('btnConfirm');
+    btn.disabled = true; btn.textContent = 'Verificando...';
 
-		try {
-			const endpoint = isOut ? '/checkout' : '/checkin';
-			const res = await fetch(API + endpoint, {
-				method:'POST', headers:{'Content-Type':'application/json'},
-				body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
-			});
-			const data = await res.json();
-			
-			if(!res.ok) return showErr(res.status === 409 ? 'Ya registrado' : 'Atención', data.error, res.status === 409);
+    try {
+      const endpoint = isOut ? '/checkout' : '/checkin';
+      const res = await fetch(API + endpoint, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
+      });
+      const data = await res.json();
+      
+      if(!res.ok) return showErr(res.status === 409 ? 'Ya registrado' : 'Atención', data.error, res.status === 409);
 
-			// OCULTAR FORMULARIO Y MOSTRAR ÉXITO
-			document.getElementById('formSection').style.display = 'none';
-			document.getElementById('successScreen').style.display = 'flex';
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'flex';
 
-			// LLENAR LA TABLA DE RESULTADOS
-			document.getElementById('resNombre').textContent = data.asistencia.nombre;
-			document.getElementById('resMatricula').textContent = data.asistencia.matricula;
-			document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
+      // SOLUCIÓN AL BUG DE INFORMACIÓN INCORRECTA:
+      document.getElementById('resNombre').textContent = data.asistencia.nombre;
+      document.getElementById('resMatricula').textContent = data.asistencia.matricula;
+      document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
 
-			if(isOut) {
-				document.getElementById('sTitle').textContent = "¡Salida registrada!";
-				document.getElementById('lblTime').textContent = "Tiempo total";
-				document.getElementById('resTime').textContent = data.asistencia.horas_reales + " horas";
-				document.getElementById('lblHrs').textContent = "Meta del evento";
-				document.getElementById('resHrs').textContent = data.asistencia.horas_esperadas + " h";
-			} else {
-				// Formatear hora de entrada para evitar "Invalid Date"
-				const fechaAsis = new Date(data.asistencia.timestamp);
-				const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-				
-				document.getElementById('resTime').textContent = horaLegible;
-				document.getElementById('resHrs').textContent = "+" + data.asistencia.horas_acreditadas + " h";
-			}
-		} catch(e){ 
-			console.error(e);
-			showErr('Error de servidor','No pudimos procesar tu registro. Intenta de nuevo.', true); 
-		}
-	}
+      if(isOut) {
+        document.getElementById('sTitle').textContent = "¡Salida registrada!";
+        document.getElementById('lblTime').textContent = "Tiempo total";
+        document.getElementById('resTime').textContent = (data.asistencia.horas_reales || "0") + " horas";
+        document.getElementById('lblHrs').textContent = "Meta del evento";
+        document.getElementById('resHrs').textContent = (data.asistencia.horas_esperadas || eventData.horas_acredita) + " h";
+      } else {
+        // Formatear hora de entrada (con validación de existencia de timestamp)
+        const ts = data.asistencia.timestamp;
+        const fechaAsis = ts ? new Date(ts) : new Date();
+        const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+        
+        document.getElementById('resTime').textContent = horaLegible;
+        document.getElementById('resHrs').textContent = "+" + (data.asistencia.horas_acreditadas || eventData.horas_acredita) + " h";
+      }
+    } catch(e){ 
+      console.error(e);
+      showErr('Error de servidor','No pudimos procesar tu registro. Intenta de nuevo.', true); 
+    }
+  }
 
   function toggleDD(){ 
     if(document.getElementById('nameDrop').classList.contains('disabled')) return;
