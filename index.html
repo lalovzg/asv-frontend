@@ -21,7 +21,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; transition: 0.3s; overflow-x: hidden; }
 
-  /* ─── HEADER (RESTAURADO) ─── */
+  /* ─── HEADER ─── */
   header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 16px 20px 20px; position: relative; overflow: hidden; }
   header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(43,159,212,0.15); }
   header::after { content: ''; position: absolute; bottom: -20px; left: 30%; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.05); }
@@ -52,7 +52,7 @@
   .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
   .stat-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--blue); }
 
-  /* ─── QR CARD (PROFESIONAL) ─── */
+  /* ─── QR CARD ─── */
   .qr-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 20px; text-align: center; position: relative; overflow: hidden; }
   .qr-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy), var(--sky)); }
   .qr-frame { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; border: 3px solid var(--border); overflow: hidden; }
@@ -67,9 +67,6 @@
 
   /* ─── LOGS (ESTILO IPHONE) ─── */
   .log-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-  .log-header { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .log-count { background: var(--blue); color: white; font-size: 11px; font-weight: 700; border-radius: 99px; padding: 2px 9px; }
-  
   .log-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); animation: slideIn 0.3s ease; }
   .log-avatar { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; font-family: 'Sora'; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
   .log-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -102,8 +99,8 @@
       </div>
     </div>
     <div class="header-actions">
-      <button class="icon-btn" onclick="toggleTheme()">🌙</button>
-      <button class="icon-btn">⚙️</button>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+      <button class="icon-btn" style="display: none;">⚙️</button>
     </div>
   </div>
   <div class="event-pill" onclick="openEventModal()">
@@ -232,6 +229,7 @@
     asis.slice().reverse().slice(0,6).forEach(a=>{
       const initials = a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
       const row=document.createElement('div'); row.className = 'log-item';
+      // NOMBRE COMPLETO RESTAURADO
       row.innerHTML=`<div class="log-avatar">${initials}</div><div class="log-name">${a.estudiantes.nombre_completo}</div><div class="log-time">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="log-check">✅</div>`;
       f.appendChild(row);
     });
@@ -256,6 +254,7 @@
       }
       const row = document.createElement('div'); row.style.cssText = 'display:grid; grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr; padding:12px 16px; border-bottom:1px solid #eee; font-size:12px; align-items:center;';
       if(!a) row.style.opacity = "0.6";
+      // NOMBRE COMPLETO RESTAURADO
       row.innerHTML = `<div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo}</div><div style="color:var(--gray); text-align:center;">${eS}</div><div style="color:var(--gray); text-align:center;">${sS}</div><div style="color:${col}; font-weight:800; text-align:right; padding-right:5px;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
       m.appendChild(row);
     });
@@ -265,7 +264,16 @@
   function switchTab(t,el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
   function openEventModal(){ document.getElementById('eModal').classList.add('show'); init(); }
   function closeModal(e){ if(e.target.id==='eModal') e.target.classList.remove('show'); }
-  function toggleTheme(){ const b=document.body; const isD=b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme',isD?'light':'dark'); }
+  
+  // TOGGLE THEME CORREGIDO
+  function toggleTheme(){ 
+    const b=document.body; 
+    const btn=document.getElementById('themeBtn');
+    const isD=b.getAttribute('data-theme')==='dark'; 
+    b.setAttribute('data-theme',isD?'light':'dark'); 
+    btn.textContent = isD ? '🌙' : '☀️';
+  }
+
   function showToast(m,t){ const el=document.getElementById('toast'); el.textContent=m; el.className='toast show'; el.style.background=t==='error'?'#7f1d1d':(t==='success'?'#14532d':'#0f2a52'); setTimeout(()=>el.className='toast',2800); }
   init();
 </script>
