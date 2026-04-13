@@ -267,14 +267,14 @@
 
   function renderMonitor(asis){
     const m=document.getElementById('mList'); 
-    m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:10px;background:var(--surface);font-weight:800;font-size:9px;"><div>ALUMNO</div><div>Entrada</div><div>Salida</div><div>TIEMPO</div><div>ACC</div></div>';
+    m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:10px;background:var(--surface);font-weight:800;font-size:13px;"><div>ALUMNO</div><div>Entrada</div><div>Salida</div><div>TIEMPO</div><div>ACC</div></div>';
     asis.forEach(a=>{
       const now=new Date(), s=new Date(a.timestamp_servidor), meta=curEv.horas_acredita;
       let out=a.timestamp_salida?new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'--:--';
       let hrs=a.timestamp_salida?a.horas_reales:parseFloat(((now-s)/(1000*60*60)).toFixed(2));
       let color=a.timestamp_salida?(hrs>=meta?'var(--success)':'var(--error)'):(hrs>=meta?'#f59e0b':'var(--gray)');
       let emo=a.timestamp_salida?(hrs>=meta?'✅':'⚠️'):(hrs>=meta?'🕒':'⏳');
-      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:12px;border-bottom:1px solid #eee;font-size:12px;align-items:center;';
+      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:12px;border-bottom:1px solid #eee;font-size:13px;align-items:center;';
       row.innerHTML=`<div>${a.estudiantes.nombre_completo}</div><div>${s.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div>${out}</div><div style="color:${color};font-weight:800;">${emo} ${hrs}h</div><div>${!a.timestamp_salida?`<button onclick="forceOut('${a.id}','${a.estudiantes.nombre_completo}')" style="border:none;background:none;font-size:16px;cursor:pointer;">🚪</button>`:'✨'}</div>`;
       m.appendChild(row);
     });
