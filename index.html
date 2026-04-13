@@ -232,7 +232,7 @@
     asis.slice().reverse().slice(0,6).forEach(a=>{
       const initials = a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
       const row=document.createElement('div'); row.className = 'log-item';
-      row.innerHTML=`<div class="log-avatar">${initials}</div><div class="log-name">${a.estudiantes.nombre_completo.split(' ')[0]}</div><div class="log-time">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="log-check">✅</div>`;
+      row.innerHTML=`<div class="log-avatar">${initials}</div><div class="log-name">${a.estudiantes.nombre_completo}</div><div class="log-time">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="log-check">✅</div>`;
       f.appendChild(row);
     });
   }
@@ -256,7 +256,7 @@
       }
       const row = document.createElement('div'); row.style.cssText = 'display:grid; grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr; padding:12px 16px; border-bottom:1px solid #eee; font-size:12px; align-items:center;';
       if(!a) row.style.opacity = "0.6";
-      row.innerHTML = `<div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo.split(' ')[0]}</div><div style="color:var(--gray); text-align:center;">${eS}</div><div style="color:var(--gray); text-align:center;">${sS}</div><div style="color:${col}; font-weight:800; text-align:right; padding-right:5px;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
+      row.innerHTML = `<div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo}</div><div style="color:var(--gray); text-align:center;">${eS}</div><div style="color:var(--gray); text-align:center;">${sS}</div><div style="color:${col}; font-weight:800; text-align:right; padding-right:5px;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
       m.appendChild(row);
     });
   }
