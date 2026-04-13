@@ -95,24 +95,58 @@
     });
   }
   function toggleDD(){ if(document.getElementById('nameDrop').classList.contains('disabled')) return; const list = document.getElementById('dropList'); list.style.display = list.style.display === 'block' ? 'none' : 'block'; }
+  // --- CONFIRMACIÓN ACTUALIZADA ---
   async function confirmAttendance(){
-    const btn = document.getElementById('btnConfirm'); btn.disabled = true; btn.textContent = 'Procesando...';
+    const btn = document.getElementById('btnConfirm');
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+
     try {
-      const res = await fetch(API + (isOut?'/checkout':'/checkin'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id}) });
+      const endpoint = isOut ? '/checkout' : '/checkin';
+      const res = await fetch(API + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, matricula: selected.matricula, estudiante_id: selected.id })
+      });
+
       const data = await res.json();
-      if(!res.ok) return showErr('Atención', data.error || 'Error', false);
+
+      if(!res.ok) {
+        // SI ES DUPLICADO (409), ACTIVAMOS EL BOTÓN REINTENTAR
+        if(res.status === 409) {
+          return showErr('Registro Duplicado', data.error, true);
+        }
+        // SI ES TOKEN QUEMADO (410) O ERROR GRAVE, NO HAY REINTENTO
+        return showErr('Atención', data.error || 'Error', false);
+      }
+
+      // FLUJO DE ÉXITO
       document.getElementById('formSection').style.display = 'none';
       document.getElementById('successScreen').style.display = 'flex';
-      if(isOut) { document.getElementById('sTitle').textContent = "Salida Exitosa"; document.getElementById('sSub').textContent = `Completaste ${data.asistencia.horas_reales}h.`; }
-      else { document.getElementById('sSub').textContent = `Entrada registrada para ${selected.nombre_completo.split(' ')[0]}.`; }
-    } catch(e){ showErr('Error','Fallo de conexión.', true); }
+      document.getElementById('sSub').textContent = isOut ? "Salida procesada con éxito." : "Entrada registrada correctamente.";
+
+    } catch(e){ 
+      showErr('Error','Fallo de conexión con el servidor.', true); 
+    }
   }
+
+  // --- MANEJO DE ERRORES CON REINTENTO ---
   function showErr(t, s, retry){
-    document.getElementById('formSection').style.display = 'none'; document.getElementById('errorScreen').style.display = 'flex';
-    document.getElementById('eTitle').textContent = t; document.getElementById('eSub').textContent = s;
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'flex';
+    document.getElementById('eTitle').textContent = t;
+    document.getElementById('eSub').textContent = s;
+    
     const btn = document.getElementById('btnError');
-    if(retry) btn.onclick = () => location.reload();
-    else { btn.textContent = "Entendido"; btn.onclick = () => closePage('error'); }
+    if(retry){
+      btn.textContent = "Corregir datos y reintentar";
+      // Al reintentar, simplemente recargamos para limpiar todo. 
+      // Como el token está en la URL (?t=...), el sistema carga el mismo token de nuevo.
+      btn.onclick = () => location.reload(); 
+    } else {
+      btn.textContent = "Entendido, volver a escanear";
+      btn.onclick = () => closePage('error');
+    }
   }
   function closePage(type){
     document.getElementById('successScreen').style.display = 'none'; document.getElementById('errorScreen').style.display = 'none'; document.getElementById('doneScreen').style.display = 'flex';
