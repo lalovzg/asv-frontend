@@ -3,182 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a3a6b">
-<title>SS de ASV · Registro de Asistencia</title>
+<meta name="theme-color" content="#004a7c">
+<title>Registro · ASV MTY A.C.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --navy:   #0f2a52; --blue:   #1e6bb8; --sky:    #2b9fd4; --light:  #7ecef0;
-    --white:  #ffffff; --gray:   #64748b; --border: #d1e3f8; --surface:#f0f6ff;
-    --success:#16a34a; --error:  #dc2626; --text:   #111827; --bg:     #f0f6ff;
-    --card:   #ffffff; --shadow: 0 4px 24px rgba(15,42,82,0.10); --radius: 20px;
+    --asv-blue:  #0072bc; --asv-navy:  #004a7c; --asv-light: #e6f1f8;
+    --white:     #ffffff; --gray:      #64748b; --surface:   #f8fafc;
+    --success:   #16a34a; --error:     #dc2626; --text:      #0f172a;
+    --bg:        #f1f5f9; --card:      #ffffff; --shadow:    0 10px 25px -5px rgba(0, 114, 188, 0.1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-bottom: 20px; }
 
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 0 0 40px; }
-
-  /* ─── HEADER ─── */
-  .top-bar { width: 100%; background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 20px 20px 28px; text-align: center; position: relative; overflow: hidden; }
-  .top-bar::before { content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background: rgba(43,159,212,0.12); }
-  .top-bar::after { content: ''; position: absolute; bottom: -30px; left: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  /* ─── HEADER MÓVIL APK STYLE ─── */
+  header { width: 100%; background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 20px 20px 30px; position: relative; overflow: hidden; text-align: center; color: white; }
   
-  .org-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 99px; padding: 6px 14px; margin-bottom: 12px; position: relative; z-index: 1; }
-  .org-badge-text { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; color: var(--light); text-transform: uppercase; letter-spacing: 0.08em; }
-  .top-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: white; line-height: 1.2; position: relative; z-index: 1; }
-  .top-subtitle { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 6px; position: relative; z-index: 1; }
+  .logo-container { width: 100%; display: flex; justify-content: center; margin-bottom: 10px; }
+  .main-logo { width: 75px; height: 75px; border-radius: 50%; background: white; padding: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  
+  .org-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .org-sub { font-size: 9px; color: rgba(255,255,255,0.9); font-weight: 500; font-style: italic; max-width: 260px; margin: 0 auto; line-height: 1.2; }
 
-  /* ─── EVENT CHIP ─── */
-  .event-chip { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 18px; margin: -16px 20px 0; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; width: calc(100% - 40px); max-width: 440px; z-index: 2; }
-  .event-chip-icon { width: 42px; height: 42px; background: linear-gradient(135deg, var(--navy), var(--blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-  .event-chip-hrs { margin-left: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; text-align: center; flex-shrink: 0; }
-  .event-chip-hrs-num { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--blue); line-height: 1; }
-  .event-chip-hrs-lbl { font-size: 9px; color: var(--gray); }
+  /* ─── EVENT CHIP (COMPACTO) ─── */
+  .event-card { background: var(--card); border-radius: 16px; padding: 15px 18px; margin: -20px 15px 0; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; width: calc(100% - 30px); max-width: 450px; z-index: 2; border: 1px solid rgba(0,114,188,0.08); }
+  .icon-box { width: 40px; height: 40px; background: var(--asv-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .event-info { flex: 1; min-width: 0; }
+  .event-label { font-family: 'Sora'; font-weight: 800; font-size: 13px; color: var(--asv-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .event-date { font-size: 10px; color: var(--gray); font-weight: 600; }
 
   /* ─── FORM ─── */
-  .form-wrap { width: 100%; max-width: 440px; padding: 24px 20px 0; }
-  .step-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-  .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; background: var(--border); color: var(--gray); transition: 0.3s; }
-  .step-dot.active { background: var(--blue); color: white; }
-  .step-dot.done { background: var(--success); color: white; }
-  .step-line { flex: 1; height: 2px; background: var(--border); border-radius: 99px; }
-  .step-line.done { background: var(--success); }
-
-  .field-label { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; margin-bottom: 8px; display: block; }
-  .input-wrap { position: relative; margin-bottom: 6px; }
-  .input-field { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; font-size: 16px; outline: none; transition: 0.2s; font-family: 'DM Sans', sans-serif; }
-  .input-field:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(30,107,184,0.1); }
+  .form-wrap { width: 100%; max-width: 450px; padding: 25px 20px 0; }
+  .field-group { margin-bottom: 18px; }
+  .label { font-family: 'Sora'; font-size: 9px; font-weight: 800; color: var(--asv-blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
+  
+  .input-field { width: 100%; background: white; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px; font-size: 16px; outline: none; transition: 0.3s; font-family: 'DM Sans'; font-weight: 500; }
+  .input-field:focus { border-color: var(--asv-blue); }
   .input-field.valid { border-color: var(--success); }
   .input-field.error { border-color: var(--error); }
-  .input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; pointer-events: none; }
 
-  .dropdown-field { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
-  .dropdown-field.disabled { opacity: 0.45; cursor: not-allowed; background: var(--surface); }
-  .dropdown-list { position: absolute; background: var(--card); border: 1.5px solid var(--blue); border-radius: 14px; width: 100%; z-index: 50; display: none; max-height: 220px; overflow-y: auto; box-shadow: 0 8px 32px rgba(15,42,82,0.15); margin-top: 6px; }
-  .dropdown-option { padding: 13px 16px; font-size: 14px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-  .dropdown-option:last-child { border-bottom: none; }
+  .dropdown-field { width: 100%; background: white; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--asv-navy); }
+  .dropdown-field.disabled { opacity: 0.4; background: #f8fafc; }
+  .dropdown-list { position: absolute; background: white; border: 2px solid var(--asv-blue); border-radius: 14px; width: 100%; z-index: 50; display: none; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,114,188,0.15); margin-top: 5px; }
+  .dropdown-opt { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; }
 
-  .mismatch-box { background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 14px; padding: 12px; margin-bottom: 16px; display: none; color: var(--error); font-size: 12px; line-height: 1.5; }
-  .match-box { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 14px; padding: 12px; margin-bottom: 16px; display: none; align-items: center; gap: 10px; }
-  .match-avatar { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; }
+  /* BOTONES DIFERENCIADOS MODO OUTLINE */
+  .btn-submit { width: 100%; border-radius: 12px; padding: 16px; font-family: 'Sora'; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; background: transparent; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 10px; }
+  
+  /* Color Entrada */
+  .btn-in { border: 2px solid var(--asv-blue); color: var(--asv-blue); }
+  .btn-in:hover:not(:disabled), .btn-in:active:not(:disabled) { background: var(--asv-blue); color: white; }
+  
+  /* Color Salida */
+  .btn-out { border: 2px solid #fbbf24; color: #d97706; }
+  .btn-out:hover:not(:disabled), .btn-out:active:not(:disabled) { background: #fbbf24; color: white; }
 
-  .btn-confirm { width: 100%; background: linear-gradient(135deg, var(--blue), var(--sky)); color: white; border: none; border-radius: 14px; padding: 16px; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 4px 16px rgba(30,107,184,0.35); transition: opacity 0.2s; }
-  .btn-confirm:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-submit:disabled { opacity: 0.3; border-color: var(--gray); color: var(--gray); }
 
   /* ─── SCREENS ─── */
-  .success-screen, .error-screen { display: none; flex-direction: column; align-items: center; padding: 40px 20px; text-align: center; width: 100%; max-width: 440px; }
-  .error-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; display: flex; align-items: center; justify-content: center; font-size: 42px; margin-bottom: 24px; box-shadow: 0 8px 32px rgba(220,38,38,0.3); }
-  .btn-action { width: 100%; background: var(--navy); color: white; padding: 16px; border-radius: 14px; border: none; font-family: 'Sora', sans-serif; font-weight: 700; cursor: pointer; margin-top: 20px; }
+  .screen { display: none; flex-direction: column; align-items: center; padding: 30px 20px; text-align: center; width: 100%; max-width: 450px; }
+  .status-circle { width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 34px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+  .receipt-card { background: white; border-radius: 16px; padding: 18px; width: 100%; box-shadow: var(--shadow); margin: 20px 0; text-align: left; border: 1px solid rgba(0,114,188,0.08); }
+  .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+  .receipt-val { font-weight: 700; color: var(--asv-navy); }
+
+  .btn-action { width: 100%; background: var(--asv-navy); color: white; border: none; border-radius: 12px; padding: 16px; font-family: 'Sora'; font-weight: 700; font-size: 12px; cursor: pointer; margin-top: 15px; }
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <div class="org-badge"><span>🐾</span><span class="org-badge-text">Ángeles sin Voz A.C.</span></div>
-  <div class="top-title" id="pageTitle">Registro de Asistencia</div>
-  <div class="top-subtitle">Servicio Social · Brigadas y Campañas</div>
-</div>
-
-<div class="event-chip">
-  <div class="event-chip-icon" id="evIcon">✂️</div>
-  <div style="min-width:0; flex:1;">
-    <div style="font-family:'Sora'; font-size:14px; font-weight:700;" id="evName">Verificando...</div>
-    <div style="font-size:11px; color:var(--gray);" id="evMeta">---</div>
+<header>
+  <div class="logo-container">
+    <img src="images/logo/ASV_AC_Black.png" alt="Logo ASV" class="main-logo">
   </div>
-  <div class="event-chip-hrs">
-    <div class="event-chip-hrs-num" id="evHrs">0</div>
-    <div class="event-chip-hrs-lbl">horas</div>
+  <div class="org-name">ÁNGELES SIN VOZ MONTERREY A.C.</div>
+  <div class="org-sub">Alzando la voz y luchando... contra el maltrato animal.</div>
+</header>
+
+<div class="event-card">
+  <div class="icon-box" id="evIcon">🐶</div>
+  <div class="event-info">
+    <div class="event-label" id="evName">Verificando...</div>
+    <div class="event-date" id="evMeta">--- --- ----</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-family:'Sora';font-weight:800;color:var(--asv-blue);font-size:16px;" id="evHrs">0</div>
+    <div style="font-size:8px;color:var(--gray);font-weight:800;">HORAS</div>
   </div>
 </div>
 
 <div class="form-wrap" id="formSection">
-  <div class="step-indicator" style="margin-top:24px;">
-    <div class="step-dot active" id="dot1">1</div>
-    <div class="step-line" id="line1"></div>
-    <div class="step-dot" id="dot2">2</div>
-    <div class="step-line" id="line2"></div>
-    <div class="step-dot" id="dot3">✓</div>
-  </div>
-
-  <label class="field-label">Matrícula</label>
-  <div class="input-wrap">
+  <div class="field-group">
+    <label class="label">Matrícula</label>
     <input type="text" class="input-field" id="matricula" placeholder="Ej. SS001" oninput="onMatInput()" autocomplete="off">
-    <span class="input-icon" id="matIcon"></span>
-  </div>
-  <div style="font-size:11px; color:var(--gray); margin-bottom:16px;" id="matHint">Escribe tu matrícula tal como está registrada</div>
-  <div style="font-size:11px; color:var(--error); margin-bottom:16px; display:none;" id="matError">Matrícula no encontrada en este evento</div>
-
-  <label class="field-label">Confirma tu nombre</label>
-  <div style="position:relative; margin-bottom:20px;">
-    <div class="dropdown-field disabled" id="nameDrop" onclick="toggleDD()">
-      <span id="dropText">Primero ingresa tu matrícula</span>
-      <span>▼</span>
-    </div>
-    <div class="dropdown-list" id="dropList"></div>
+    <div style="font-size:10px;color:var(--error);margin-top:5px;display:none;" id="matError">Matrícula no encontrada</div>
   </div>
 
-  <div class="mismatch-box" id="mismatchBox">⚠️ Los datos no coinciden. Selecciona tu nombre correcto de la lista.</div>
-
-  <div class="match-box" id="matchBox">
-    <div class="match-avatar" id="matchAvatar">--</div>
-    <div style="flex:1;">
-      <div style="font-family:'Sora'; font-size:14px; font-weight:700; color:#15803d;" id="matchName">—</div>
-      <div style="font-size:11px; color:#16a34a;" id="matchSub">—</div>
+  <div class="field-group">
+    <label class="label">Confirma tu nombre completo</label>
+    <div style="position:relative">
+      <div class="dropdown-field disabled" id="nameDrop" onclick="toggleDD()">
+        <span id="dropText">Ingresa matrícula primero</span>
+        <span>▼</span>
+      </div>
+      <div class="dropdown-list" id="dropList"></div>
     </div>
   </div>
 
-  <button class="btn-confirm" id="btnConfirm" disabled onclick="confirmAttendance()">Confirmar asistencia →</button>
+  <button class="btn-submit" id="btnConfirm" disabled onclick="confirmAttendance()">
+    Confirmar Registro →
+  </button>
 </div>
 
-<div class="success-screen" id="successScreen">
-  <div style="width:90px; height:90px; border-radius:50%; background:#f0fdf4; color:var(--success); display:flex; align-items:center; justify-content:center; font-size:42px; margin-bottom:20px; box-shadow:0 8px 32px rgba(22,163,74,0.2);">✓</div>
-  <h2 style="font-family:'Sora'; font-size:24px; font-weight:800;" id="sTitle">¡Asistencia registrada!</h2>
-  <p style="font-size:14px; color:var(--gray); margin-top:8px;" id="sSub">Tu registro quedó confirmado con hora exacta del servidor.</p>
-
-  <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 20px; width:100%; box-shadow:var(--shadow); margin:24px 0 16px; text-align:left;">
-    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
-      <span style="color:var(--gray);">Nombre</span>
-      <span style="font-weight:600;" id="resNombre">—</span>
-    </div>
-    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
-      <span style="color:var(--gray);">Matrícula</span>
-      <span style="font-weight:600;" id="resMatricula">—</span>
-    </div>
-    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
-      <span style="color:var(--gray);">Evento</span>
-      <span style="font-weight:600;" id="resEvento">—</span>
-    </div>
-    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--surface); font-size:13px;">
-      <span style="color:var(--gray);" id="lblTime">Hora de entrada</span>
-      <span style="font-weight:600;" id="resTime">—</span>
-    </div>
-    <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:13px;">
-      <span style="color:var(--gray);" id="lblHrs">Horas acreditadas</span>
-      <span style="font-weight:600; color:var(--blue);" id="resHrs">—</span>
-    </div>
+<div class="screen" id="successScreen">
+  <div class="status-circle" style="background:#f0fdf4;color:var(--success);">✓</div>
+  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;color:var(--asv-navy);">¡Registro Exitoso!</h2>
+  <div class="receipt-card">
+    <div class="receipt-row"><span>Nombre</span><span class="receipt-val" id="rNom">--</span></div>
+    <div class="receipt-row"><span>Matrícula</span><span class="receipt-val" id="rMat">--</span></div>
+    <div class="receipt-row"><span>Operación</span><span class="receipt-val" id="rOp">--</span></div>
+    <div class="receipt-row"><span>Hora Servidor</span><span class="receipt-val" id="rTime">--</span></div>
+    <div class="receipt-row"><span>Acreditación</span><span class="receipt-val" style="color:var(--asv-blue)" id="rHrs">--</span></div>
   </div>
-
-  <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px 16px; font-size:12px; color:#15803d; width:100%; display:flex; align-items:center; gap:8px;">
-    <span>💬</span>
-    <span>Recibirás confirmación por WhatsApp en breve</span>
-  </div>
-
-  <button class="btn-action" onclick="closePage('success')">Cerrar esta página</button>
+  <button class="btn-action" onclick="closePage('ok')">FINALIZAR PROCESO</button>
 </div>
 
-<div class="error-screen" id="errorScreen">
-  <div class="error-circle">✕</div>
-  <h2 style="font-family:'Sora'; font-size:24px; font-weight:800;" id="eTitle">Atención</h2>
-  <p style="font-size:16px; color:var(--gray); margin-top:12px; line-height:1.5;" id="eSub"></p>
-  <button class="btn-action" id="btnError">Volver a intentar</button>
+<div class="screen" id="errorScreen">
+  <div class="status-circle" style="background:#fef2f2;color:var(--error);">✕</div>
+  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;">Atención</h2>
+  <p style="color:var(--gray);margin:10px 0 20px;font-size:14px;line-height:1.4;" id="eSub"></p>
+  <button class="btn-action" id="btnRetry" style="background:var(--asv-blue)">CORREGIR Y REINTENTAR</button>
 </div>
 
-<div class="error-screen" id="doneScreen">
-  <div style="font-size:64px; margin-bottom:20px;" id="doneIcon">⏰</div>
-  <h2 style="font-family:'Sora'; font-size:24px; font-weight:800;" id="doneTitle">Registro Exitoso</h2>
-  <p style="font-size:16px; color:var(--gray); margin-top:12px;">Tu registro ha concluido con éxito. Ya puedes cerrar esta pestaña.</p>
+<div class="screen" id="doneScreen">
+  <div style="font-size:50px;margin-bottom:20px;" id="doneIcon">🔒</div>
+  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;">Sesión Finalizada</h2>
+  <p style="color:var(--gray);margin-top:8px;font-size:14px;" id="doneDesc"></p>
 </div>
 
 <script>
@@ -187,210 +150,77 @@
   const params = new URLSearchParams(location.search), token = params.get('t'), isOut = params.get('mode') === 'out';
 
   (async () => {
-    if(!token) return showErr('Token ausente','Este enlace no es válido. Escanea el QR vigente.', false);
+    if(!token) return showErr('Token ausente','Usa un código QR válido.', false);
     try {
       const res = await fetch(`${API}/event/${token}`), data = await res.json();
-      if(!res.ok) return showErr(res.status === 410 ? 'Token ya usado' : 'Acceso denegado', data.error, false);
-      
-      students = data.estudiantes;
-      eventData = data.evento;
-
-      const [y, m, d] = eventData.fecha.split('-');
-      const mesesAbbr = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
-      
+      if(!res.ok) return showErr(res.status === 410 ? 'Token ya usado' : 'Error', data.error, false);
+      students = data.estudiantes; eventData = data.evento;
       document.getElementById('evName').textContent = eventData.nombre;
-      document.getElementById('evMeta').textContent = `${d}/${mesesAbbr[parseInt(m)-1]}/${y}`;
       document.getElementById('evHrs').textContent = eventData.horas_acredita;
+      
+      const ms = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+      const [y, m, d] = eventData.fecha.split('-'); document.getElementById('evMeta').textContent = `${d} de ${ms[parseInt(m)-1]} de ${y}`;
 
+      const btn = document.getElementById('btnConfirm');
       if(isOut){
         document.getElementById('evIcon').textContent = '🏁';
-        document.getElementById('pageTitle').textContent = 'Registro de Salida';
-        document.getElementById('btnConfirm').style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-        document.getElementById('btnConfirm').textContent = 'Confirmar salida →';
+        btn.textContent = 'Confirmar Salida →'; btn.classList.add('btn-out');
+      } else {
+        btn.classList.add('btn-in');
       }
-    } catch(e){ showErr('Error de Conexión','Revisa tu internet e intenta de nuevo.', true); }
+    } catch(e){ showErr('Error de Conexión','Revisa tu internet.', true); }
   })();
 
   function onMatInput(){
     const val = document.getElementById('matricula').value.trim().toUpperCase();
     const match = students.find(s => s.matricula === val);
-    const input = document.getElementById('matricula');
-    const icon = document.getElementById('matIcon');
-    const drop = document.getElementById('nameDrop');
-
-    // SOLUCIÓN AL BUG VISUAL: Limpiar estados de error/éxito cada vez que escriben
-    input.classList.remove('valid', 'error');
-    icon.textContent = '';
-    document.getElementById('matError').style.display = 'none';
-
-    resetUIState();
-
+    const input = document.getElementById('matricula'), drop = document.getElementById('nameDrop');
+    input.classList.remove('valid', 'error'); document.getElementById('matError').style.display = 'none';
+    drop.classList.add('disabled'); document.getElementById('dropText').textContent = "Ingresa matrícula primero";
     if(val.length < 3) return;
-
-    if(match){
-      input.classList.add('valid');
-      icon.textContent = '✓'; icon.style.color = 'var(--success)';
-      drop.classList.remove('disabled');
-      document.getElementById('dropText').textContent = "Busca tu nombre en la lista";
-      renderDD(match);
-      updateDot(2, 'active');
-    } else if(val.length >= 5){
-      input.classList.add('error');
-      icon.textContent = '✕'; icon.style.color = 'var(--error)';
-      document.getElementById('matError').style.display = 'block';
-    }
+    if(match){ input.classList.add('valid'); drop.classList.remove('disabled'); document.getElementById('dropText').textContent = "Busca tu nombre en la lista"; renderDD(match); }
+    else if(val.length >= 5){ input.classList.add('error'); document.getElementById('matError').style.display = 'block'; }
   }
 
   function renderDD(m){
     const list = document.getElementById('dropList'); list.innerHTML = '';
-    const sorted = [m, ...students.filter(s => s.id !== m.id)];
-    sorted.forEach(s => {
-      const d = document.createElement('div'); d.className = 'dropdown-option';
-      d.innerHTML = `<span>${s.nombre_completo}</span><span style="color:var(--gray); font-size:10px;">${s.matricula}</span>`;
-      d.onclick = () => selectStudent(s);
+    [m, ...students.filter(s => s.id !== m.id)].forEach(s => {
+      const d = document.createElement('div'); d.className = 'dropdown-opt';
+      d.innerHTML = `<span>${s.nombre_completo}</span><span style="color:var(--gray);font-size:10px">${s.matricula}</span>`;
+      d.onclick = () => { selected = s; document.getElementById('dropText').textContent = s.nombre_completo; list.style.display = 'none'; document.getElementById('btnConfirm').disabled = (s.matricula !== document.getElementById('matricula').value.trim().toUpperCase()); };
       list.appendChild(d);
     });
   }
 
-  function selectStudent(s){
-    selected = s;
-    document.getElementById('dropText').textContent = s.nombre_completo;
-    document.getElementById('dropList').style.display = 'none';
-    validatePair();
-  }
-
-  function validatePair(){
-    const val = document.getElementById('matricula').value.trim().toUpperCase();
-    document.getElementById('mismatchBox').style.display = 'none';
-    document.getElementById('matchBox').style.display = 'none';
-
-    if(selected.matricula === val){
-      document.getElementById('matchName').textContent = selected.nombre_completo;
-      document.getElementById('matchSub').textContent = `Matrícula verificada · ${eventData.horas_acredita}h acreditadas`;
-      document.getElementById('matchAvatar').textContent = selected.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
-      document.getElementById('matchBox').style.display = 'flex';
-      document.getElementById('btnConfirm').disabled = false;
-      updateDot(2, 'done'); updateDot(3, 'active');
-    } else {
-      document.getElementById('mismatchBox').style.display = 'block';
-      document.getElementById('btnConfirm').disabled = true;
-    }
-  }
+  function toggleDD(){ if(!document.getElementById('nameDrop').classList.contains('disabled')) { const l = document.getElementById('dropList'); l.style.display = l.style.display==='block'?'none':'block'; } }
 
   async function confirmAttendance(){
-  const btn = document.getElementById('btnConfirm');
-  btn.disabled = true; btn.textContent = 'Verificando...';
-
-  try {
-    const endpoint = isOut ? '/checkout' : '/checkin';
-    const res = await fetch(API + endpoint, {
-      method:'POST', 
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
-    });
-    
-    const data = await res.json();
-    
-    // 1. MANEJO DE ERRORES (Solo entramos aquí si el servidor responde con error)
-    if(!res.ok) {
-      // 409 = Ya registrado (Entrada) | 404 = No hay entrada (Salida)
-      const canRetry = (res.status === 409 || res.status === 404);
-      const errorTitle = res.status === 404 ? 'Sin entrada previa' : (res.status === 409 ? 'Ya registrado' : 'Atención');
-      
-      // Detenemos la función y mostramos el error con opción a reintentar si canRetry es true
-      return showErr(errorTitle, data.error, canRetry);
-    }
-
-    // 2. MANEJO DE ÉXITO (Solo llegamos aquí si res.ok es true)
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successScreen').style.display = 'flex';
-
-    // Llenamos la información básica
-    document.getElementById('resNombre').textContent = data.asistencia.nombre;
-    document.getElementById('resMatricula').textContent = data.asistencia.matricula;
-    document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
-
-    if(isOut) {
-      // Pantalla específica de SALIDA
-      document.getElementById('sTitle').textContent = "¡Salida registrada!";
-      document.getElementById('lblTime').textContent = "Tiempo total";
-      document.getElementById('resTime').textContent = (data.asistencia.horas_reales || "0") + " horas";
-      document.getElementById('lblHrs').textContent = "Meta del evento";
-      document.getElementById('resHrs').textContent = (data.asistencia.horas_esperadas || eventData.horas_acredita) + " h";
-    } else {
-      // Pantalla específica de ENTRADA
-      const ts = data.asistencia.timestamp;
-      const fechaAsis = ts ? new Date(ts) : new Date();
-      const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-      
-      document.getElementById('resTime').textContent = horaLegible;
-      document.getElementById('resHrs').textContent = "+" + (data.asistencia.horas_acreditadas || eventData.horas_acredita) + " h";
-    }
-
-  } catch(e){ 
-    console.error(e);
-    showErr('Error de servidor', 'No pudimos conectar con el sistema. Revisa tu conexión e intenta de nuevo.', true); 
-  }
-}
-
-  function toggleDD(){ 
-    if(document.getElementById('nameDrop').classList.contains('disabled')) return;
-    const l = document.getElementById('dropList'); l.style.display = l.style.display === 'block' ? 'none' : 'block';
-  }
-
-  function resetUIState(){
-    document.getElementById('nameDrop').classList.add('disabled');
-    document.getElementById('dropText').textContent = "Primero ingresa tu matrícula";
-    document.getElementById('btnConfirm').disabled = true;
-    document.getElementById('matchBox').style.display = 'none';
-    document.getElementById('mismatchBox').style.display = 'none';
-    updateDot(2, ''); updateDot(3, '');
-  }
-
-  function updateDot(n, s){
-    const d = document.getElementById('dot'+n); if(!d) return;
-    d.className = 'step-dot ' + s;
-    if(n>1){ document.getElementById('line'+(n-1)).className = 'step-line '+(s==='done'?'done':''); }
+    const btn = document.getElementById('btnConfirm'); btn.disabled = true; btn.textContent = 'PROCESANDO...';
+    try {
+      const r = await fetch(API + (isOut?'/checkout':'/checkin'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id}) });
+      const d = await r.json();
+      if(!r.ok) return showErr(r.status === 409 ? 'Ya registrado' : 'Atención', d.error, (r.status === 409 || r.status === 404));
+      document.getElementById('formSection').style.display = 'none'; document.getElementById('successScreen').style.display = 'flex';
+      document.getElementById('rNom').textContent = d.asistencia.nombre; document.getElementById('rMat').textContent = d.asistencia.matricula;
+      document.getElementById('rOp').textContent = isOut ? "SALIDA BRIGADA" : "ENTRADA BRIGADA";
+      const ts = d.asistencia.timestamp ? new Date(d.asistencia.timestamp) : new Date();
+      document.getElementById('rTime').textContent = ts.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('rHrs').textContent = isOut ? d.asistencia.horas_reales+" h" : "+"+(d.asistencia.horas_acreditadas||eventData.horas_acredita)+" h";
+    } catch(e){ showErr('Error','Fallo en el servidor.', true); }
   }
 
   function showErr(t, s, retry){
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'flex';
-    document.getElementById('eTitle').textContent = t; 
-    document.getElementById('eSub').textContent = s;
-    const btn = document.getElementById('btnError');
-    
-    if(retry){ 
-      btn.textContent = "Corregir datos y reintentar"; 
-      btn.onclick = () => location.reload(); 
-    } else { 
-      btn.textContent = "Entendido, cerrar"; 
-      btn.onclick = () => closePage('error'); 
-    }
+    document.getElementById('formSection').style.display = 'none'; document.getElementById('errorScreen').style.display = 'flex';
+    document.getElementById('eSub').textContent = s; const btn = document.getElementById('btnRetry');
+    if(retry) btn.onclick = () => location.reload();
+    else { btn.textContent = "Entendido"; btn.onclick = () => closePage('err'); }
   }
 
   function closePage(type){
-    document.getElementById('successScreen').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'none';
-    
-    const doneScreen = document.getElementById('doneScreen');
-    const title = document.getElementById('doneTitle');
-    const desc = doneScreen.querySelector('p'); // Seleccionamos el párrafo descriptivo
-    const icon = document.getElementById('doneIcon');
-
-    doneScreen.style.display = 'flex';
-
-    if(type === 'error'){
-      icon.textContent = '❌';
-      title.textContent = 'Proceso Cancelado';
-      desc.textContent = 'Hubo un error con los datos o el acceso. Escanea un QR vigente o corrige los datos para intentarlo de nuevo.';
-      desc.style.color = 'var(--error)'; // Opcional: poner el texto en rojo
-    } else {
-      icon.textContent = '⏰';
-      title.textContent = 'Registro Exitoso';
-      desc.textContent = 'Tu registro ha concluido con éxito. Ya puedes cerrar esta pestaña.';
-      desc.style.color = 'var(--gray)';
-    }
+    document.getElementById('successScreen').style.display = 'none'; document.getElementById('errorScreen').style.display = 'none';
+    const s = document.getElementById('doneScreen'); s.style.display = 'flex';
+    if(type==='err'){ document.getElementById('doneIcon').textContent = '❌'; document.getElementById('doneDesc').textContent = 'Hubo un error con los datos. Escanea el QR de nuevo.'; }
+    else { document.getElementById('doneDesc').textContent = 'Registro guardado con éxito. ¡Gracias por tu apoyo!'; }
   }
 </script>
 </body>
