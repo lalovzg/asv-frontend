@@ -278,47 +278,60 @@
   }
 
   async function confirmAttendance(){
-    const btn = document.getElementById('btnConfirm');
-    btn.disabled = true; btn.textContent = 'Verificando...';
+  const btn = document.getElementById('btnConfirm');
+  btn.disabled = true; btn.textContent = 'Verificando...';
 
-    try {
-      const endpoint = isOut ? '/checkout' : '/checkin';
-      const res = await fetch(API + endpoint, {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
-      });
-      const data = await res.json();
+  try {
+    const endpoint = isOut ? '/checkout' : '/checkin';
+    const res = await fetch(API + endpoint, {
+      method:'POST', 
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id})
+    });
+    
+    const data = await res.json();
+    
+    // 1. MANEJO DE ERRORES (Solo entramos aquí si el servidor responde con error)
+    if(!res.ok) {
+      // 409 = Ya registrado (Entrada) | 404 = No hay entrada (Salida)
+      const canRetry = (res.status === 409 || res.status === 404);
+      const errorTitle = res.status === 404 ? 'Sin entrada previa' : (res.status === 409 ? 'Ya registrado' : 'Atención');
       
-      if(!res.ok) return showErr(res.status === 409 ? 'Ya registrado' : 'Atención', data.error, res.status === 409);
-
-      document.getElementById('formSection').style.display = 'none';
-      document.getElementById('successScreen').style.display = 'flex';
-
-      // SOLUCIÓN AL BUG DE INFORMACIÓN INCORRECTA:
-      document.getElementById('resNombre').textContent = data.asistencia.nombre;
-      document.getElementById('resMatricula').textContent = data.asistencia.matricula;
-      document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
-
-      if(isOut) {
-        document.getElementById('sTitle').textContent = "¡Salida registrada!";
-        document.getElementById('lblTime').textContent = "Tiempo total";
-        document.getElementById('resTime').textContent = (data.asistencia.horas_reales || "0") + " horas";
-        document.getElementById('lblHrs').textContent = "Meta del evento";
-        document.getElementById('resHrs').textContent = (data.asistencia.horas_esperadas || eventData.horas_acredita) + " h";
-      } else {
-        // Formatear hora de entrada (con validación de existencia de timestamp)
-        const ts = data.asistencia.timestamp;
-        const fechaAsis = ts ? new Date(ts) : new Date();
-        const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
-        
-        document.getElementById('resTime').textContent = horaLegible;
-        document.getElementById('resHrs').textContent = "+" + (data.asistencia.horas_acreditadas || eventData.horas_acredita) + " h";
-      }
-    } catch(e){ 
-      console.error(e);
-      showErr('Error de servidor','No pudimos procesar tu registro. Intenta de nuevo.', true); 
+      // Detenemos la función y mostramos el error con opción a reintentar si canRetry es true
+      return showErr(errorTitle, data.error, canRetry);
     }
+
+    // 2. MANEJO DE ÉXITO (Solo llegamos aquí si res.ok es true)
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'flex';
+
+    // Llenamos la información básica
+    document.getElementById('resNombre').textContent = data.asistencia.nombre;
+    document.getElementById('resMatricula').textContent = data.asistencia.matricula;
+    document.getElementById('resEvento').textContent = isOut ? "Salida de Brigada" : data.asistencia.evento;
+
+    if(isOut) {
+      // Pantalla específica de SALIDA
+      document.getElementById('sTitle').textContent = "¡Salida registrada!";
+      document.getElementById('lblTime').textContent = "Tiempo total";
+      document.getElementById('resTime').textContent = (data.asistencia.horas_reales || "0") + " horas";
+      document.getElementById('lblHrs').textContent = "Meta del evento";
+      document.getElementById('resHrs').textContent = (data.asistencia.horas_esperadas || eventData.horas_acredita) + " h";
+    } else {
+      // Pantalla específica de ENTRADA
+      const ts = data.asistencia.timestamp;
+      const fechaAsis = ts ? new Date(ts) : new Date();
+      const horaLegible = fechaAsis.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+      
+      document.getElementById('resTime').textContent = horaLegible;
+      document.getElementById('resHrs').textContent = "+" + (data.asistencia.horas_acreditadas || eventData.horas_acredita) + " h";
+    }
+
+  } catch(e){ 
+    console.error(e);
+    showErr('Error de servidor', 'No pudimos conectar con el sistema. Revisa tu conexión e intenta de nuevo.', true); 
   }
+}
 
   function toggleDD(){ 
     if(document.getElementById('nameDrop').classList.contains('disabled')) return;
@@ -343,17 +356,41 @@
   function showErr(t, s, retry){
     document.getElementById('formSection').style.display = 'none';
     document.getElementById('errorScreen').style.display = 'flex';
-    document.getElementById('eTitle').textContent = t; document.getElementById('eSub').textContent = s;
+    document.getElementById('eTitle').textContent = t; 
+    document.getElementById('eSub').textContent = s;
     const btn = document.getElementById('btnError');
-    if(retry){ btn.textContent = "Corregir datos y reintentar"; btn.onclick = () => location.reload(); }
-    else { btn.textContent = "Entendido, cerrar"; btn.onclick = () => closePage('error'); }
+    
+    if(retry){ 
+      btn.textContent = "Corregir datos y reintentar"; 
+      btn.onclick = () => location.reload(); 
+    } else { 
+      btn.textContent = "Entendido, cerrar"; 
+      btn.onclick = () => closePage('error'); 
+    }
   }
 
   function closePage(type){
     document.getElementById('successScreen').style.display = 'none';
     document.getElementById('errorScreen').style.display = 'none';
-    document.getElementById('doneScreen').style.display = 'flex';
-    if(type==='error'){ document.getElementById('doneIcon').textContent = '❌'; document.getElementById('doneTitle').textContent = 'Proceso Cancelado'; }
+    
+    const doneScreen = document.getElementById('doneScreen');
+    const title = document.getElementById('doneTitle');
+    const desc = doneScreen.querySelector('p'); // Seleccionamos el párrafo descriptivo
+    const icon = document.getElementById('doneIcon');
+
+    doneScreen.style.display = 'flex';
+
+    if(type === 'error'){
+      icon.textContent = '❌';
+      title.textContent = 'Proceso Cancelado';
+      desc.textContent = 'Hubo un error con los datos o el acceso. Escanea un QR vigente o corrige los datos para intentarlo de nuevo.';
+      desc.style.color = 'var(--error)'; // Opcional: poner el texto en rojo
+    } else {
+      icon.textContent = '⏰';
+      title.textContent = 'Registro Exitoso';
+      desc.textContent = 'Tu registro ha concluido con éxito. Ya puedes cerrar esta pestaña.';
+      desc.style.color = 'var(--gray)';
+    }
   }
 </script>
 </body>
