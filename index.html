@@ -263,7 +263,6 @@
       row.innerHTML=`<span><b>${a.estudiantes.nombre_completo}</b></span> <span style="color:var(--gray);">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
       f.appendChild(row);
     });
-	console.log(a.estudiantes);
   }
 
   function renderMonitor(asis){
