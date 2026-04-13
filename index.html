@@ -2,85 +2,84 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SS de ASV Check-in</title>
+<title>Dashboard · ASV MTY A.C.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
-    --navy:   #0f2a52; --blue:   #1e6bb8; --sky:    #2b9fd4; --light:  #7ecef0;
-    --white:  #ffffff; --black:  #111827; --gray:   #64748b; --surface:#f0f6ff;
-    --border: #d1e3f8; --success:#16a34a; --error:  #dc2626; --text:   #111827;
-    --bg:     #f0f6ff; --card:   #ffffff; --shadow: 0 4px 24px rgba(15,42,82,0.10); --radius: 20px;
+    --asv-blue:  #0072bc; --asv-navy:  #004a7c; --asv-light: #e6f1f8;
+    --white:     #ffffff; --gray:      #64748b; --surface:   #f8fafc;
+    --success:   #16a34a; --error:     #dc2626; --text:      #0f172a;
+    --bg:        #f1f5f9; --card:      #ffffff; --shadow:    0 10px 25px -5px rgba(0, 114, 188, 0.1);
   }
   [data-theme="dark"] {
-    --text:   #e8f4fd; --bg:     #080f1e; --card:   #0d1f3c; --surface:#0f2a52;
-    --border: #1e3a6b; --shadow: 0 4px 24px rgba(0,0,0,0.5); --gray:   #94a3b8;
+    --text: #f1f7ff; --bg: #030712; --card: #0f172a; --surface: #1e293b; --shadow: 0 10px 30px rgba(0,0,0,0.5);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; transition: 0.3s; overflow-x: hidden; }
 
-  header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 16px 20px 20px; position: relative; overflow: hidden; }
-  header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(43,159,212,0.15); pointer-events: none; }
-  header::after { content: ''; position: absolute; bottom: -20px; left: 30%; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.05); pointer-events: none; }
+  /* ─── HEADER PREMIUM ─── */
+  header { background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 20px 24px 28px; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.1); pointer-events: none; }
   
-  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; position: relative; z-index: 10; }
-  .logo-area { display: flex; align-items: center; gap: 10px; }
-  .paw-icon { width: 38px; height: 38px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .org-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--light); text-transform: uppercase; line-height: 1.2; letter-spacing: 0.05em; }
-  .org-sub { font-size: 10px; font-weight: 300; color: rgba(255,255,255,0.6); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; position: relative; z-index: 2; }
+  .logo-area { display: flex; align-items: center; gap: 12px; }
+  .paw-badge { width: 42px; height: 42px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .org-name { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.02em; }
+  .org-sub { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 500; }
 
-  .header-actions { display: flex; gap: 8px; align-items: center; }
-  .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: rgba(255,255,255,0.12); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; position: relative; z-index: 20; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s; }
 
-  .event-pill { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; cursor: pointer; }
-  .event-pill-left { display: flex; align-items: center; gap: 10px; }
-  .event-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.3); } }
-  .event-label { font-size: 11px; color: rgba(255,255,255,0.6); }
-  .event-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
-  .event-time { font-size: 11px; color: var(--light); }
+  .event-pill { background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .event-dot { width: 10px; height: 10px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; margin-right: 12px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } }
+  .event-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: white; }
+  .event-date-top { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 700; text-transform: uppercase; margin-top: 2px; }
 
-  main { padding: 20px 16px 100px; max-width: 480px; margin: 0 auto; }
-  .view { display: none; } .view.active { display: block; }
-  .section-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; color: var(--gray); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+  main { padding: 24px 20px 100px; max-width: 500px; margin: 0 auto; }
+  .view { display: none; transition: 0.3s; } .view.active { display: block; }
+  .section-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 800; color: var(--asv-blue); letter-spacing: 0.1em; text-transform: uppercase; margin: 24px 0 12px; }
 
-  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
-  .stat-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--blue); }
+  /* ─── CARDS & BUTTONS ─── */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .stat-card { background: var(--card); border-radius: 18px; padding: 16px 10px; text-align: center; border: 1px solid rgba(0,114,188,0.1); box-shadow: var(--shadow); }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 28px; font-weight: 800; color: var(--asv-blue); }
 
-  .qr-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 20px; text-align: center; position: relative; overflow: hidden; }
-  .qr-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy), var(--sky)); }
-  .qr-frame { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; border: 3px solid var(--border); overflow: hidden; }
+  .qr-card { background: var(--card); border-radius: 24px; padding: 30px 24px; box-shadow: var(--shadow); margin-top: 20px; text-align: center; border: 1px solid rgba(0,114,188,0.05); }
+  .qr-frame { width: 210px; height: 210px; margin: 0 auto 20px; border-radius: 20px; background: white; display: flex; align-items: center; justify-content: center; border: 4px solid var(--asv-light); overflow: hidden; }
   
-  .token-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 6px 14px; font-family: 'Sora', monospace; font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: 0.15em; margin-bottom: 12px; }
-  .token-legend { font-size: 11px; color: var(--gray); margin-bottom: 16px; line-height: 1.4; }
+  .token-badge { display: inline-flex; align-items: center; gap: 10px; background: var(--asv-light); border-radius: 12px; padding: 10px 20px; font-family: 'Sora', monospace; font-size: 15px; font-weight: 800; color: var(--asv-navy); margin-bottom: 24px; }
+  [data-theme="dark"] .token-badge { background: rgba(255,255,255,0.05); color: var(--asv-light); }
 
-  .btn-primary { width: 100%; color: white; border: none; border-radius: 14px; padding: 15px; font-family: 'Sora'; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 16px rgba(30,107,184,0.35); }
-  .btn-in { background: linear-gradient(135deg, var(--blue), var(--sky)); }
-  .btn-out { background: linear-gradient(135deg, #f59e0b, #d97706); }
-  .btn-pause { border: 1.5px solid var(--border); margin-top: 10px; font-size: 12px; font-weight: 600; padding: 11px; }
+  .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+  .btn-pro { border: none; border-radius: 16px; padding: 18px; font-family: 'Sora'; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-in { background: var(--asv-blue); color: white; box-shadow: 0 6px 15px rgba(0,114,188,0.3); }
+  .btn-out { background: white; color: #d97706; border: 2px solid #fbbf24; }
+  [data-theme="dark"] .btn-out { background: rgba(217,119,6,0.1); }
 
-  .log-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-  .log-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); animation: slideIn 0.3s ease; }
-  .log-avatar { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; font-family: 'Sora'; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-  .log-name { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .log-time { font-family: 'Sora', monospace; font-size: 11px; color: var(--gray); }
-  .log-check { color: var(--success); font-size: 16px; }
+  .btn-pause { width: 100%; background: #fee2e2; color: var(--error); border: 1px solid #fecaca; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 11px; cursor: pointer; }
 
-  nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-  .nav-item { flex: 1; padding: 15px; text-align: center; border: none; background: transparent; color: var(--gray); font-size: 10px; font-weight: 600; cursor: pointer; }
-  .nav-item.active { color: var(--blue); border-top: 3px solid var(--blue); }
+  /* ─── LISTS ─── */
+  .log-container { background: var(--card); border-radius: 20px; border: 1px solid rgba(0,114,188,0.1); overflow: hidden; box-shadow: var(--shadow); }
+  .log-item { display: flex; align-items: center; gap: 15px; padding: 14px 18px; border-bottom: 1px solid var(--bg); }
+  .avatar { width: 40px; height: 40px; border-radius: 12px; background: var(--asv-blue); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Sora'; font-weight: 700; font-size: 14px; }
+  .name { font-size: 14px; font-weight: 700; flex: 1; color: var(--text); }
+  .meta { font-family: 'Sora'; font-size: 11px; color: var(--gray); font-weight: 600; }
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.3s; }
-  .modal-overlay.show { opacity: 1; pointer-events: all; }
-  .modal-sheet { background: var(--card); border-radius: 24px 24px 0 0; padding: 20px; width: 100%; transform: translateY(100%); transition: 0.35s; }
-  .modal-overlay.show .modal-sheet { transform: translateY(0); }
-  .event-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 10px; cursor: pointer; }
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 12px 24px; border-radius: 14px; opacity: 0; transition: 0.3s; z-index: 999; pointer-events: none; font-size: 13px; }
-  .toast.show { opacity: 1; }
-  @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+  /* ─── NAV ─── */
+  nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid rgba(0,114,188,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+  .nav-item { flex: 1; padding: 20px 10px; text-align: center; border: none; background: transparent; color: var(--gray); font-size: 10px; font-weight: 800; cursor: pointer; position: relative; }
+  .nav-item.active { color: var(--asv-blue); }
+  .nav-item.active::after { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 40px; height: 4px; background: var(--asv-blue); border-radius: 0 0 4px 4px; }
+
+  .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: flex-end; }
+  .modal-sheet { background: var(--card); border-radius: 30px 30px 0 0; padding: 24px; width: 100%; max-height: 80vh; overflow-y: auto; }
+  .event-opt { padding: 16px; border: 1.5px solid var(--asv-light); border-radius: 18px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; }
+  .event-opt:hover { border-color: var(--asv-blue); background: var(--asv-light); }
+
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--asv-navy); color: white; padding: 14px 28px; border-radius: 16px; font-size: 13px; font-weight: 700; opacity: 0; transition: 0.3s; z-index: 999; }
 </style>
 </head>
 <body data-theme="light">
@@ -88,61 +87,58 @@
 <header>
   <div class="header-top">
     <div class="logo-area">
-      <div class="paw-icon">🐾</div>
+      <div class="paw-badge">🐾</div>
       <div>
         <div class="org-name">Ángeles sin Voz</div>
-        <div class="org-sub">Sistema de Asistencia</div>
+        <div class="org-sub">Monterrey A.C. · Asistencia</div>
       </div>
     </div>
     <div class="header-actions">
       <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
-      <button class="icon-btn" style="display: none;">⚙️</button>
+      <button class="icon-btn" style="display:none">⚙️</button>
     </div>
   </div>
-  <div class="event-pill" onclick="openEventModal()">
-    <div class="event-pill-left">
+  <div class="event-pill" onclick="openModal()">
+    <div style="display:flex; align-items:center;">
       <div class="event-dot"></div>
       <div>
-        <div class="event-label">Evento activo</div>
-        <div class="event-name" id="headerEventName">Seleccione un evento activo</div>
-        <div id="headerEventDate" style="font-size:10px; color:rgba(255,255,255,0.7); margin-top:2px; font-weight:500;"></div>
+        <div class="event-name" id="hEvName">Selecciona un evento</div>
+        <div class="event-date-top" id="hEvDate">-- --- ----</div>
       </div>
     </div>
-    <div class="event-time" id="headerEventTime">--:--</div>
+    <div class="meta" style="color:white; font-size:12px;" id="hEvTime">--:--</div>
   </div>
 </header>
 
 <main>
   <div class="view active" id="v-live">
-    <div class="section-title">Resumen del evento</div>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="sTotal">0</div><div style="font-size:10px; color:var(--gray);">Inscritos</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--success);" id="sIn">0</div><div style="font-size:10px; color:var(--gray);">En Brigada</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--error);" id="sPending">0</div><div style="font-size:10px; color:var(--gray);">Pendientes</div></div>
+    <div class="section-title">Resumen de Brigada</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="sTotal">0</div><div class="org-sub" style="color:var(--gray)">Inscritos</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--success)" id="sIn">0</div><div class="org-sub" style="color:var(--gray)">Presentes</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--error)" id="sPending">0</div><div class="org-sub" style="color:var(--gray)">Faltan</div></div>
     </div>
 
     <div class="qr-card">
-      <div class="qr-frame" id="qrcode"><div style="color:var(--gray); font-size:12px;">ESPERANDO SELECCIÓN</div></div>
-      <div class="token-badge"><span>🔑</span><span id="tokenDisp">----</span></div>
-      <div class="token-legend">Token de un solo uso · se quema al confirmar entrada o salida</div>
+      <div class="qr-frame" id="qrcode"><div style="color:var(--gray);font-size:11px;font-weight:700;">ESPERANDO REGISTRO</div></div>
+      <div class="token-badge">🔑 <span id="tokenDisp">----</span></div>
+      <div class="org-sub" style="color:var(--gray);margin-bottom:20px;">Token de un solo uso · se quema al confirmar</div>
       
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <button class="btn-primary btn-in" id="bIn" onclick="genQR('in')" style="opacity:0.4;">↻ QR Entrada</button>
-        <button class="btn-primary btn-out" id="bOut" onclick="genQR('out')" style="opacity:0.4;">↻ QR Salida</button>
+      <div class="btn-group">
+        <button class="btn-pro btn-in" id="bIn" onclick="genQR('in')" style="opacity:0.4">📥 ENTRADA</button>
+        <button class="btn-pro btn-out" id="bOut" onclick="genQR('out')" style="opacity:0.4">📤 SALIDA</button>
       </div>
-      <button class="btn-primary btn-pause" id="bPause" onclick="togglePause()" style="opacity:0.4; background:var(--surface); color:var(--error);">⏸ Pausar Check-in</button>
-      <div id="pBanner" style="display:none; margin-top:14px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; padding:10px; color:#dc2626; font-size:12px; font-weight:600; text-align:center;">⚠️ REGISTRO PAUSADO</div>
+      <button class="btn-pause" id="bPause" onclick="togglePause()" style="opacity:0.4">⏸ PAUSAR CHECK-IN</button>
+      <div id="pBanner" style="display:none;margin-top:15px;background:#fee2e2;color:var(--error);padding:10px;border-radius:12px;font-size:11px;font-weight:800;">⚠️ REGISTRO PAUSADO ACTUALMENTE</div>
     </div>
 
-    <div class="section-title">Entradas Recientes</div>
-    <div class="log-card" id="fList">
-      <div style="padding:32px; text-align:center; color:var(--gray); font-size:13px;">Esperando registro...</div>
-    </div>
+    <div class="section-title">Últimos Registros</div>
+    <div class="log-container" id="fList"></div>
   </div>
 
   <div class="view" id="v-monitor">
-    <div class="section-title">Monitor de Sesiones Integral</div>
-    <div class="log-card" id="mList"></div>
+    <div class="section-title">Monitor Integral de Sesiones</div>
+    <div class="log-container" id="mList"></div>
   </div>
 </main>
 
@@ -151,141 +147,120 @@
   <button class="nav-item" onclick="switchTab('monitor', this)">📊 SESIONES</button>
 </nav>
 
-<div class="modal-overlay" id="eModal" onclick="closeModal(event)"><div class="modal-sheet"><div style="width:40px;height:4px;background:var(--border);margin:0 auto 15px;border-radius:99px;"></div><div id="mEvs"></div></div></div>
+<div class="modal-overlay" id="eModal" onclick="closeModal(event)"><div class="modal-sheet"><div style="width:40px;height:5px;background:var(--asv-light);margin:0 auto 20px;border-radius:10px;"></div><div id="mEvs"></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
   const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
   let curId=null, curEv=null, total=0, paused=false, poll=null, isBusy=false;
 
-  // FUNCIÓN AUXILIAR: Formatear fecha a "DOM 12 de ABR de 2026"
-  function formatLongDate(isoDate) {
-    if(!isoDate) return "";
-    const [y, m, d] = isoDate.split('-');
-    const date = new Date(y, m-1, d);
-    const weekdays = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
-    const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
-    return `${weekdays[date.getDay()]} ${d} de ${months[parseInt(m)-1]} de ${y}`;
+  function fmtD(iso){
+    if(!iso) return ""; const [y,m,d] = iso.split('-'); const dt = new Date(y,m-1,d);
+    const w = ["DOM","LUN","MAR","MIE","JUE","VIE","SAB"], ms = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+    return `${w[dt.getDay()]} ${d} de ${ms[m-1]} de ${y}`;
   }
 
-  async function init(){ try { const r = await fetch(API+'/eventos'), d = await r.json(); renderModal(d.eventos || []); } catch(e) { showToast('Error al cargar eventos','error'); } }
+  async function init(){ try{ const r=await fetch(API+'/eventos'), d=await r.json(); renderM(d.eventos||[]); }catch(e){ showT('Error de red','error'); } }
   
-  function renderModal(evs){ 
-    const div=document.getElementById('mEvs'); div.innerHTML='<div style="font-weight:800;margin-bottom:15px;font-family:Sora;">Seleccionar Evento</div>';
-    evs.forEach(e=>{ 
-      const d=document.createElement('div'); d.className='event-option'; 
-      // Formato actualizado en el modal
-      d.innerHTML=`<div><div style="font-weight:700;">${e.nombre}</div><div style="font-size:11px;color:var(--gray);">${formatLongDate(e.fecha)} · ${e.horas_acredita}h</div></div>`; 
-      d.onclick=()=>selectEv(e); div.appendChild(d); 
+  function renderM(evs){ 
+    const div=document.getElementById('mEvs'); div.innerHTML='<h3 style="font-family:Sora;margin-bottom:15px;">Seleccionar Evento</h3>';
+    evs.forEach(e=>{
+      const d=document.createElement('div'); d.className='event-opt';
+      d.innerHTML=`<div style="font-weight:700;">${e.nombre}</div><div class="org-sub" style="color:var(--gray);margin-top:4px;">${fmtD(e.fecha)} · ${e.horas_acredita}h</div>`;
+      d.onclick=()=>select(e); div.appendChild(d);
     });
   }
 
-  function selectEv(e){
+  function select(e){
     curId=e.id; curEv=e; paused=e.pausado; 
-    document.getElementById('headerEventName').textContent=e.nombre; 
-    // Fecha formateada en el header
-    document.getElementById('headerEventDate').textContent=formatLongDate(e.fecha);
-    document.getElementById('headerEventTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
-    document.getElementById('eModal').classList.remove('show');
+    document.getElementById('hEvName').textContent=e.nombre; document.getElementById('hEvDate').textContent=fmtD(e.fecha);
+    document.getElementById('hEvTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
+    document.getElementById('eModal').style.display='none';
     ['bIn','bOut','bPause'].forEach(id=>document.getElementById(id).style.opacity='1');
-    fetch(API+'/event-stats/'+e.id).then(r=>r.json()).then(d=>{total=d.total;document.getElementById('sTotal').textContent=total;});
     refresh(); if(poll) clearInterval(poll); poll=setInterval(refresh, 10000); 
-    updatePauseUI(); if(!paused) setTimeout(() => genQR('in'), 300);
-    showToast('Evento cargado', 'success');
+    updateUI(); if(!paused) setTimeout(()=>genQR('in'),300);
   }
   
   async function genQR(m){
-    if(!curId){ showToast('Selecciona un evento primero','error'); openEventModal(); return; }
-    if(paused) { showToast('No se puede generar QR mientras esté pausado','error'); return; }
-    if(isBusy) return;
-    isBusy = true; const tDisp = document.getElementById('tokenDisp'); const qrDiv = document.getElementById('qrcode');
-    tDisp.textContent="SOLICITANDO...";
+    if(!curId){ showT('Selecciona evento','error'); openModal(); return; }
+    if(paused || isBusy) return; isBusy=true;
+    const tD=document.getElementById('tokenDisp'), qD=document.getElementById('qrcode');
+    tD.textContent="BUSCANDO..."; qD.style.opacity='0.5';
     try {
-      const r = await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
-      const d = await r.json(); if(!r.ok) throw new Error(d.error);
-      tDisp.textContent=d.token + (m==='out'?' (OUT)':' (IN)'); qrDiv.innerHTML = '';
-      setTimeout(() => { new QRCode(qrDiv, { text: FRONT+'?t='+d.token+(m==='out'?'&mode=out':''), width: 170, height: 170, colorDark:m==='out'?'#d97706':'#0f2a52', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); isBusy = false; }, 100);
-    } catch(e) { tDisp.textContent="ERROR"; showToast(e.message || 'Error de conexión','error'); isBusy = false; }
+      const r=await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
+      const d=await r.json(); if(!r.ok) throw new Error();
+      tD.textContent=d.token + (m==='out'?' (OUT)':' (IN)'); qD.innerHTML='';
+      setTimeout(()=>{ new QRCode(qD,{text:FRONT+'?t='+d.token+(m==='out'?'&mode=out':''),width:180,height:180,colorDark:m==='out'?'#d97706':'#0072bc',correctLevel:QRCode.CorrectLevel.M}); qD.style.opacity='1'; isBusy=false; },100);
+    } catch(e){ tD.textContent="ERROR"; isBusy=false; }
   }
 
   async function togglePause(){
-    if(!curId || isBusy) return; isBusy = true; const nuevoEstado = !paused; 
-    try { await fetch(API+'/token/pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId,pausado:nuevoEstado})});
-      paused = nuevoEstado; updatePauseUI(); showToast(paused?'Check-in PAUSADO':'Check-in REANUDADO', paused?'error':'success');
-      if(!paused) { setTimeout(() => { isBusy = false; genQR('in'); }, 400); } else { isBusy = false; }
-    } catch(e){ showToast('Fallo al sincronizar','error'); isBusy = false; }
+    if(!curId || isBusy) return; isBusy=true; const next=!paused;
+    try { await fetch(API+'/token/pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId,pausado:next})});
+      paused=next; updateUI(); showT(paused?'Pausado':'Reanudado','success');
+      if(!paused) setTimeout(()=>{ isBusy=false; genQR('in'); },400); else isBusy=false;
+    } catch(e){ isBusy=false; }
   }
 
-  function updatePauseUI(){
-    const pB = document.getElementById('pBanner'); const qD = document.getElementById('qrcode'); const bP = document.getElementById('bPause');
-    pB.style.display = paused ? 'block' : 'none'; qD.style.opacity = paused ? '0.3' : '1';
-    bP.textContent = paused ? '▶ Reanudar Check-in' : '⏸ Pausar Check-in';
-    bP.style.background = paused ? '#dcfce7' : 'var(--surface)'; bP.style.color = paused ? '#166534' : 'var(--error)';
-    if(paused) { document.getElementById('tokenDisp').textContent="PAUSADO"; qD.innerHTML = '<div style="color:var(--gray); font-size:12px; margin-top:80px; font-weight:700;">REGISTRO PAUSADO</div>'; }
+  function updateUI(){
+    const pB=document.getElementById('pBanner'), qD=document.getElementById('qrcode'), bP=document.getElementById('bPause');
+    pB.style.display=paused?'block':'none'; qD.style.opacity=paused?'0.2':'1';
+    bP.textContent=paused?'▶ REANUDAR CHECK-IN':'⏸ PAUSAR CHECK-IN';
+    bP.style.background=paused?'#dcfce7':'#fee2e2'; bP.style.color=paused?'#166534':'var(--error)';
+    if(paused){ document.getElementById('tokenDisp').textContent="OFFLINE"; qD.innerHTML='<div style="font-weight:800;color:var(--gray);margin-top:80px;">PAUSADO</div>'; }
   }
 
   async function refresh(){
     if(!curId || isBusy) return;
     try {
-        const [resAsis, resStudents] = await Promise.all([fetch(API+'/asistencias/'+curId), fetch(API+'/event-students/'+curId)]);
-        const dAsis = await resAsis.json(); const dStudents = await resStudents.json();
-        const asis = dAsis.asistencias || []; const assigned = dStudents.estudiantes || [];
-        renderFeed(asis); renderMonitor(assigned, asis);
-        document.getElementById('sIn').textContent = asis.filter(a=>!a.timestamp_salida).length;
-        document.getElementById('sPending').textContent = Math.max(0, assigned.length - asis.length);
-        document.getElementById('sTotal').textContent = assigned.length;
-    } catch(e) {}
+      const [rA, rS] = await Promise.all([fetch(API+'/asistencias/'+curId), fetch(API+'/event-students/'+curId)]);
+      const dA=await rA.json(), dS=await rS.json(); const asis=dA.asistencias||[], stds=dS.estudiantes||[];
+      renderF(asis); renderMon(stds, asis);
+      document.getElementById('sIn').textContent=asis.filter(a=>!a.timestamp_salida).length;
+      document.getElementById('sPending').textContent=Math.max(0, stds.length-asis.length);
+      document.getElementById('sTotal').textContent=stds.length;
+    } catch(e){}
   }
 
-  function renderFeed(asis){
+  function renderF(asis){
     const f=document.getElementById('fList'); f.innerHTML='';
-    if(asis.length === 0) { f.innerHTML = '<div style="padding:32px; text-align:center; color:var(--gray); font-size:13px;">Esperando registro...</div>'; return; }
+    if(!asis.length){ f.innerHTML='<div style="padding:40px;text-align:center;color:var(--gray);font-size:12px;">Sin registros hoy</div>'; return; }
     asis.slice().reverse().slice(0,6).forEach(a=>{
-      const initials = a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
-      const row=document.createElement('div'); row.className = 'log-item';
-      row.innerHTML=`<div class="log-avatar">${initials}</div><div class="log-name">${a.estudiantes.nombre_completo}</div><div class="log-time">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div class="log-check">✅</div>`;
+      const ini=a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
+      const row=document.createElement('div'); row.className='log-item';
+      row.innerHTML=`<div class="avatar">${ini}</div><div class="name">${a.estudiantes.nombre_completo}</div><div class="meta">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</div>`;
       f.appendChild(row);
     });
   }
 
-  function renderMonitor(assigned, asistencias){
-    const m = document.getElementById('mList'); 
-    m.innerHTML = '<div style="display:grid; grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr; padding:12px 16px; background:var(--surface); font-weight:800; font-size:9px; color:var(--gray); text-transform:uppercase; letter-spacing:0.05em;"><div>ESTUDIANTE</div><div>Entrada</div><div>Salida</div><div>TIEMPO</div><div>ACC</div></div>';
-    assigned.forEach(student => {
-      const a = asistencias.find(res => res.estudiante_id === student.id);
-      const now = new Date(); const meta = curEv.horas_acredita;
-      let eS="--:--", sS="--:--", tS="0.00h", col="var(--gray)", emo="⏳", btn=`<span style="font-size:16px; opacity:0.3;">⏳</span>`;
-      if(a) {
-        const sT = new Date(a.timestamp_servidor); eS = sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-        if(a.timestamp_salida) {
-          sS = new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); const hrs = a.horas_reales || 0;
-          tS = hrs.toFixed(2) + "h"; col = hrs >= meta ? "var(--success)" : "var(--error)"; emo = "✅"; btn = `<span style="font-size:16px;">✨</span>`;
+  function renderMon(stds, asis){
+    const m=document.getElementById('mList'); m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 18px;background:var(--surface);font-weight:800;font-size:9px;color:var(--asv-blue);text-transform:uppercase;"><div>ESTUDIANTE</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
+    stds.forEach(s=>{
+      const a=asis.find(x=>x.estudiante_id===s.id), now=new Date(), meta=curEv.horas_acredita;
+      let eS="--:--", sS="--:--", tS="0.00h", col="var(--gray)", emo="⏳", btn=`<span style="opacity:0.3">⏳</span>`;
+      if(a){
+        const sT=new Date(a.timestamp_servidor); eS=sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        if(a.timestamp_salida){
+          sS=new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); const hrs=a.horas_reales||0;
+          tS=hrs.toFixed(2)+"h"; col=hrs>=meta?"var(--success)":"var(--error)"; emo="✅"; btn=`<span>✨</span>`;
         } else {
-          const hrsV = parseFloat(((now - sT)/(1000*60*60)).toFixed(2)); tS = hrsV.toFixed(2) + "h";
-          col = hrsV >= meta ? "#f59e0b" : "var(--blue)"; emo = "🐕🐈‍"; btn = `<button onclick="forceOut('${a.id}','${student.nombre_completo}')" style="border:none;background:none;font-size:18px;cursor:pointer;">🚪</button>`;
+          const hrsV=parseFloat(((now-sT)/(1000*60*60)).toFixed(2)); tS=hrsV.toFixed(2)+"h";
+          col=hrsV>=meta?"#f59e0b":"var(--asv-blue)"; emo="🐕🐈‍"; btn=`<button onclick="fOut('${a.id}','${s.nombre_completo}')" style="border:none;background:none;font-size:18px;cursor:pointer;">🚪</button>`;
         }
       }
-      const row = document.createElement('div'); row.style.cssText = 'display:grid; grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr; padding:12px 16px; border-bottom:1px solid #eee; font-size:12px; align-items:center;';
-      if(!a) row.style.opacity = "0.6";
-      row.innerHTML = `<div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo}</div><div style="color:var(--gray); text-align:center;">${eS}</div><div style="color:var(--gray); text-align:center;">${sS}</div><div style="color:${col}; font-weight:800; text-align:right; padding-right:5px;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
-      m.appendChild(row);
+      const r=document.createElement('div'); r.className='log-item'; r.style.cssText='display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:14px 18px;font-size:12px;align-items:center;';
+      if(!a) r.style.opacity="0.5";
+      r.innerHTML=`<div style="font-weight:700;">${s.nombre_completo}</div><div style="text-align:center;">${eS}</div><div style="text-align:center;">${sS}</div><div style="color:${col};font-weight:800;text-align:right;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
+      m.appendChild(r);
     });
   }
 
-  async function forceOut(id,n){ if(!confirm('¿Cerrar sesión de '+n+'?'))return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
-  function switchTab(t,el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.tab-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
-  function openEventModal(){ document.getElementById('eModal').classList.add('show'); init(); }
-  function closeModal(e){ if(e.target.id==='eModal') e.target.classList.remove('show'); }
-  
-  function toggleTheme(){ 
-    const b=document.body; 
-    const btn=document.getElementById('themeBtn');
-    const isD=b.getAttribute('data-theme')==='dark'; 
-    b.setAttribute('data-theme',isD?'light':'dark'); 
-    btn.textContent = isD ? '🌙' : '☀️';
-  }
-
-  function showToast(m,t){ const el=document.getElementById('toast'); el.textContent=m; el.className='toast show'; el.style.background=t==='error'?'#7f1d1d':(t==='success'?'#14532d':'#0f2a52'); setTimeout(()=>el.className='toast',2800); }
+  async function fOut(id,n){ if(!confirm('¿Cerrar sesión de '+n+'?'))return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
+  function switchTab(t,el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+  function openModal(){ document.getElementById('eModal').style.display='flex'; init(); }
+  function closeModal(e){ if(e.target.id==='eModal') e.target.style.display='none'; }
+  function toggleTheme(){ const b=document.body, btn=document.getElementById('themeBtn'), isD=b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme',isD?'light':'dark'); btn.textContent=isD?'🌙':'☀️'; }
+  function showT(m,t){ const el=document.getElementById('toast'); el.textContent=m; el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',2800); }
   init();
 </script>
 </body>
