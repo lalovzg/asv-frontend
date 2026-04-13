@@ -1,1047 +1,116 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a3a6b">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<title>SS de ASV Check-in</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SS ASV - Directora</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <style>
-  :root {
-    --navy:   #0f2a52;
-    --blue:   #1e6bb8;
-    --sky:    #2b9fd4;
-    --light:  #7ecef0;
-    --white:  #ffffff;
-    --black:  #111827;
-    --gray:   #64748b;
-    --surface:#f0f6ff;
-    --border: #d1e3f8;
-    --success:#16a34a;
-    --error:  #dc2626;
-    --text:   #111827;
-    --bg:     #f0f6ff;
-    --card:   #ffffff;
-    --shadow: 0 4px 24px rgba(15,42,82,0.10);
-    --radius: 20px;
-  }
-  [data-theme="dark"] {
-    --text:   #e8f4fd;
-    --bg:     #080f1e;
-    --card:   #0d1f3c;
-    --surface:#0f2a52;
-    --border: #1e3a6b;
-    --shadow: 0 4px 24px rgba(0,0,0,0.5);
-    --gray:   #94a3b8;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    transition: background 0.3s, color 0.3s;
-    overflow-x: hidden;
-  }
-
-  /* ─── HEADER ─── */
-  header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-    padding: 16px 20px 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -40px; right: -40px;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    background: rgba(43,159,212,0.15);
-  }
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -20px; left: 30%;
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.05);
-  }
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .logo-area { display: flex; align-items: center; gap: 10px; }
-  .paw-icon {
-    width: 38px; height: 38px;
-    background: rgba(255,255,255,0.15);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-  .org-name {
-    font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 700;
-    color: var(--light);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    line-height: 1.2;
-  }
-  .org-sub { font-size: 10px; font-weight: 300; color: rgba(255,255,255,0.6); }
-
-  .header-actions { display: flex; gap: 8px; align-items: center; }
-  .icon-btn {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    border: none;
-    background: rgba(255,255,255,0.12);
-    color: white;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
-    transition: background 0.2s;
-  }
-  .icon-btn:active { background: rgba(255,255,255,0.25); }
-
-  .event-pill {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    padding: 10px 14px;
-    display: flex; align-items: center; justify-content: space-between;
-    position: relative; z-index: 1;
-  }
-  .event-pill-left { display: flex; align-items: center; gap: 10px; }
-  .event-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 8px #4ade80;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%,100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.3); }
-  }
-  .event-label { font-size: 11px; color: rgba(255,255,255,0.6); }
-  .event-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
-  .event-time { font-size: 11px; color: var(--light); }
-
-  /* ─── MAIN ─── */
-  main { padding: 20px 16px 100px; max-width: 480px; margin: 0 auto; }
-
-  .section-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 11px; font-weight: 700;
-    color: var(--gray);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  /* ─── STATS ─── */
-  .stats-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px; margin-bottom: 24px;
-  }
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 12px;
-    text-align: center;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s;
-  }
-  .stat-card:active { transform: scale(0.97); }
-  .stat-num {
-    font-family: 'Sora', sans-serif;
-    font-size: 26px; font-weight: 800;
-    color: var(--blue);
-    line-height: 1;
-  }
-  .stat-num.green { color: var(--success); }
-  .stat-num.red { color: var(--error); }
-  .stat-lbl { font-size: 10px; color: var(--gray); margin-top: 4px; }
-
-  /* ─── QR CARD ─── */
-  .qr-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px 20px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .qr-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--navy), var(--sky));
-  }
-  .qr-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-  .qr-subtitle { font-size: 12px; color: var(--gray); margin-bottom: 20px; }
-
-  .qr-frame {
-    width: 200px; height: 200px;
-    margin: 0 auto 16px;
-    border-radius: 16px;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    border: 3px solid var(--border);
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(15,42,82,0.12);
-  }
-  .qr-frame canvas, .qr-frame img { border-radius: 12px; }
-
-  /* corner decorations */
-  .qr-frame::before, .qr-frame::after {
-    content: '';
-    position: absolute;
-    width: 20px; height: 20px;
-    border-color: var(--blue);
-    border-style: solid;
-  }
-  .qr-frame::before { top: 6px; left: 6px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .qr-frame::after  { bottom: 6px; right: 6px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-
-  .token-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 14px;
-    font-family: 'Sora', monospace;
-    font-size: 13px; font-weight: 700;
-    color: var(--navy);
-    letter-spacing: 0.15em;
-    margin-bottom: 16px;
-  }
-  [data-theme="dark"] .token-badge { color: var(--light); }
-
-  .token-timer {
-    font-size: 11px; color: var(--gray);
-    margin-bottom: 16px;
-  }
-  .timer-bar {
-    height: 3px;
-    background: var(--border);
-    border-radius: 99px;
-    margin: 8px 0 16px;
-    overflow: hidden;
-  }
-  .timer-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--sky), var(--blue));
-    border-radius: 99px;
-    width: 70%;
-    transition: width 1s linear;
-  }
-
-  /* ─── BUTTONS ─── */
-  .btn-primary {
-    width: 100%;
-    background: linear-gradient(135deg, var(--blue), var(--sky));
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 15px;
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: opacity 0.2s, transform 0.15s;
-    box-shadow: 0 4px 16px rgba(30,107,184,0.35);
-  }
-  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
-
-  .btn-secondary {
-    width: 100%;
-    background: transparent;
-    color: var(--blue);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 13px;
-    font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    margin-top: 10px;
-  }
-  .btn-secondary:active { background: var(--surface); transform: scale(0.98); }
-
-  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-  .btn-sm {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 11px;
-    font-family: 'Sora', sans-serif;
-    font-size: 12px; font-weight: 600;
-    color: var(--text);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .btn-sm:active { transform: scale(0.96); }
-  .btn-sm.danger { color: var(--error); border-color: #fecaca; }
-  [data-theme="dark"] .btn-sm.danger { border-color: #7f1d1d; }
-
-  /* ─── LOG ─── */
-  .log-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  .log-header {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .log-header-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 700;
-    color: var(--text);
-  }
-  .log-count {
-    background: var(--blue);
-    color: white;
-    font-size: 11px; font-weight: 700;
-    border-radius: 99px;
-    padding: 2px 9px;
-    font-family: 'Sora', sans-serif;
-  }
-  .log-list { max-height: 280px; overflow-y: auto; }
-  .log-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    animation: slideIn 0.3s ease;
-  }
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-10px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  .log-item:last-child { border-bottom: none; }
-  .log-avatar {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--navy), var(--blue));
-    color: white;
-    font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .log-name {
-    font-size: 13px; font-weight: 500; color: var(--text);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    flex: 1;
-  }
-  .log-time {
-    font-family: 'Sora', monospace;
-    font-size: 11px; color: var(--gray);
-    flex-shrink: 0;
-  }
-  .log-check { color: var(--success); font-size: 16px; flex-shrink: 0; }
-
-  .log-empty {
-    padding: 32px 16px;
-    text-align: center;
-    color: var(--gray);
-    font-size: 13px;
-  }
-
-  /* ─── TOAST ─── */
-  .toast {
-    position: fixed;
-    bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--navy);
-    color: white;
-    border-radius: 14px;
-    padding: 12px 20px;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-    z-index: 999;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.success { background: #14532d; }
-  .toast.error { background: #7f1d1d; }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: var(--card);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-    z-index: 100;
-  }
-  .nav-item {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 3px; cursor: pointer;
-    padding: 6px 4px;
-    border-radius: 12px;
-    transition: background 0.2s;
-    border: none; background: transparent; color: var(--gray);
-    font-family: 'DM Sans', sans-serif; font-size: 10px;
-  }
-  .nav-item.active { color: var(--blue); }
-  .nav-item .nav-icon { font-size: 20px; }
-
-  /* ─── VIEWS ─── */
-  .view { display: none; }
-  .view.active { display: block; }
-
-  /* ─── PANEL INICIO ─── */
-  .select-event-card {
-    background: var(--card);
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    margin-bottom: 20px;
-  }
-  .select-event-card:active { background: var(--surface); border-color: var(--blue); }
-  .select-icon { font-size: 40px; margin-bottom: 12px; }
-  .select-label {
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700;
-    color: var(--text); margin-bottom: 4px;
-  }
-  .select-sub { font-size: 12px; color: var(--gray); }
-
-  /* ─── MODAL ─── */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    display: flex; align-items: flex-end;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.3s;
-  }
-  .modal-overlay.show { opacity: 1; pointer-events: all; }
-  .modal-sheet {
-    background: var(--card);
-    border-radius: 24px 24px 0 0;
-    padding: 20px 20px max(20px, env(safe-area-inset-bottom));
-    width: 100%;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  .modal-overlay.show .modal-sheet { transform: translateY(0); }
-  .modal-handle {
-    width: 40px; height: 4px;
-    background: var(--border);
-    border-radius: 99px;
-    margin: 0 auto 20px;
-  }
-  .modal-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 16px; font-weight: 700;
-    margin-bottom: 16px; color: var(--text);
-  }
-  .event-option {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .event-option:active { background: var(--surface); border-color: var(--blue); }
-  .event-opt-icon {
-    width: 40px; height: 40px;
-    background: linear-gradient(135deg, var(--navy), var(--blue));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex-shrink: 0;
-  }
-  .event-opt-name {
-    font-family: 'Sora', sans-serif;
-    font-size: 14px; font-weight: 600; color: var(--text);
-  }
-  .event-opt-sub { font-size: 11px; color: var(--gray); }
-
-  /* ─── ESTUDIANTES VIEW ─── */
-  .student-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 10px;
-    box-shadow: var(--shadow);
-  }
-  .student-avatar {
-    width: 40px; height: 40px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--navy), var(--sky));
-    color: white;
-    font-family: 'Sora', sans-serif;
-    font-size: 15px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .student-name {
-    font-family: 'Sora', sans-serif;
-    font-size: 13px; font-weight: 600; color: var(--text); flex: 1;
-  }
-  .student-hours { font-size: 11px; color: var(--gray); }
-  .student-status {
-    font-size: 18px;
-  }
-
+  :root { --navy:#0f2a52; --blue:#1e6bb8; --sky:#2b9fd4; --light:#7ecef0; --white:#fff; --gray:#64748b; --border:#d1e3f8; --success:#16a34a; --error:#dc2626; --bg:#f0f6ff; --card:#fff; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--navy); padding-bottom: 80px; }
+  header { background: linear-gradient(135deg, var(--navy), var(--blue)); padding: 20px; color: white; }
+  main { padding: 20px; max-width: 500px; margin: 0 auto; }
+  .view { display: none; } .view.active { display: block; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
+  .stat-num { font-family: 'Sora'; font-size: 24px; font-weight: 800; }
+  .qr-card { background: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border); }
+  .qr-frame { width: 180px; height: 180px; margin: 0 auto 15px; background: white; display: flex; align-items: center; justify-content: center; }
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+  .btn { border: none; border-radius: 12px; padding: 14px; color: white; font-weight: 700; cursor: pointer; transition: 0.2s; opacity: 0.4; }
+  .btn-in { background: var(--blue); } .btn-out { background: #f59e0b; }
+  .log-card { background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
+  .tab-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid var(--border); }
+  .tab-item { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: var(--gray); font-weight: 600; }
+  .tab-item.active { color: var(--blue); border-top: 3px solid var(--blue); }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 10px 20px; border-radius: 10px; opacity: 0; transition: 0.3s; }
 </style>
 </head>
-<body data-theme="light">
-
-<!-- HEADER -->
-<header>
-  <div class="header-top">
-    <div class="logo-area">
-      <div class="paw-icon">🐾</div>
-      <div>
-        <div class="org-name">Ángeles sin Voz</div>
-        <div class="org-sub">Sistema de Asistencia</div>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" onclick="toggleTheme()" title="Tema">🌙</button>
-      <button class="icon-btn" title="Configuración">⚙️</button>
-    </div>
-  </div>
-
-  <div class="event-pill" id="eventPill" onclick="openEventModal()" style="cursor:pointer;">
-    <div class="event-pill-left">
-      <div class="event-dot"></div>
-      <div>
-        <div class="event-label">Evento activo</div>
-        <div class="event-name" id="headerEventName">Seleccione un evento activo</div>
-      </div>
-    </div>
-    <div class="event-time" id="headerEventTime">--:--</div>
-  </div>
-</header>
-
-<!-- MAIN -->
+<body>
+<header> <div style="font-weight:800; font-size:14px; color:var(--light);">SS ÁNGELES SIN VOZ</div> <div id="hName" style="font-family:'Sora'; margin-top:5px;">Selecciona un evento</div> </header>
 <main>
-
-  <!-- VIEW: CHECKIN -->
-  <div class="view active" id="view-checkin">
-
-    <!-- Stats -->
-    <div class="section-title">Resumen del evento</div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-num" id="statTotal">0</div>
-        <div class="stat-lbl">Registrados</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num green" id="statPresent">0</div>
-        <div class="stat-lbl">Presentes</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num red" id="statAbsent">0</div>
-        <div class="stat-lbl">Pendientes</div>
-      </div>
+  <div class="view active" id="v-live">
+    <div class="stats">
+      <div class="stat-card"> <div class="stat-num" id="sTotal">0</div> <div style="font-size:10px;">Inscritos</div> </div>
+      <div class="stat-card"> <div class="stat-num" style="color:var(--success);" id="sIn">0</div> <div style="font-size:10px;">En Brigada</div> </div>
+      <div class="stat-card"> <div class="stat-num" style="color:var(--error);" id="sPending">0</div> <div style="font-size:10px;">Pendientes</div> </div>
     </div>
-
-    <!-- QR Card -->
     <div class="qr-card">
-      <div class="qr-title">Código de Acceso</div>
-      <div class="qr-subtitle">El estudiante escanea este QR para registrar su entrada</div>
-
-      <div class="qr-frame" id="qrFrame">
-        <div id="qrcode"></div>
+      <div class="qr-frame" id="qrcode"></div>
+      <div class="btn-grid">
+        <button class="btn btn-in" id="bIn" onclick="genQR('in')">📥 Entrada</button>
+        <button class="btn btn-out" id="bOut" onclick="genQR('out')">📤 Salida</button>
       </div>
-
-      <div class="token-badge">
-        <span>🔑</span>
-        <span id="tokenDisplay">ASV-7K4M</span>
-      </div>
-
-      <div class="token-timer">Token de un solo uso · se quema al escanear</div>
-      <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-
-      <button class="btn-primary" id="btnNewQR" onclick="generateNewQR()">
-        ↻ &nbsp;Generar nuevo QR
-      </button>
-
-      <div class="btn-row">
-        <button class="btn-sm danger" id="btnPause" onclick="togglePause()" style="grid-column: 1 / -1;">
-          ⏸ Pausar evento
-        </button>
-      </div>
-
-      <!-- Banner de pausa -->
-      <div id="pauseBanner" style="display:none; margin-top:14px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; padding:12px 14px; display:none; align-items:center; gap:10px;">
-        <span style="font-size:20px;">⏸</span>
-        <div>
-          <div style="font-family:'Sora',sans-serif; font-size:13px; font-weight:700; color:#dc2626;">Check-in pausado</div>
-          <div style="font-size:11px; color:#ef4444;">Ningún estudiante puede registrarse en este momento</div>
-        </div>
-      </div>
+      <button class="btn" id="bPause" onclick="togglePause()" style="width:100%; background:var(--error);">⏸ Pausar</button>
     </div>
-
-    <!-- Log -->
-    <div class="section-title">Registros de hoy</div>
-    <div class="log-card">
-      <div class="log-header">
-        <span class="log-header-title">Asistencias confirmadas</span>
-        <span class="log-count" id="logCount">0</span>
-      </div>
-      <div class="log-list" id="logList">
-        <div class="log-empty">⏳ Esperando primer registro…</div>
-      </div>
-    </div>
-
-    <!-- Simulación --
-    <button class="btn-secondary" onclick="simulateCheckin()" style="margin-top:16px;">
-      🧪 Simular escaneo (demo)
-    </button>
-	-- Fin Simulación -->
-
+    <div id="feed" class="log-card"></div>
   </div>
-
-  <!-- VIEW: ESTUDIANTES -->
-  <div class="view" id="view-estudiantes">
-    <div class="section-title">Servicio social activo</div>
-    <div id="studentList"></div>
+  <div class="view" id="v-monitor">
+    <div class="log-card" id="monitorTable"></div>
   </div>
-
-  <!-- VIEW: HISTORIAL -->
-  <div class="view" id="view-historial">
-    <div class="section-title">Próximamente</div>
-    <div style="text-align:center; padding:60px 20px; color:var(--gray);">
-      <div style="font-size:48px; margin-bottom:12px;">📊</div>
-      <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:var(--text);">Historial y exportación</div>
-      <div style="font-size:13px; margin-top:8px;">Aquí irá el historial completo y el botón para exportar a Google Sheets vía Supabase.</div>
-    </div>
-  </div>
-
 </main>
-
-<!-- NAV -->
-<nav>
-  <button class="nav-item active" id="nav-checkin" onclick="switchView('checkin')">
-    <span class="nav-icon">📷</span>
-    <span>Check-in</span>
-  </button>
-  <button class="nav-item" id="nav-estudiantes" onclick="switchView('estudiantes')">
-    <span class="nav-icon">👥</span>
-    <span>Estudiantes</span>
-  </button>
-  <button class="nav-item" id="nav-historial" onclick="switchView('historial')">
-    <span class="nav-icon">📊</span>
-    <span>Historial</span>
-  </button>
+<nav class="tab-nav">
+  <div class="tab-item active" onclick="switchTab('live', this)">📷 En Vivo</div>
+  <div class="tab-item" onclick="switchTab('monitor', this)">📊 Sesiones</div>
 </nav>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="eventModal" onclick="closeEventModal(event)">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Seleccionar evento</div>
-    <div class="event-option" onclick="selectEvent('Campaña de Esterilización','09:00 – 13:00')">
-      <div class="event-opt-icon">✂️</div>
-      <div>
-        <div class="event-opt-name">Campaña de Esterilización</div>
-        <div class="event-opt-sub">Sáb 12 Abr · 09:00 – 13:00 · 4 hrs</div>
-      </div>
-    </div>
-    <div class="event-option" onclick="selectEvent('Brigada Médica Col. Valle','10:00 – 14:00')">
-      <div class="event-opt-icon">🏥</div>
-      <div>
-        <div class="event-opt-name">Brigada Médica Col. Valle</div>
-        <div class="event-opt-sub">Dom 13 Abr · 10:00 – 14:00 · 4 hrs</div>
-      </div>
-    </div>
-    <div class="event-option" onclick="selectEvent('Reunión de coordinación','17:00 – 19:00')">
-      <div class="event-opt-icon">📋</div>
-      <div>
-        <div class="event-opt-name">Reunión de coordinación</div>
-        <div class="event-opt-sub">Lun 14 Abr · 17:00 – 19:00 · 2 hrs</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-
 <script>
-// CONFIG
-var API = 'https://asv-backend.onrender.com/api';
-var FRONTEND = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
+  const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
+  let curId = null, curEv = null, total = 0, paused = false;
 
-// STATE
-var currentEventId = null;
-var currentEventData = null;
-var currentToken = null;
-var qrInstance = null;
-var eventPaused = false;
-var totalRegistrados = 0; // Para el cálculo de pendientes
-var pollInterval = null;
-
-// INIT - Cargar eventos al iniciar
-async function init() {
-  await loadEvents();
-}
-
-// CARGAR EVENTOS
-async function loadEvents() {
-  try {
-    var res = await fetch(API + '/eventos');
-    var data = await res.json();
-    renderEventModal(data.eventos || []);
-  } catch(e) {
-    showToast('Error al cargar eventos', 'error');
+  async function loadEvs(){
+    const res = await fetch(API+'/eventos'), d = await res.json();
+    if(d.eventos.length) selectEv(d.eventos[0]); 
   }
-}
-
-// RENDER MODAL DE EVENTOS
-function renderEventModal(eventos) {
-  var sheet = document.querySelector('.modal-sheet');
-  var handle = sheet.querySelector('.modal-handle');
-  var title = sheet.querySelector('.modal-title');
-  sheet.innerHTML = '';
-  sheet.appendChild(handle);
-  sheet.appendChild(title);
-
-  if (!eventos || eventos.length === 0) {
-    var empty = document.createElement('div');
-    empty.style.cssText = 'text-align:center;padding:32px;color:var(--gray);font-size:13px;';
-    empty.textContent = 'No hay eventos activos.';
-    sheet.appendChild(empty);
-    return;
+  function selectEv(ev){
+    curId = ev.id; curEv = ev; paused = ev.pausado;
+    document.getElementById('hName').textContent = ev.nombre;
+    ['bIn','bOut','bPause'].forEach(id => document.getElementById(id).style.opacity='1');
+    fetch(API+'/event-stats/'+ev.id).then(r=>r.json()).then(d=>{ total=d.total; document.getElementById('sTotal').textContent=total; });
+    genQR('in'); refresh(); setInterval(refresh, 10000);
   }
-
-  eventos.forEach(function(ev) {
-    var fecha = new Date(ev.fecha + 'T12:00:00');
-    var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
-    var div = document.createElement('div');
-    div.className = 'event-option';
-    div.innerHTML =
-      '<div class="event-opt-icon">📋</div>' +
-      '<div>' +
-        '<div class="event-opt-name">' + ev.nombre + '</div>' +
-        '<div class="event-opt-sub">' + fechaStr + ' · ' + ev.hora_inicio.slice(0,5) + ' - ' + ev.hora_fin.slice(0,5) + ' · ' + ev.horas_acredita + ' hrs</div>' +
-      '</div>';
-    div.onclick = function() { selectEvent(ev); };
-    sheet.appendChild(div);
-  });
-}
-
-// SELECCIONAR EVENTO
-async function selectEvent(ev) {
-  currentEventId = ev.id;
-  currentEventData = ev;
-  eventPaused = ev.pausado || false;
-
-  var fecha = new Date(ev.fecha + 'T12:00:00');
-  var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' });
-  document.getElementById('headerEventName').textContent = ev.nombre + ' · ' + fechaStr;
-  document.getElementById('headerEventTime').textContent = ev.hora_inicio.slice(0,5) + ' - ' + ev.hora_fin.slice(0,5);
-  document.getElementById('eventModal').classList.remove('show');
-
-  // Desbloqueo visual de botones
-  if(document.getElementById('btnNewQR')) document.getElementById('btnNewQR').style.opacity = '1';
-  document.getElementById('btnPause').style.opacity = '1';
-
-  try {
-    // Obtener total de alumnos esperados (Registrados)
-    var resStats = await fetch(API + '/event-stats/' + ev.id);
-    var dataStats = await resStats.json();
-    totalRegistrados = dataStats.total || 0;
-    document.getElementById('statTotal').textContent = totalRegistrados;
-
-    await generateNewQR();
-    await loadAsistencias();
-    startPolling();
-    updatePauseUI(); 
-    showToast('Evento: ' + ev.nombre, 'success');
-  } catch(e) {
-    showToast('Error al cargar datos del evento', 'error');
+  async function genQR(mode){
+    const res = await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
+    const d = await res.json();
+    const qrDiv = document.getElementById('qrcode'); qrDiv.innerHTML = '';
+    new QRCode(qrDiv, { text: FRONT+'?t='+d.token+(mode==='out'?'&mode=out':''), width:170, height:170, colorDark:mode==='out'?'#d97706':'#0f2a52' });
+    showToast('QR '+mode.toUpperCase()+' Generado');
   }
-}
-
-// GENERAR QR
-async function generateNewQR() {
-  if (!currentEventId) {
-    showToast('Favor de seleccionar un evento primero', 'error');
-    openEventModal();
-    return;
+  async function refresh(){
+    if(!curId) return;
+    const res = await fetch(API+'/asistencias/'+curId), d = await res.json();
+    renderFeed(d.asistencias); renderMonitor(d.asistencias);
+    const inB = d.asistencias.filter(a=>!a.timestamp_salida).length;
+    document.getElementById('sIn').textContent = inB;
+    document.getElementById('sPending').textContent = total - d.asistencias.length;
   }
-
-  try {
-    var res = await fetch(API + '/token/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ evento_id: currentEventId })
+  function renderFeed(asis){
+    const div = document.getElementById('feed'); div.innerHTML = '<div style="padding:10px; font-weight:800; font-size:12px; border-bottom:1px solid #eee;">ENTRADAS RECIENTES</div>';
+    asis.slice().reverse().forEach(a => {
+      const row = document.createElement('div'); row.style.padding='12px'; row.style.borderBottom='1px solid #eee'; row.style.display='flex'; row.style.justifyContent='space-between';
+      row.innerHTML = `<span><b>${a.estudiantes.nombre_completo.split(' ')[0]}</b></span> <span style="color:var(--gray); font-size:12px;">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
+      div.appendChild(row);
     });
-    var data = await res.json();
-
-    if (!res.ok) {
-      showToast(data.error || 'Error al generar token', 'error');
-      return;
-    }
-
-    currentToken = data.token;
-    document.getElementById('tokenDisplay').textContent = currentToken;
-
-    var qrDiv = document.getElementById('qrcode');
-    qrDiv.innerHTML = '';
-
-    var url = FRONTEND + '?t=' + currentToken;
-    qrInstance = new QRCode(qrDiv, {
-      text: url,
-      width: 170,
-      height: 170,
-      colorDark: '#0f2a52',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
+  }
+  function renderMonitor(asis){
+    const div = document.getElementById('monitorTable'); div.innerHTML = '<div style="display:grid; grid-template-columns:1.2fr 0.8fr 0.8fr 0.7fr 0.5fr; padding:10px; background:#f8f9fa; font-weight:800; font-size:10px;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
+    asis.forEach(a => {
+      const now = new Date(), start = new Date(a.timestamp_servidor), meta = curEv.horas_acredita;
+      let out = a.timestamp_salida ? new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--';
+      let hrs = a.timestamp_salida ? a.horas_reales : parseFloat(((now - start)/(1000*60*60)).toFixed(2));
+      let color = a.timestamp_salida ? (hrs>=meta?'var(--success)':'var(--error)') : (hrs>=meta?'#f59e0b':'var(--gray)');
+      let emoji = a.timestamp_salida ? (hrs>=meta?'✅':'⚠️') : (hrs>=meta?'🕒':'⏳');
+      const row = document.createElement('div'); row.style.display='grid'; row.style.gridTemplateColumns='1.2fr 0.8fr 0.8fr 0.7fr 0.5fr'; row.style.padding='10px'; row.style.borderBottom='1px solid #eee'; row.style.fontSize='12px'; row.style.alignItems='center';
+      row.innerHTML = `<div>${a.estudiantes.nombre_completo.split(' ')[0]}</div> <div>${start.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div> <div>${out}</div> <div style="color:${color}; font-weight:800;">${emoji} ${hrs}h</div> <div>${!a.timestamp_salida?`<button onclick="forceOut('${a.id}','${a.estudiantes.nombre_completo}')" style="border:none; background:none; cursor:pointer; font-size:16px;">🚪</button>`:'✨'}</div>`;
+      div.appendChild(row);
     });
-
-    document.getElementById('timerFill').style.width = '100%';
-
-  } catch(e) {
-    showToast('Error de conexión', 'error');
   }
-}
-
-// CARGAR ASISTENCIAS (Polling)
-async function loadAsistencias() {
-  if (!currentEventId) return;
-  try {
-    var res = await fetch(API + '/asistencias/' + currentEventId);
-    var data = await res.json();
-    var asistencias = data.asistencias || [];
-    renderLog(asistencias);
-    updateStats(asistencias);
-  } catch(e) {
-    console.error("Error en polling asistencias");
-  }
-}
-
-// UPDATE STATS (Operación Matemática)
-function updateStats(asistencias) {
-  var presentes = asistencias.length;
-  var pendientes = totalRegistrados - presentes;
-  if (pendientes < 0) pendientes = 0; 
-
-  document.getElementById('statPresent').textContent = presentes;
-  document.getElementById('statAbsent').textContent = pendientes;
-}
-
-// PAUSAR / REANUDAR
-async function togglePause() {
-  if (!currentEventId) {
-    showToast('Selecciona un evento primero', 'error');
-    return;
-  }
-
-  var nuevoPausado = !eventPaused;
-  try {
-    var res = await fetch(API + '/token/pause', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ evento_id: currentEventId, pausado: nuevoPausado })
-    });
-
-    if (!res.ok) throw new Error();
-
-    eventPaused = nuevoPausado;
-    updatePauseUI();
-
-    if (eventPaused) {
-      showToast('Check-in PAUSADO', 'error');
-    } else {
-      await generateNewQR();
-      showToast('Check-in REANUDADO', 'success');
-    }
-  } catch(e) {
-    showToast('Error al cambiar estado', 'error');
-  }
-}
-
-// AYUDANTE VISUAL PAUSA
-function updatePauseUI() {
-  var btn = document.getElementById('btnPause');
-  var banner = document.getElementById('pauseBanner');
-  var qrFrame = document.getElementById('qrFrame');
-
-  if (eventPaused) {
-    btn.innerHTML = '&#9654; Reanudar evento';
-    banner.style.display = 'flex';
-    qrFrame.style.opacity = '0.3';
-    qrFrame.style.filter = 'grayscale(1)';
-  } else {
-    btn.innerHTML = '&#9208; Pausar evento';
-    banner.style.display = 'none';
-    qrFrame.style.opacity = '1';
-    qrFrame.style.filter = '';
-  }
-}
-
-// POLLING
-function startPolling() {
-  if (pollInterval) clearInterval(pollInterval);
-  pollInterval = setInterval(loadAsistencias, 10000);
-}
-
-// RENDER LOG
-function renderLog(asistencias) {
-  var logList = document.getElementById('logList');
-  document.getElementById('logCount').textContent = asistencias.length;
-
-  if (asistencias.length === 0) {
-    logList.innerHTML = '<div class="log-empty">Esperando registro…</div>';
-    return;
-  }
-
-  logList.innerHTML = '';
-  asistencias.slice().reverse().forEach(function(a) {
-    var hora = new Date(a.timestamp_servidor).toLocaleTimeString('es-MX', {
-      hour: '2-digit', minute: '2-digit', timeZone: 'America/Monterrey'
-    });
-    var nombre = a.estudiantes ? a.estudiantes.nombre_completo : 'Desconocido';
-    var initials = nombre.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2);
-    var item = document.createElement('div');
-    item.className = 'log-item';
-    item.innerHTML =
-      '<div class="log-avatar">' + initials + '</div>' +
-      '<div class="log-name">' + nombre + '</div>' +
-      '<div class="log-time">' + hora + '</div>' +
-      '<div class="log-check">&#10003;</div>';
-    logList.appendChild(item);
-  });
-}
-
-// UI HELPERS (Theme, Nav, Modal)
-function toggleTheme() {
-  var body = document.body;
-  var isDark = body.getAttribute('data-theme') === 'dark';
-  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-}
-
-function switchView(name) {
-  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-  document.getElementById('view-' + name).classList.add('active');
-  document.getElementById('nav-' + name).classList.add('active');
-  if (name === 'estudiantes') renderStudents();
-}
-
-function openEventModal() {
-  loadEvents();
-  document.getElementById('eventModal').classList.add('show');
-}
-
-function closeEventModal(e) {
-  if (e.target === document.getElementById('eventModal'))
-    document.getElementById('eventModal').classList.remove('show');
-}
-
-// NUEVA FUNCIÓN: Muestra Alumnos Esperados vs Registrados
-async function renderStudents() {
-  var list = document.getElementById('studentList');
-  if (!currentEventId) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Selecciona un evento primero</div>';
-    return;
-  }
-
-  list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">Cargando lista...</div>';
-
-  try {
-    // Consultamos ambas listas al mismo tiempo para ganar velocidad
-    const [resAll, resAsis] = await Promise.all([
-      fetch(API + '/event-students/' + currentEventId),
-      fetch(API + '/asistencias/' + currentEventId)
-    ]);
-
-    const dataAll = await resAll.json();
-    const dataAsis = await resAsis.json();
-
-    const alumnosEsperados = dataAll.estudiantes || [];
-    const asistenciasHoy = dataAsis.asistencias || [];
-
-    // Creamos un set de IDs de los que YA registraron para buscar rápido
-    const idsPresentes = new Set(asistenciasHoy.map(a => a.estudiante_id));
-
-    list.innerHTML = '';
-
-    if (alumnosEsperados.length === 0) {
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray);font-size:13px;">No hay alumnos asignados a este evento.</div>';
-      return;
-    }
-
-    // Dibujamos la lista completa
-    alumnosEsperados.forEach(function(s) {
-      const yaLlego = idsPresentes.has(s.id);
-      const initials = s.nombre_completo.split(' ').map(w => w[0]).join('').slice(0,2);
-      
-      const div = document.createElement('div');
-      div.className = 'student-item';
-      
-      // Si no ha llegado, le bajamos un poco la opacidad al avatar
-      const avatarStyle = yaLlego ? '' : 'style="filter: grayscale(1); opacity: 0.5;"';
-
-      div.innerHTML =
-        '<div class="student-avatar" ' + avatarStyle + '>' + initials + '</div>' +
-        '<div style="flex:1;min-width:0;">' +
-          '<div class="student-name">' + s.nombre_completo + '</div>' +
-          '<div class="student-hours">' + s.matricula + '</div>' +
-        '</div>' +
-        '<div class="student-status">' + (yaLlego ? '✅' : '⏳') + '</div>';
-      
-      list.appendChild(div);
-    });
-
-  } catch(e) {
-    console.error(e);
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--error);font-size:13px;">Error al cargar la lista.</div>';
-  }
-}
-
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + (type || '');
-  setTimeout(function() { t.className = 'toast'; }, 2800);
-}
-
-init();
+  async function forceOut(id, name){ if(!confirm('¿Cerrar sesión de '+name+'?')) return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
+  function switchTab(t, el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.tab-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+  function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2000); }
+  loadEvs();
 </script>
 </body>
 </html>
