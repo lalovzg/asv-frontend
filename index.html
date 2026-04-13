@@ -2,115 +2,144 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SS ASV - Directora</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<title>SS de ASV Check-in</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-  :root { --navy:#0f2a52; --blue:#1e6bb8; --sky:#2b9fd4; --light:#7ecef0; --white:#fff; --gray:#64748b; --border:#d1e3f8; --success:#16a34a; --error:#dc2626; --bg:#f0f6ff; --card:#fff; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--navy); padding-bottom: 80px; }
-  header { background: linear-gradient(135deg, var(--navy), var(--blue)); padding: 20px; color: white; }
-  main { padding: 20px; max-width: 500px; margin: 0 auto; }
+  :root { --navy:#0f2a52; --blue:#1e6bb8; --sky:#2b9fd4; --light:#7ecef0; --white:#fff; --gray:#64748b; --surface:#f0f6ff; --border:#d1e3f8; --success:#16a34a; --error:#dc2626; --text:#111827; --bg:#f0f6ff; --card:#fff; --shadow:0 4px 24px rgba(15,42,82,0.10); }
+  [data-theme="dark"] { --text:#e8f4fd; --bg:#080f1e; --card:#0d1f3c; --surface:#0f2a52; --border:#1e3a6b; --shadow:0 4px 24px rgba(0,0,0,0.5); --gray:#94a3b8; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; transition: 0.3s; }
+  header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 16px 20px 20px; position: relative; overflow: hidden; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .org-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: var(--light); text-transform: uppercase; }
+  .event-pill { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .event-name { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 600; color: white; }
+  main { padding: 20px 16px 100px; max-width: 480px; margin: 0 auto; }
   .view { display: none; } .view.active { display: block; }
-  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .stat-card { background: white; padding: 15px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
-  .stat-num { font-family: 'Sora'; font-size: 24px; font-weight: 800; }
-  .qr-card { background: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 20px; border: 1px solid var(--border); }
-  .qr-frame { width: 180px; height: 180px; margin: 0 auto 15px; background: white; display: flex; align-items: center; justify-content: center; }
-  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-  .btn { border: none; border-radius: 12px; padding: 14px; color: white; font-weight: 700; cursor: pointer; transition: 0.2s; opacity: 0.4; }
-  .btn-in { background: var(--blue); } .btn-out { background: #f59e0b; }
-  .log-card { background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; }
-  .tab-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid var(--border); }
-  .tab-item { flex: 1; padding: 15px; text-align: center; cursor: pointer; color: var(--gray); font-weight: 600; }
-  .tab-item.active { color: var(--blue); border-top: 3px solid var(--blue); }
-  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 10px 20px; border-radius: 10px; opacity: 0; transition: 0.3s; }
+  .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
+  .stat-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--blue); }
+  .qr-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 20px; text-align: center; }
+  .qr-frame { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; border: 3px solid var(--border); }
+  .btn-primary { width: 100%; color: white; border: none; border-radius: 14px; padding: 15px; font-family: 'Sora'; font-weight: 700; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 16px rgba(30,107,184,0.35); }
+  .btn-in { background: linear-gradient(135deg, var(--blue), var(--sky)); }
+  .btn-out { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .btn-pause { background: #fee2e2; color: #dc2626; border: 1.5px solid #fecaca; margin-top: 10px; }
+  .log-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
+  nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid var(--border); padding-bottom: env(safe-area-inset-bottom); }
+  .nav-item { flex: 1; padding: 12px; text-align: center; border: none; background: transparent; color: var(--gray); font-size: 10px; }
+  .nav-item.active { color: var(--blue); }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.3s; }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal-sheet { background: var(--card); border-radius: 24px 24px 0 0; padding: 20px; width: 100%; transform: translateY(100%); transition: 0.35s; }
+  .modal-overlay.show .modal-sheet { transform: translateY(0); }
+  .event-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border); border-radius: 14px; margin-bottom: 10px; cursor: pointer; }
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 12px 20px; border-radius: 14px; opacity: 0; transition: 0.3s; z-index: 999; }
 </style>
 </head>
-<body>
-<header> <div style="font-weight:800; font-size:14px; color:var(--light);">SS ÁNGELES SIN VOZ</div> <div id="hName" style="font-family:'Sora'; margin-top:5px;">Selecciona un evento</div> </header>
+<body data-theme="light">
+<header>
+  <div class="header-top"> <div class="org-name">🐾 Ángeles sin Voz</div> <button onclick="toggleTheme()" class="icon-btn" style="background:none; border:none; color:white; font-size:18px;">🌙</button> </div>
+  <div class="event-pill" onclick="openEventModal()"> <div> <div style="font-size:10px; opacity:0.7;">Evento activo</div> <div class="event-name" id="hName">Seleccione un evento</div> </div> <div id="hTime" style="font-size:11px;">--:--</div> </div>
+</header>
 <main>
   <div class="view active" id="v-live">
-    <div class="stats">
-      <div class="stat-card"> <div class="stat-num" id="sTotal">0</div> <div style="font-size:10px;">Inscritos</div> </div>
-      <div class="stat-card"> <div class="stat-num" style="color:var(--success);" id="sIn">0</div> <div style="font-size:10px;">En Brigada</div> </div>
-      <div class="stat-card"> <div class="stat-num" style="color:var(--error);" id="sPending">0</div> <div style="font-size:10px;">Pendientes</div> </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="sTotal">0</div><div style="font-size:10px; color:var(--gray);">Inscritos</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--success);" id="sIn">0</div><div style="font-size:10px; color:var(--gray);">En Brigada</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--error);" id="sPending">0</div><div style="font-size:10px; color:var(--gray);">Pendientes</div></div>
     </div>
     <div class="qr-card">
       <div class="qr-frame" id="qrcode"></div>
-      <div class="btn-grid">
-        <button class="btn btn-in" id="bIn" onclick="genQR('in')">📥 Entrada</button>
-        <button class="btn btn-out" id="bOut" onclick="genQR('out')">📤 Salida</button>
+      <div style="font-family:monospace; margin-bottom:15px; font-weight:800;" id="tokenDisp">----</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button class="btn-primary btn-in" id="bIn" onclick="genQR('in')" style="opacity:0.4;">↻ QR Entrada</button>
+        <button class="btn-primary btn-out" id="bOut" onclick="genQR('out')" style="opacity:0.4;">↻ QR Salida</button>
       </div>
-      <button class="btn" id="bPause" onclick="togglePause()" style="width:100%; background:var(--error);">⏸ Pausar</button>
+      <button class="btn-primary btn-pause" id="bPause" onclick="togglePause()" style="opacity:0.4;">⏸ Pausar Check-in</button>
+      <div id="pBanner" style="display:none; margin-top:14px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:12px; padding:10px; color:#dc2626; font-size:12px;">Check-in pausado</div>
     </div>
-    <div id="feed" class="log-card"></div>
+    <div class="log-card" id="fList"></div>
   </div>
   <div class="view" id="v-monitor">
-    <div class="log-card" id="monitorTable"></div>
+    <div class="log-card" id="mList"></div>
   </div>
 </main>
-<nav class="tab-nav">
-  <div class="tab-item active" onclick="switchTab('live', this)">📷 En Vivo</div>
-  <div class="tab-item" onclick="switchTab('monitor', this)">📊 Sesiones</div>
+<nav>
+  <button class="nav-item active" onclick="switchTab('live', this)">📷 EN VIVO</button>
+  <button class="nav-item" onclick="switchTab('monitor', this)">📊 SESIONES</button>
 </nav>
+<div class="modal-overlay" id="eModal" onclick="closeModal(event)"><div class="modal-sheet"><div style="width:40px;height:4px;background:var(--border);margin:0 auto 15px;border-radius:99px;"></div><div id="mEvs"></div></div></div>
 <div class="toast" id="toast"></div>
-
 <script>
   const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
-  let curId = null, curEv = null, total = 0, paused = false;
+  let curId=null, curEv=null, total=0, paused=false, poll=null;
 
-  async function loadEvs(){
-    const res = await fetch(API+'/eventos'), d = await res.json();
-    if(d.eventos.length) selectEv(d.eventos[0]); 
+  async function init(){ const r=await fetch(API+'/eventos'), d=await r.json(); renderModal(d.eventos); }
+  function renderModal(evs){ 
+    const div=document.getElementById('mEvs'); div.innerHTML='<div style="font-weight:800;margin-bottom:15px;">Seleccionar Evento</div>';
+    evs.forEach(e=>{
+      const d=document.createElement('div'); d.className='event-option';
+      d.innerHTML=`<div><div style="font-weight:700;">${e.nombre}</div><div style="font-size:11px;color:var(--gray);">${e.fecha} · ${e.horas_acredita}h</div></div>`;
+      d.onclick=()=>selectEv(e); div.appendChild(d);
+    });
   }
-  function selectEv(ev){
-    curId = ev.id; curEv = ev; paused = ev.pausado;
-    document.getElementById('hName').textContent = ev.nombre;
-    ['bIn','bOut','bPause'].forEach(id => document.getElementById(id).style.opacity='1');
-    fetch(API+'/event-stats/'+ev.id).then(r=>r.json()).then(d=>{ total=d.total; document.getElementById('sTotal').textContent=total; });
-    genQR('in'); refresh(); setInterval(refresh, 10000);
+  function selectEv(e){
+    curId=e.id; curEv=e; paused=e.pausado; document.getElementById('hName').textContent=e.nombre; document.getElementById('hTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
+    document.getElementById('eModal').classList.remove('show');
+    ['bIn','bOut','bPause'].forEach(id=>document.getElementById(id).style.opacity='1');
+    fetch(API+'/event-stats/'+e.id).then(r=>r.json()).then(d=>{total=d.total;document.getElementById('sTotal').textContent=total;});
+    refresh(); if(poll) clearInterval(poll); poll=setInterval(refresh,10000); updatePauseUI(); showToast('Evento: '+e.nombre, 'success');
   }
-  async function genQR(mode){
-    const res = await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
-    const d = await res.json();
-    const qrDiv = document.getElementById('qrcode'); qrDiv.innerHTML = '';
-    new QRCode(qrDiv, { text: FRONT+'?t='+d.token+(mode==='out'?'&mode=out':''), width:170, height:170, colorDark:mode==='out'?'#d97706':'#0f2a52' });
-    showToast('QR '+mode.toUpperCase()+' Generado');
+  async function genQR(m){
+    if(!curId){ showToast('Selecciona un evento primero','error'); openEventModal(); return; }
+    const r=await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
+    const d=await r.json(); if(r.status===403) return showToast('El evento está pausado','error');
+    document.getElementById('tokenDisp').textContent=d.token+(m==='out'?' (OUT)':' (IN)');
+    const div=document.getElementById('qrcode'); div.innerHTML='';
+    new QRCode(div, { text: FRONT+'?t='+d.token+(m==='out'?'&mode=out':''), width:170, height:170, colorDark:m==='out'?'#d97706':'#0f2a52' });
+  }
+  async function togglePause(){
+    if(!curId){ showToast('Selecciona un evento primero','error'); return; }
+    paused=!paused; await fetch(API+'/token/pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId,pausado:paused})});
+    updatePauseUI(); showToast(paused?'Check-in PAUSADO':'Check-in REANUDADO', paused?'error':'success');
+  }
+  function updatePauseUI(){
+    document.getElementById('pBanner').style.display=paused?'block':'none';
+    document.getElementById('qrcode').style.opacity=paused?'0.3':'1';
+    document.getElementById('bPause').textContent=paused?'▶ Reanudar Check-in':'⏸ Pausar Check-in';
   }
   async function refresh(){
-    if(!curId) return;
-    const res = await fetch(API+'/asistencias/'+curId), d = await res.json();
-    renderFeed(d.asistencias); renderMonitor(d.asistencias);
-    const inB = d.asistencias.filter(a=>!a.timestamp_salida).length;
-    document.getElementById('sIn').textContent = inB;
-    document.getElementById('sPending').textContent = total - d.asistencias.length;
-  }
-  function renderFeed(asis){
-    const div = document.getElementById('feed'); div.innerHTML = '<div style="padding:10px; font-weight:800; font-size:12px; border-bottom:1px solid #eee;">ENTRADAS RECIENTES</div>';
-    asis.slice().reverse().forEach(a => {
-      const row = document.createElement('div'); row.style.padding='12px'; row.style.borderBottom='1px solid #eee'; row.style.display='flex'; row.style.justifyContent='space-between';
-      row.innerHTML = `<span><b>${a.estudiantes.nombre_completo.split(' ')[0]}</b></span> <span style="color:var(--gray); font-size:12px;">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
-      div.appendChild(row);
+    const r=await fetch(API+'/asistencias/'+curId), d=await r.json();
+    const asis=d.asistencias;
+    const f=document.getElementById('fList'); f.innerHTML='<div style="padding:12px;font-weight:800;font-size:11px;border-bottom:1px solid #eee;">ENTRADAS RECIENTES</div>';
+    asis.slice().reverse().forEach(a=>{
+      const row=document.createElement('div'); row.style.cssText='padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;font-size:13px;';
+      row.innerHTML=`<span><b>${a.estudiantes.nombre_completo.split(' ')[0]}</b></span> <span style="color:var(--gray);">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
+      f.appendChild(row);
     });
-  }
-  function renderMonitor(asis){
-    const div = document.getElementById('monitorTable'); div.innerHTML = '<div style="display:grid; grid-template-columns:1.2fr 0.8fr 0.8fr 0.7fr 0.5fr; padding:10px; background:#f8f9fa; font-weight:800; font-size:10px;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
-    asis.forEach(a => {
-      const now = new Date(), start = new Date(a.timestamp_servidor), meta = curEv.horas_acredita;
-      let out = a.timestamp_salida ? new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--';
-      let hrs = a.timestamp_salida ? a.horas_reales : parseFloat(((now - start)/(1000*60*60)).toFixed(2));
-      let color = a.timestamp_salida ? (hrs>=meta?'var(--success)':'var(--error)') : (hrs>=meta?'#f59e0b':'var(--gray)');
-      let emoji = a.timestamp_salida ? (hrs>=meta?'✅':'⚠️') : (hrs>=meta?'🕒':'⏳');
-      const row = document.createElement('div'); row.style.display='grid'; row.style.gridTemplateColumns='1.2fr 0.8fr 0.8fr 0.7fr 0.5fr'; row.style.padding='10px'; row.style.borderBottom='1px solid #eee'; row.style.fontSize='12px'; row.style.alignItems='center';
-      row.innerHTML = `<div>${a.estudiantes.nombre_completo.split(' ')[0]}</div> <div>${start.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div> <div>${out}</div> <div style="color:${color}; font-weight:800;">${emoji} ${hrs}h</div> <div>${!a.timestamp_salida?`<button onclick="forceOut('${a.id}','${a.estudiantes.nombre_completo}')" style="border:none; background:none; cursor:pointer; font-size:16px;">🚪</button>`:'✨'}</div>`;
-      div.appendChild(row);
+    const m=document.getElementById('mList'); m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:10px;background:var(--surface);font-weight:800;font-size:9px;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
+    asis.forEach(a=>{
+      const now=new Date(), s=new Date(a.timestamp_servidor), meta=curEv.horas_acredita;
+      let out=a.timestamp_salida?new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'--:--';
+      let hrs=a.timestamp_salida?a.horas_reales:parseFloat(((now-s)/(1000*60*60)).toFixed(2));
+      let color=a.timestamp_salida?(hrs>=meta?'var(--success)':'var(--error)'):(hrs>=meta?'#f59e0b':'var(--gray)');
+      let emo=a.timestamp_salida?(hrs>=meta?'✅':'⚠️'):(hrs>=meta?'🕒':'⏳');
+      const row=document.createElement('div'); row.style.cssText='display:grid;grid-template-columns:1.2fr 0.8fr 0.8fr 0.8fr 0.4fr;padding:12px;border-bottom:1px solid #eee;font-size:12px;align-items:center;';
+      row.innerHTML=`<div>${a.estudiantes.nombre_completo.split(' ')[0]}</div><div>${s.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div><div>${out}</div><div style="color:${color};font-weight:800;">${emo} ${hrs}h</div><div>${!a.timestamp_salida?`<button onclick="forceOut('${a.id}','${a.estudiantes.nombre_completo}')" style="border:none;background:none;font-size:16px;cursor:pointer;">🚪</button>`:'✨'}</div>`;
+      m.appendChild(row);
     });
+    document.getElementById('sIn').textContent=asis.filter(a=>!a.timestamp_salida).length;
+    document.getElementById('sPending').textContent=total-asis.length;
   }
-  async function forceOut(id, name){ if(!confirm('¿Cerrar sesión de '+name+'?')) return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
-  function switchTab(t, el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.tab-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
-  function showToast(m){ const t=document.getElementById('toast'); t.textContent=m; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2000); }
-  loadEvs();
+  async function forceOut(id,n){ if(!confirm('¿Cerrar sesión de '+n+'?'))return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
+  function switchTab(t,el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
+  function openEventModal(){ document.getElementById('eModal').classList.add('show'); init(); }
+  function closeModal(e){ if(e.target.id==='eModal') e.target.classList.remove('show'); }
+  function toggleTheme(){ const b=document.body; const isD=b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme',isD?'light':'dark'); }
+  function showToast(m,t){ const el=document.getElementById('toast'); el.textContent=m; el.style.background=t==='error'?'#7f1d1d':'#0f2a52'; el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',2500); }
+  init();
 </script>
 </body>
 </html>
