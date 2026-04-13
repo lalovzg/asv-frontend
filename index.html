@@ -21,10 +21,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; transition: 0.3s; overflow-x: hidden; }
 
-  /* ─── HEADER ─── */
   header { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 16px 20px 20px; position: relative; overflow: hidden; }
-  
-  /* pointer-events: none evita que los círculos bloqueen los clics */
   header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; border-radius: 50%; background: rgba(43,159,212,0.15); pointer-events: none; }
   header::after { content: ''; position: absolute; bottom: -20px; left: 30%; width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.05); pointer-events: none; }
   
@@ -36,7 +33,6 @@
 
   .header-actions { display: flex; gap: 8px; align-items: center; }
   .icon-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: rgba(255,255,255,0.12); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s; position: relative; z-index: 20; }
-  .icon-btn:hover { background: rgba(255,255,255,0.25); }
 
   .event-pill { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; cursor: pointer; }
   .event-pill-left { display: flex; align-items: center; gap: 10px; }
@@ -50,12 +46,10 @@
   .view { display: none; } .view.active { display: block; }
   .section-title { font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700; color: var(--gray); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
 
-  /* ─── STATS ─── */
   .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
   .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; box-shadow: var(--shadow); }
   .stat-num { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 800; color: var(--blue); }
 
-  /* ─── QR CARD ─── */
   .qr-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 20px; box-shadow: var(--shadow); margin-bottom: 20px; text-align: center; position: relative; overflow: hidden; }
   .qr-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--navy), var(--sky)); }
   .qr-frame { width: 200px; height: 200px; margin: 0 auto 16px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; border: 3px solid var(--border); overflow: hidden; }
@@ -68,7 +62,6 @@
   .btn-out { background: linear-gradient(135deg, #f59e0b, #d97706); }
   .btn-pause { border: 1.5px solid var(--border); margin-top: 10px; font-size: 12px; font-weight: 600; padding: 11px; }
 
-  /* ─── LOGS (ESTILO IPHONE) ─── */
   .log-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
   .log-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); animation: slideIn 0.3s ease; }
   .log-avatar { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--blue)); color: white; font-family: 'Sora'; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
@@ -112,6 +105,7 @@
       <div>
         <div class="event-label">Evento activo</div>
         <div class="event-name" id="headerEventName">Seleccione un evento activo</div>
+        <div id="headerEventDate" style="font-size:10px; color:rgba(255,255,255,0.7); margin-top:2px; font-weight:500;"></div>
       </div>
     </div>
     <div class="event-time" id="headerEventTime">--:--</div>
@@ -164,23 +158,40 @@
   const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
   let curId=null, curEv=null, total=0, paused=false, poll=null, isBusy=false;
 
+  // FUNCIÓN AUXILIAR: Formatear fecha a "DOM 12 de ABR de 2026"
+  function formatLongDate(isoDate) {
+    if(!isoDate) return "";
+    const [y, m, d] = isoDate.split('-');
+    const date = new Date(y, m-1, d);
+    const weekdays = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
+    const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+    return `${weekdays[date.getDay()]} ${d} de ${months[parseInt(m)-1]} de ${y}`;
+  }
+
   async function init(){ try { const r = await fetch(API+'/eventos'), d = await r.json(); renderModal(d.eventos || []); } catch(e) { showToast('Error al cargar eventos','error'); } }
   
   function renderModal(evs){ 
     const div=document.getElementById('mEvs'); div.innerHTML='<div style="font-weight:800;margin-bottom:15px;font-family:Sora;">Seleccionar Evento</div>';
-    evs.forEach(e=>{ const d=document.createElement('div'); d.className='event-option'; d.innerHTML=`<div><div style="font-weight:700;">${e.nombre}</div><div style="font-size:11px;color:var(--gray);">${e.fecha} · ${e.horas_acredita}h</div></div>`; d.onclick=()=>selectEv(e); div.appendChild(d); });
+    evs.forEach(e=>{ 
+      const d=document.createElement('div'); d.className='event-option'; 
+      // Formato actualizado en el modal
+      d.innerHTML=`<div><div style="font-weight:700;">${e.nombre}</div><div style="font-size:11px;color:var(--gray);">${formatLongDate(e.fecha)} · ${e.horas_acredita}h</div></div>`; 
+      d.onclick=()=>selectEv(e); div.appendChild(d); 
+    });
   }
 
   function selectEv(e){
     curId=e.id; curEv=e; paused=e.pausado; 
     document.getElementById('headerEventName').textContent=e.nombre; 
+    // Fecha formateada en el header
+    document.getElementById('headerEventDate').textContent=formatLongDate(e.fecha);
     document.getElementById('headerEventTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
     document.getElementById('eModal').classList.remove('show');
     ['bIn','bOut','bPause'].forEach(id=>document.getElementById(id).style.opacity='1');
     fetch(API+'/event-stats/'+e.id).then(r=>r.json()).then(d=>{total=d.total;document.getElementById('sTotal').textContent=total;});
     refresh(); if(poll) clearInterval(poll); poll=setInterval(refresh, 10000); 
     updatePauseUI(); if(!paused) setTimeout(() => genQR('in'), 300);
-    showToast('Evento cargado: ' + e.nombre, 'success');
+    showToast('Evento cargado', 'success');
   }
   
   async function genQR(m){
