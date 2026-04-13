@@ -241,7 +241,7 @@
     f.innerHTML='<div style="padding:12px;font-weight:800;font-size:11px;border-bottom:1px solid #eee;color:var(--gray);">ENTRADAS RECIENTES</div>';
     asis.slice().reverse().slice(0,10).forEach(a=>{
       const row=document.createElement('div'); row.style.cssText='padding:12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;font-size:13px;';
-      row.innerHTML=`<span><b>${a.estudiantes.nombre_completo.split(' ')[0]}</b></span> <span style="color:var(--gray);">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
+      row.innerHTML=`<span><b>${a.estudiantes.nombre_completo}</b></span> <span style="color:var(--gray);">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</span>`;
       f.appendChild(row);
     });
   }
@@ -293,7 +293,7 @@
       if(!a) row.style.opacity = "0.6"; // Menos opacidad para los que no han llegado
 
       row.innerHTML = `
-        <div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo.split(' ')[0]}</div>
+        <div style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${student.nombre_completo}</div>
         <div style="color:var(--gray); text-align:center;">${entradaStr}</div>
         <div style="color:var(--gray); text-align:center;">${salidaStr}</div>
         <div style="color:${color}; font-weight:800; text-align:right; padding-right:5px;">${emoji} ${tiempoStr}</div>
