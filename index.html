@@ -44,7 +44,10 @@
     <div class="org-name">🐾 Ángeles sin Voz</div> 
     <button id="themeBtn" onclick="toggleTheme()" class="icon-btn" style="background:none; border:none; color:white; font-size:18px;">🌙</button> 
   </div>
-  <div class="event-pill" onclick="openEventModal()"> <div> <div style="font-size:10px; opacity:0.7;">Evento activo</div> <div class="event-name" id="hName">Seleccione un evento</div> </div> <div id="hTime" style="font-size:11px;">--:--</div> </div>
+  <div class="event-pill" onclick="openEventModal()"> 
+    <div> <div style="font-size:10px; opacity:0.7;">Evento activo</div> <div class="event-name" id="hName">Seleccione un evento</div> </div> 
+    <div id="hTime" style="font-size:11px;">--:--</div> 
+  </div>
 </header>
 <main>
   <div class="view active" id="v-live">
@@ -89,77 +92,54 @@
     });
   }
 
-  // --- FUNCIÓN CORREGIDA: Ahora espera los datos antes de mostrar la UI ---
   async function selectEv(e){
     curId=e.id; curEv=e; paused=e.pausado; 
     document.getElementById('hName').textContent=e.nombre; 
     document.getElementById('hTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
     document.getElementById('eModal').classList.remove('show');
-    
-    // Habilitamos botones
     ['bIn','bOut','bPause'].forEach(id=>document.getElementById(id).style.opacity='1');
-
     try {
-      // 1. ESPERAMOS el total de alumnos antes de seguir
       const resStats = await fetch(API+'/event-stats/'+e.id);
       const dataStats = await resStats.json();
       total = dataStats.total;
       document.getElementById('sTotal').textContent = total;
-
-      // 2. Cargamos el primer set de asistencias
       await refresh(); 
-
-      // 3. GENERAMOS el QR inicial automáticamente
-      await genQR('in');
-
-      // 4. Activamos el polling
+      await genQR('in'); // QR inicial automático al seleccionar
       if(poll) clearInterval(poll); 
       poll = setInterval(refresh, 10000); 
-      
       updatePauseUI(); 
       showToast('Evento cargado con éxito', 'success');
-    } catch(err) {
-      showToast('Error al sincronizar datos', 'error');
-    }
+    } catch(err) { showToast('Error al sincronizar datos', 'error'); }
   }
 
+  // --- FUNCIÓN RESTAURADA: Ahora guía al usuario si no hay evento ---
   async function genQR(m){
-    if(!curId) return;
+    if(!curId){ 
+      showToast('Selecciona un evento primero','error'); 
+      openEventModal(); 
+      return; 
+    }
     const qrFrame = document.getElementById('qrcode');
     qrFrame.innerHTML = '<div style="font-size:12px; color:var(--gray);">Generando...</div>';
     document.getElementById('tokenDisp').textContent="SOLICITANDO...";
-
     try {
       const r=await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
       const d=await r.json(); 
-      
       if(r.status===403) { 
         document.getElementById('tokenDisp').textContent="PAUSADO"; 
         qrFrame.innerHTML = '';
         return showToast('Registro pausado','error'); 
       }
-
       document.getElementById('tokenDisp').textContent=d.token+(m==='out'?' (SALIDA)':' (ENTRADA)');
-      qrFrame.innerHTML = ''; // Limpiamos el "Generando..."
-
-      // Pequeño delay para asegurar renderizado estable
+      qrFrame.innerHTML = '';
       setTimeout(() => {
-        new QRCode(qrFrame, { 
-          text: FRONT+'?t='+d.token+(m==='out'?'&mode=out':''), 
-          width: 170, 
-          height: 170, 
-          colorDark:m==='out'?'#d97706':'#0f2a52', 
-          colorLight:'#ffffff' 
-        });
+        new QRCode(qrFrame, { text: FRONT+'?t='+d.token+(m==='out'?'&mode=out':''), width: 170, height: 170, colorDark:m==='out'?'#d97706':'#0f2a52', colorLight:'#ffffff' });
       }, 50);
-    } catch(e) { 
-      document.getElementById('tokenDisp').textContent="ERROR"; 
-      showToast('Fallo al generar QR','error'); 
-    }
+    } catch(e) { document.getElementById('tokenDisp').textContent="ERROR"; showToast('Fallo al generar QR','error'); }
   }
 
   async function togglePause(){
-    if(!curId){ showToast('Selecciona un evento primero','error'); return; }
+    if(!curId){ showToast('Selecciona un evento primero','error'); openEventModal(); return; }
     paused=!paused; 
     try {
       await fetch(API+'/token/pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId,pausado:paused})});
