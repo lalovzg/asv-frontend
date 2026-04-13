@@ -1,381 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a3a6b">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>SS de ASV · Registro</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
-  :root {
-    --navy:   #0f2a52;
-    --blue:   #1e6bb8;
-    --sky:    #2b9fd4;
-    --light:  #7ecef0;
-    --white:  #ffffff;
-    --gray:   #64748b;
-    --border: #d1e3f8;
-    --surface:#f0f6ff;
-    --success:#16a34a;
-    --error:  #dc2626;
-    --text:   #111827;
-    --bg:     #f0f6ff;
-    --card:   #ffffff;
-    --shadow: 0 4px 24px rgba(15,42,82,0.10);
-  }
-
+  :root { --navy: #0f2a52; --blue: #1e6bb8; --sky: #2b9fd4; --light: #7ecef0; --white: #ffffff; --gray: #64748b; --border: #d1e3f8; --surface:#f0f6ff; --success:#16a34a; --error: #dc2626; --text: #111827; --bg: #f0f6ff; --card: #ffffff; --shadow: 0 4px 24px rgba(15,42,82,0.10); }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 40px;
-  }
-
-  /* ─── HEADER ─── */
-  .top-bar {
-    width: 100%;
-    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-    padding: 20px 20px 28px;
-    text-align: center;
-    color: white;
-    position: relative;
-    overflow: hidden;
-  }
-  .top-bar::before {
-    content: '';
-    position: absolute; top: -50px; right: -50px;
-    width: 180px; height: 180px; border-radius: 50%;
-    background: rgba(43,159,212,0.12);
-  }
-  .top-title {
-    font-family: 'Sora', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    margin-top: 8px;
-  }
-
-  /* ─── EVENT CHIP ─── */
-  .event-chip {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 14px 18px;
-    margin: -16px 20px 0;
-    box-shadow: var(--shadow);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: calc(100% - 40px);
-    max-width: 440px;
-    z-index: 2;
-  }
-  .event-chip-icon {
-    width: 42px; height: 42px;
-    background: linear-gradient(135deg, var(--navy), var(--blue));
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-
-  /* ─── FORM ─── */
-  .form-wrap {
-    width: 100%;
-    max-width: 440px;
-    padding: 24px 20px 0;
-  }
-  .input-field {
-    width: 100%;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    font-size: 16px;
-    margin-bottom: 12px;
-    outline: none;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .input-field:focus { border-color: var(--blue); }
-
-  .dropdown-field {
-    width: 100%;
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    background: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; padding-bottom: 40px; }
+  .top-bar { width: 100%; background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%); padding: 20px 20px 28px; text-align: center; color: white; position: relative; }
+  .top-title { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; margin-top: 8px; }
+  .event-chip { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px 18px; margin: -16px 20px 0; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; width: calc(100% - 40px); max-width: 440px; z-index: 2; }
+  .event-chip-icon { width: 42px; height: 42px; background: linear-gradient(135deg, var(--navy), var(--blue)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .form-wrap { width: 100%; max-width: 440px; padding: 24px 20px 0; }
+  .input-field { width: 100%; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; font-size: 16px; margin-bottom: 12px; outline: none; font-family: 'DM Sans', sans-serif; }
+  .dropdown-field { width: 100%; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 20px; cursor: pointer; background: white; display: flex; justify-content: space-between; align-items: center; }
   .dropdown-field.disabled { opacity: 0.5; cursor: not-allowed; background: var(--surface); }
-
-  .dropdown-list {
-    position: absolute;
-    background: white;
-    border: 1.5px solid var(--blue);
-    border-radius: 14px;
-    width: calc(100% - 40px);
-    max-width: 400px;
-    z-index: 50;
-    display: none;
-    max-height: 200px;
-    overflow-y: auto;
-    box-shadow: var(--shadow);
-  }
-
-  .btn-confirm {
-    width: 100%;
-    background: linear-gradient(135deg, var(--blue), var(--sky));
-    color: white;
-    border: none;
-    border-radius: 14px;
-    padding: 18px;
-    font-family: 'Sora', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(30,107,184,0.3);
-  }
-  .btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ─── PANTALLAS FINALES ─── */
-  .success-screen, .error-screen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 24px;
-    text-align: center;
-    width: 100%;
-    max-width: 440px;
-  }
-  .success-circle {
-    width: 90px; height: 90px;
-    background: linear-gradient(135deg, #16a34a, #22c55e);
-    border-radius: 50%;
-    color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 42px; margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(22,163,74,0.3);
-  }
-  .error-circle {
-    width: 90px; height: 90px;
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    border-radius: 50%;
-    color: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 42px; margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(220,38,38,0.3);
-  }
-
+  .dropdown-list { position: absolute; background: white; border: 1.5px solid var(--blue); border-radius: 14px; width: calc(100% - 40px); max-width: 400px; z-index: 50; display: none; max-height: 200px; overflow-y: auto; box-shadow: var(--shadow); }
+  .btn-confirm { width: 100%; background: linear-gradient(135deg, var(--blue), var(--sky)); color: white; border: none; border-radius: 14px; padding: 18px; font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  .btn-confirm:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; }
+  .success-screen, .error-screen { display: none; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center; width: 100%; max-width: 440px; }
+  .success-circle { width: 90px; height: 90px; background: linear-gradient(135deg, #16a34a, #22c55e); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 42px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(22,163,74,0.3); }
+  .error-circle { width: 90px; height: 90px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 42px; margin-bottom: 20px; box-shadow: 0 8px 32px rgba(220,38,38,0.3); }
   .title-lg { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 12px; }
   .sub-md { font-size: 16px; color: var(--gray); line-height: 1.6; margin-bottom: 30px; }
-
-  .btn-action {
-    width: 100%;
-    background: var(--navy);
-    color: white;
-    padding: 18px;
-    border-radius: 14px;
-    border: none;
-    font-family: 'Sora', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  .btn-action { width: 100%; background: var(--navy); color: white; padding: 18px; border-radius: 14px; border: none; font-family: 'Sora', sans-serif; font-weight: 700; cursor: pointer; }
 </style>
 </head>
 <body>
-
-<div class="top-bar">
-  <div class="top-title">Registro de Asistencia</div>
-</div>
-
+<div class="top-bar"><div class="top-title">Registro de Asistencia</div></div>
 <div class="event-chip">
   <div class="event-chip-icon" id="evIcon">📥</div>
-  <div>
-    <div style="font-weight:700;" id="evName">Verificando...</div>
-    <div style="font-size:11px; color:var(--gray);" id="evMeta">---</div>
-  </div>
+  <div><div style="font-weight:700;" id="evName">Verificando...</div><div style="font-size:11px; color:var(--gray);" id="evMeta">---</div></div>
 </div>
-
 <div class="form-wrap" id="formSection">
   <label style="font-size:11px; font-weight:700; color:var(--gray); text-transform:uppercase; margin-bottom:8px; display:block;">Matrícula</label>
   <input type="text" class="input-field" id="matricula" placeholder="Ej. SS001" oninput="onMatInput()" autocomplete="off">
-  
   <label style="font-size:11px; font-weight:700; color:var(--gray); text-transform:uppercase; margin-bottom:8px; display:block;">Confirma tu nombre</label>
-  <div class="dropdown-field disabled" id="nameDrop" onclick="toggleDD()">
-    <span id="dropText">Ingresa matrícula primero</span>
-    <span>▼</span>
-  </div>
+  <div class="dropdown-field disabled" id="nameDrop" onclick="toggleDD()"><span id="dropText">Ingresa matrícula primero</span><span>▼</span></div>
   <div class="dropdown-list" id="dropList"></div>
-
   <button class="btn-confirm" id="btnConfirm" disabled onclick="confirmAttendance()">Confirmar Asistencia</button>
 </div>
-
 <div class="success-screen" id="successScreen">
   <div class="success-circle">✓</div>
   <h2 class="title-lg" id="sTitle">¡Registrado!</h2>
   <p class="sub-md" id="sSub"></p>
   <button class="btn-action" onclick="closePage('success')">Finalizar Proceso</button>
 </div>
-
 <div class="error-screen" id="errorScreen">
   <div class="error-circle">✕</div>
   <h2 class="title-lg" id="eTitle">Error</h2>
   <p class="sub-md" id="eSub"></p>
   <button class="btn-action" id="btnError" onclick="location.reload()">Reintentar</button>
 </div>
-
 <div class="error-screen" id="doneScreen">
   <div style="font-size:64px; margin-bottom:20px;" id="doneIcon">🔒</div>
   <h2 class="title-lg" id="doneTitle">Sesión finalizada</h2>
   <p class="sub-md" id="doneSub">Ya puedes cerrar esta pestaña.</p>
 </div>
-
 <script>
   const API = 'https://asv-backend.onrender.com/api';
-  let students = [], selected = null, currentEvent = null;
-  const params = new URLSearchParams(location.search);
-  const token = params.get('t');
-  const isOut = params.get('mode') === 'out';
-
-  // --- INICIO ---
+  let students = [], selected = null;
+  const params = new URLSearchParams(location.search), token = params.get('t'), isOut = params.get('mode') === 'out';
   (async () => {
-    if(!token) return showErr('Token ausente','Este enlace no es válido. Escanea el QR de la directora.', false);
-
+    if(!token) return showErr('Token ausente','Usa un QR válido.', false);
     try {
-      const res = await fetch(`${API}/event/${token}`);
-      const data = await res.json();
-
-      if(!res.ok) {
-        if(res.status === 410) return showErr('¡Asistencia ya registrada!', 'Este código ya fue procesado. Solicita uno nuevo.', false);
-        return showErr('Acceso Denegado', data.error || 'Token no válido', false);
-      }
-
+      const res = await fetch(`${API}/event/${token}`), data = await res.json();
+      if(!res.ok) return showErr('Acceso Denegado', data.error || 'Token no válido', false);
       students = data.estudiantes;
-      currentEvent = data.evento;
-
       document.getElementById('evName').textContent = data.evento.nombre;
       document.getElementById('evMeta').textContent = `${data.evento.fecha} · ${data.evento.horas_acredita} hrs`;
-
       if(isOut){
         document.getElementById('evIcon').textContent = '🏁';
         document.querySelector('.top-title').textContent = 'Registro de Salida';
-        const btn = document.getElementById('btnConfirm');
-        btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-        btn.textContent = 'Confirmar Salida';
+        document.getElementById('btnConfirm').style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        document.getElementById('btnConfirm').textContent = 'Confirmar Salida';
       }
-    } catch(e){ 
-      showErr('Error de Conexión','No pudimos conectar con el servidor. Revisa tu internet.', true); 
-    }
+    } catch(e){ showErr('Error de Red','Revisa tu internet.', true); }
   })();
-
-  // --- LÓGICA DE INPUT ---
   function onMatInput(){
     const val = document.getElementById('matricula').value.trim().toUpperCase();
     const match = students.find(s => s.matricula === val);
     const drop = document.getElementById('nameDrop');
-
-    if(match){
-      drop.classList.remove('disabled');
-      renderDD(match);
-      document.getElementById('dropText').textContent = "Selecciona tu nombre";
-    } else {
-      drop.classList.add('disabled');
-      document.getElementById('dropList').style.display = 'none';
-      document.getElementById('btnConfirm').disabled = true;
-      document.getElementById('dropText').textContent = "Matrícula no encontrada";
-    }
+    if(match){ drop.classList.remove('disabled'); renderDD(match); document.getElementById('dropText').textContent = "Selecciona tu nombre"; }
+    else { drop.classList.add('disabled'); document.getElementById('dropList').style.display = 'none'; document.getElementById('btnConfirm').disabled = true; document.getElementById('dropText').textContent = "Matrícula no encontrada"; }
   }
-
   function renderDD(m){
-    const list = document.getElementById('dropList');
-    list.innerHTML = '';
-    // Ponemos al que coincide primero
-    const sorted = [m, ...students.filter(s => s.id !== m.id)];
-    sorted.forEach(s => {
-      const d = document.createElement('div');
-      d.style.cssText = 'padding:14px; border-bottom:1px solid #eee; cursor:pointer; font-size:14px;';
+    const list = document.getElementById('dropList'); list.innerHTML = '';
+    [m, ...students.filter(s => s.id !== m.id)].forEach(s => {
+      const d = document.createElement('div'); d.style.cssText = 'padding:14px; border-bottom:1px solid #eee; cursor:pointer; font-size:14px;';
       d.innerHTML = `<b>${s.nombre_completo}</b> <small style="color:#999; float:right;">${s.matricula}</small>`;
-      d.onclick = () => {
-        selected = s;
-        document.getElementById('dropText').textContent = s.nombre_completo;
-        list.style.display = 'none';
-        document.getElementById('btnConfirm').disabled = (s.matricula !== document.getElementById('matricula').value.trim().toUpperCase());
-      };
+      d.onclick = () => { selected = s; document.getElementById('dropText').textContent = s.nombre_completo; list.style.display = 'none'; document.getElementById('btnConfirm').disabled = (s.matricula !== document.getElementById('matricula').value.trim().toUpperCase()); };
       list.appendChild(d);
     });
   }
-
-  function toggleDD(){ 
-    if(document.getElementById('nameDrop').classList.contains('disabled')) return;
-    const list = document.getElementById('dropList');
-    list.style.display = list.style.display === 'block' ? 'none' : 'block';
-  }
-
-  // --- CONFIRMACIÓN ---
+  function toggleDD(){ if(document.getElementById('nameDrop').classList.contains('disabled')) return; const list = document.getElementById('dropList'); list.style.display = list.style.display === 'block' ? 'none' : 'block'; }
   async function confirmAttendance(){
-    const btn = document.getElementById('btnConfirm');
-    btn.disabled = true;
-    btn.textContent = 'Procesando...';
-
+    const btn = document.getElementById('btnConfirm'); btn.disabled = true; btn.textContent = 'Procesando...';
     try {
-      const endpoint = isOut ? '/checkout' : '/checkin';
-      const res = await fetch(API + endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, matricula: selected.matricula, estudiante_id: selected.id })
-      });
-
+      const res = await fetch(API + (isOut?'/checkout':'/checkin'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id}) });
       const data = await res.json();
-      if(!res.ok) return showErr('Atención', data.error || 'Error en el proceso', false);
-
+      if(!res.ok) return showErr('Atención', data.error || 'Error', false);
       document.getElementById('formSection').style.display = 'none';
       document.getElementById('successScreen').style.display = 'flex';
-      
-      const sub = document.getElementById('sSub');
-      if(isOut) {
-        document.getElementById('sTitle').textContent = "Salida Exitosa";
-        sub.textContent = `Has cumplido ${data.asistencia.horas_reales} horas de las ${data.asistencia.horas_esperadas} programadas.`;
-      } else {
-        sub.textContent = `Entrada registrada para ${selected.nombre_completo.split(' ')[0]}. ¡Buen turno!`;
-      }
-    } catch(e){ showErr('Error','Hubo un fallo en la comunicación con el servidor.', true); }
+      if(isOut) { document.getElementById('sTitle').textContent = "Salida Exitosa"; document.getElementById('sSub').textContent = `Completaste ${data.asistencia.horas_reales}h.`; }
+      else { document.getElementById('sSub').textContent = `Entrada registrada para ${selected.nombre_completo.split(' ')[0]}.`; }
+    } catch(e){ showErr('Error','Fallo de conexión.', true); }
   }
-
-  // --- MANEJO DE PANTALLAS ---
   function showErr(t, s, retry){
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'flex';
-    document.getElementById('eTitle').textContent = t;
-    document.getElementById('eSub').textContent = s;
+    document.getElementById('formSection').style.display = 'none'; document.getElementById('errorScreen').style.display = 'flex';
+    document.getElementById('eTitle').textContent = t; document.getElementById('eSub').textContent = s;
     const btn = document.getElementById('btnError');
-    if(retry){
-      btn.textContent = "Intentar de nuevo";
-      btn.onclick = () => location.reload();
-    } else {
-      btn.textContent = "Entendido, volver a escanear";
-      btn.onclick = () => closePage('error');
-    }
+    if(retry) btn.onclick = () => location.reload();
+    else { btn.textContent = "Entendido"; btn.onclick = () => closePage('error'); }
   }
-
   function closePage(type){
-    document.getElementById('successScreen').style.display = 'none';
-    document.getElementById('errorScreen').style.display = 'none';
-    document.getElementById('doneScreen').style.display = 'flex';
-    
-    if(type === 'error'){
-      document.getElementById('doneIcon').textContent = '❌';
-      document.getElementById('doneTitle').textContent = 'Acceso Cancelado';
-      document.getElementById('doneSub').textContent = 'Cierra esta pestaña y solicita un nuevo QR a la directora.';
-    }
+    document.getElementById('successScreen').style.display = 'none'; document.getElementById('errorScreen').style.display = 'none'; document.getElementById('doneScreen').style.display = 'flex';
+    if(type === 'error'){ document.getElementById('doneIcon').textContent = '❌'; document.getElementById('doneTitle').textContent = 'Acceso Cancelado'; document.getElementById('doneSub').textContent = 'Vuelve a escanear un QR vigente.'; }
   }
 </script>
 </body>
