@@ -167,6 +167,18 @@
   const WEBHOOK = 'https://script.google.com/macros/s/AKfycbx05cq-k_LuXCAEt3EnmPtguSQHl1KtbpC-kmeef4wv0gc8tVyK3Cx1Ja-RW5uCKAqR0Q/exec';
   let curId=null, curEv=null, paused=false, poll=null, isBusy=false;
   let horasSeleccionadas = {};
+  // Convierte "15:00:00" o un objeto Date a "03:00 PM"
+  const fmt12h = (t) => {
+    if (!t) return "--:--";
+    if (t instanceof Date) return t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    
+    // Si viene como string "HH:mm:ss" desde la base de datos
+    let [h, m] = t.split(':');
+    h = parseInt(h);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h.toString().padStart(2, '0')}:${m} ${ampm}`;
+  };
 
   function fmtD(iso){
     if(!iso) return ""; const [y,m,d] = iso.split('-'); const dt = new Date(y,m-1,d);
@@ -242,32 +254,61 @@
     asis.slice().reverse().slice(0,6).forEach(a=>{
       const ini=a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
       const row=document.createElement('div'); row.className='log-item';
-      row.innerHTML=`<div class="avatar">${ini}</div><div class="name">${a.estudiantes.nombre_completo}</div><div class="meta">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</div>`;
+      row.innerHTML=`<div class="avatar">${ini}</div><div class="name">${a.estudiantes.nombre_completo}</div><div class="meta">${fmt12h(new Date(a.timestamp_servidor))} ✅</div>`;
       f.appendChild(row);
     });
   }
 
-  function renderMon(stds, asis){
-    const m=document.getElementById('mList'); m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;background:var(--surface);font-weight:800;font-size:8px;color:var(--asv-blue);text-transform:uppercase;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
-    stds.forEach(s=>{
-      const a=asis.find(x=>x.estudiante_id===s.id), now=new Date(), meta=curEv.horas_acredita;
-      let eS="--:--", sS="--:--", tS="0.00h", col="var(--gray)", emo="⏳", btn=`<span style="opacity:0.3">⏳</span>`;
-      if(a){
-        const sT=new Date(a.timestamp_servidor); eS=sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-        if(a.timestamp_salida){
-          sS=new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); const hrs=a.horas_reales||0;
-          tS=hrs.toFixed(2)+"h"; col=hrs>=meta?"var(--success)":"var(--error)"; emo="✅"; btn=`<span>✨</span>`;
-        } else {
-          const hrsV=parseFloat(((now-sT)/(1000*60*60)).toFixed(2)); tS=hrsV.toFixed(2) + "h";
-          col=hrsV>=meta?"#f59e0b":"var(--asv-blue)"; emo="🐕🐈‍"; btn=`<button onclick="fOut('${a.id}','${s.nombre_completo}')" style="border:none;background:none;font-size:16px;cursor:pointer;">🚪</button>`;
-        }
+  function renderMon(stds, asis) {
+  const m = document.getElementById('mList');
+  // Encabezado de la tabla
+  m.innerHTML = '<div style="display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;background:var(--surface);font-weight:800;font-size:8px;color:var(--asv-blue);text-transform:uppercase;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
+
+  stds.forEach(s => {
+    const a = asis.find(x => x.estudiante_id === s.id), now = new Date(), meta = curEv.horas_acredita;
+    
+    // 1. Valores por defecto
+    let eS = "--:--", sS = "--:--", tS = "0.00h", col = "var(--gray)", emo = "⏳", btn = `<span style="opacity:0.3">⏳</span>`;
+    
+    if (a) {
+      const sT = new Date(a.timestamp_servidor);
+      // 2. Aplicamos formato de 12h a la entrada
+      eS = fmt12h(sT);
+      
+      if (a.timestamp_salida) {
+        // 3. Aplicamos formato de 12h a la salida
+        sS = fmt12h(new Date(a.timestamp_salida));
+        const hrs = a.horas_reales || 0;
+        tS = hrs.toFixed(2) + "h"; 
+        col = hrs >= meta ? "var(--success)" : "var(--error)"; 
+        emo = "✅"; 
+        btn = `<span>✨</span>`;
+      } else {
+        // Sesión activa (en curso)
+        const hrsV = parseFloat(((now - sT) / (1000 * 60 * 60)).toFixed(2));
+        tS = hrsV.toFixed(2) + "h";
+        col = hrsV >= meta ? "#f59e0b" : "var(--asv-blue)";
+        emo = "🐕🐈‍";
+        btn = `<button onclick="fOut('${a.id}','${s.nombre_completo}')" style="border:none;background:none;font-size:16px;cursor:pointer;">🚪</button>`;
       }
-      const r=document.createElement('div'); r.className='log-item'; r.style.cssText='display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;font-size:11px;align-items:center;';
-      if(!a) r.style.opacity="0.5";
-      r.innerHTML=`<div style="font-weight:700;">${s.nombre_completo}</div><div style="text-align:center;">${eS}</div><div style="text-align:center;">${sS}</div><div style="color:${col};font-weight:800;text-align:right;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
-      m.appendChild(r);
-    });
-  }
+    }
+
+    // 4. CREAR LA FILA (Esto es lo que faltaba para que se vea)
+    const r = document.createElement('div');
+    r.className = 'log-item';
+    r.style.cssText = 'display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;font-size:11px;align-items:center;';
+    if (!a) r.style.opacity = "0.5";
+
+    r.innerHTML = `
+      <div style="font-weight:700;">${s.nombre_completo}</div>
+      <div style="text-align:center;">${eS}</div>
+      <div style="text-align:center;">${sS}</div>
+      <div style="color:${col};font-weight:800;text-align:right;">${emo} ${tS}</div>
+      <div style="text-align:center;">${btn}</div>
+    `;
+    m.appendChild(r);
+  });
+}
 
   function renderClose(stds, asis){
     const c = document.getElementById('cList');
@@ -284,10 +325,10 @@
       if(!s) return;
       
       // Intentamos leer el horario asignado desde el backend
-      const tIn = s.hora_entrada_esperada || curEv.hora_inicio;
-      const tOut = s.hora_salida_esperada || curEv.hora_fin;
-      const rIn = new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      const rOut = a.timestamp_salida ? new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--';
+      const tIn = fmt12h(s.hora_entrada_esperada || curEv.hora_inicio);
+      const tOut = fmt12h(s.hora_salida_esperada || curEv.hora_fin);
+      const rIn = fmt12h(new Date(a.timestamp_servidor));
+      const rOut = a.timestamp_salida ? fmt12h(new Date(a.timestamp_salida)) : '--:--';
       
       const valorAcreditar = horasSeleccionadas[s.id] || curEv.horas_acredita;
 
