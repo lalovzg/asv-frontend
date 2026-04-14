@@ -323,7 +323,7 @@
     });
 
     // 2. LIMPIAR Y PONER EL TÍTULO (El '=' en lugar de '+=' limpia todo lo anterior)
-    c.innerHTML = `<div style="padding:10px 15px; background:var(--asv-light); color:var(--asv-navy); font-size:10px; font-weight:800; text-align:center; border-radius:10px; margin-bottom:15px;">GESTIÓN DE ACREDITACIONES</div>`;
+    c.innerHTML = '';
     
     asis.forEach(a => {
       const s = stds.find(x => x.id === a.estudiante_id);
