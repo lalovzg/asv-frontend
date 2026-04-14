@@ -21,20 +21,21 @@
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; transition: 0.3s; overflow-x: hidden; }
 
   /* ─── HEADER APK STYLE ─── */
-  header { background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 15px 20px 25px; position: relative; overflow: hidden; text-align: center; color: white; }
+  header { background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 15px 20px 25px; position: relative; overflow: hidden; text-align: center; }
   .logo-container { width: 100%; display: flex; justify-content: center; margin-bottom: 12px; }
   .main-logo { width: 80px; height: 80px; border-radius: 50%; background: white; padding: 1px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
   .org-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 800; color: white; letter-spacing: 0.05em; margin-bottom: 4px; }
   .org-sub { font-size: 10px; color: rgba(255,255,255,0.9); font-weight: 500; font-style: italic; max-width: 300px; margin: 0 auto 15px; }
 
-  .header-actions { position: absolute; top: 15px; right: 15px; }
+  .header-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 8px; }
   .icon-btn { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 
   .event-pill { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; max-width: 400px; margin: 0 auto; }
-  .event-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; margin-right: 10px; }
+  .event-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 10px #4ade80; margin-right: 10px; animation: pulse 2s infinite; }
   .event-name { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; color: white; text-align: left; }
+  .event-date-top { font-size: 9px; color: rgba(255,255,255,0.7); font-weight: 700; text-align: left; }
 
-  main { padding: 20px 16px 120px; max-width: 500px; margin: 0 auto; }
+  main { padding: 20px 16px 100px; max-width: 480px; margin: 0 auto; }
   .view { display: none; } .view.active { display: block; }
   .section-title { font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 800; color: var(--asv-blue); letter-spacing: 0.1em; text-transform: uppercase; margin: 20px 0 10px; }
 
@@ -42,33 +43,38 @@
   .stat-card { background: var(--card); border-radius: 16px; padding: 14px 8px; text-align: center; border: 1px solid rgba(0,114,188,0.08); box-shadow: var(--shadow); }
   .stat-num { font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; color: var(--asv-blue); }
 
-  .qr-card { background: var(--card); border-radius: 24px; padding: 25px 20px; box-shadow: var(--shadow); margin-top: 15px; text-align: center; }
+  .qr-card { background: var(--card); border-radius: 24px; padding: 25px 20px; box-shadow: var(--shadow); margin-top: 15px; text-align: center; border: 1px solid rgba(0,114,188,0.05); }
   .qr-frame { width: 190px; height: 190px; margin: 0 auto 15px; border-radius: 16px; background: white; display: flex; align-items: center; justify-content: center; border: 3px solid var(--asv-light); overflow: hidden; }
   
+  .token-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--asv-light); border-radius: 10px; padding: 8px 16px; font-family: 'Sora', monospace; font-size: 13px; font-weight: 800; color: var(--asv-navy); margin-bottom: 15px; }
+
   .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
   .btn-pro { border-radius: 14px; padding: 15px; font-family: 'Sora'; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; background: transparent; }
   .btn-in { border: 2px solid var(--asv-blue); color: var(--asv-blue); }
   .btn-in:hover { background: var(--asv-blue); color: white; }
   .btn-out { border: 2px solid #fbbf24; color: #d97706; }
   .btn-out:hover { background: #fbbf24; color: white; }
+  .btn-pause { width: 100%; background: #fef2f2; color: var(--error); border: 1px solid #fecaca; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 10px; cursor: pointer; }
 
   .log-container { background: var(--card); border-radius: 18px; border: 1px solid rgba(0,114,188,0.08); overflow: hidden; box-shadow: var(--shadow); }
   .log-item { display: flex; align-items: center; gap: 12px; padding: 12px 15px; border-bottom: 1px solid var(--bg); }
-  .name { font-size: 13px; font-weight: 700; flex: 1; }
+  .avatar { width: 36px; height: 36px; border-radius: 10px; background: var(--asv-blue); color: white; display: flex; align-items: center; justify-content: center; font-family: 'Sora'; font-weight: 700; font-size: 12px; }
+  .name { font-size: 13px; font-weight: 700; flex: 1; color: var(--text); }
 
-  /* ESTILOS DE CIERRE */
+  /* CIERRE STYLE */
   .close-card { background: var(--card); padding: 15px; border-bottom: 1px solid var(--bg); display: flex; flex-direction: column; gap: 10px; }
-  .close-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .hrs-select { padding: 8px; border-radius: 10px; border: 2px solid var(--asv-light); font-family: 'Sora'; font-weight: 800; color: var(--asv-navy); outline: none; }
-  .btn-finalize { background: var(--success); color: white; width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Sora'; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 20px; box-shadow: 0 8px 20px rgba(22,163,74,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn-finalize { background: var(--success); color: white; width: 100%; padding: 18px; border: none; border-radius: 16px; font-family: 'Sora'; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 20px; box-shadow: 0 8px 20px rgba(22,163,74,0.3); }
 
   nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid rgba(0,114,188,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
-  .nav-item { flex: 1; padding: 18px 10px; text-align: center; border: none; background: transparent; color: var(--gray); font-size: 9px; font-weight: 800; cursor: pointer; position: relative; }
+  .nav-item { flex: 1; padding: 18px 10px; text-align: center; border: none; background: transparent; color: var(--gray); font-size: 10px; font-weight: 800; cursor: pointer; position: relative; }
   .nav-item.active { color: var(--asv-blue); }
-  .nav-item.active::after { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 30px; height: 4px; background: var(--asv-blue); border-radius: 0 0 4px 4px; }
+  .nav-item.active::after { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 35px; height: 4px; background: var(--asv-blue); border-radius: 0 0 4px 4px; }
 
   .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 200; display: none; align-items: flex-end; }
   .modal-sheet { background: var(--card); border-radius: 25px 25px 0 0; padding: 20px; width: 100%; max-height: 80vh; overflow-y: auto; }
+  .event-opt { padding: 14px; border: 1.5px solid var(--asv-light); border-radius: 15px; margin-bottom: 10px; cursor: pointer; }
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--asv-navy); color: white; padding: 12px 24px; border-radius: 14px; font-size: 12px; font-weight: 700; opacity: 0; transition: 0.3s; z-index: 999; }
 </style>
 </head>
 <body data-theme="light">
@@ -78,38 +84,46 @@
   <div class="logo-container"><img src="images/logo/ASV_AC_Black.png" alt="Logo ASV" class="main-logo"></div>
   <div class="org-name">ÁNGELES SIN VOZ MONTERREY A.C.</div>
   <div class="org-sub">Alzando la voz y luchando... contra el maltrato animal.</div>
-  <div class="event-pill" onclick="openModal()"><div style="display:flex; align-items:center;"><div class="event-dot"></div><div><div class="event-name" id="hEvName">Selecciona un evento</div></div></div></div>
+
+  <div class="event-pill" onclick="openModal()">
+    <div style="display:flex; align-items:center;"><div class="event-dot"></div><div><div class="event-date-top" id="hEvDate">SELECCIONA EVENTO</div><div class="event-name" id="hEvName">Presiona para cargar</div></div></div>
+    <div class="meta" style="color:white; font-size:11px;" id="hEvTime">--:--</div>
+  </div>
 </header>
 
 <main>
   <div class="view active" id="v-live">
     <div class="section-title">Resumen de Brigada</div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num" id="sTotal">0</div><div style="font-size:9px;color:var(--gray);font-weight:700;">Inscritos</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--success)" id="sIn">0</div><div style="font-size:9px;color:var(--gray);font-weight:700;">Presentes</div></div>
-      <div class="stat-card"><div class="stat-num" style="color:var(--error)" id="sPending">0</div><div style="font-size:9px;color:var(--gray);font-weight:700;">Faltan</div></div>
+      <div class="stat-card"><div class="stat-num" id="sTotal">0</div><div class="meta" style="font-size:10px;">Inscritos</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--success)" id="sIn">0</div><div class="meta" style="font-size:10px;">Presentes</div></div>
+      <div class="stat-card"><div class="stat-num" style="color:var(--error)" id="sPending">0</div><div class="meta" style="font-size:10px;">Faltan</div></div>
     </div>
+
     <div class="qr-card">
       <div class="qr-frame" id="qrcode"></div>
-      <div style="font-family:'Sora';font-weight:800;color:var(--asv-navy);margin-bottom:15px;" id="tokenDisp">----</div>
+      <div class="token-badge">🔑 <span id="tokenDisp">----</span></div>
       <div class="btn-group">
         <button class="btn-pro btn-in" id="bIn" onclick="genQR('in')" style="opacity:0.4">📥 ENTRADA</button>
         <button class="btn-pro btn-out" id="bOut" onclick="genQR('out')" style="opacity:0.4">📤 SALIDA</button>
       </div>
+      <button class="btn-pause" id="bPause" onclick="togglePause()" style="opacity:0.4">⏸ PAUSAR CHECK-IN</button>
+      <div id="pBanner" style="display:none;margin-top:15px;background:#fee2e2;color:var(--error);padding:10px;border-radius:12px;font-size:10px;font-weight:800;">⚠️ REGISTRO PAUSADO</div>
     </div>
+
+    <div class="section-title">Últimos Registros</div>
+    <div class="log-container" id="fList"></div>
   </div>
 
   <div class="view" id="v-monitor">
-    <div class="section-title">Monitor de Tiempo Real</div>
+    <div class="section-title">Monitor Integral de Sesiones</div>
     <div class="log-container" id="mList"></div>
   </div>
 
   <div class="view" id="v-close">
     <div class="section-title">Acreditación de Horas</div>
     <div class="log-container" id="cList"></div>
-    <button class="btn-finalize" onclick="finalizeEvent()">
-      <span>✅ FINALIZAR BRIGADA Y EXPORTAR</span>
-    </button>
+    <button class="btn-finalize" onclick="finalizeEvent()">✅ FINALIZAR Y EXPORTAR</button>
   </div>
 </main>
 
@@ -119,56 +133,111 @@
   <button class="nav-item" onclick="switchTab('close', this)">📝 CIERRE</button>
 </nav>
 
-<div class="modal-overlay" id="eModal" onclick="closeModal(event)"><div class="modal-sheet"><div id="mEvs"></div></div></div>
+<div class="modal-overlay" id="eModal" onclick="closeModal(event)"><div class="modal-sheet"><div style="width:40px;height:5px;background:var(--asv-light);margin:0 auto 20px;border-radius:10px;"></div><div id="mEvs"></div></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
   const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
   const WEBHOOK = 'https://script.google.com/macros/s/AKfycbx05cq-k_LuXCAEt3EnmPtguSQHl1KtbpC-kmeef4wv0gc8tVyK3Cx1Ja-RW5uCKAqR0Q/exec';
-  let curId=null, curEv=null, total=0, poll=null, isBusy=false;
+  let curId=null, curEv=null, paused=false, poll=null, isBusy=false;
 
-  async function init(){ try{ const r=await fetch(API+'/eventos'), d=await r.json(); renderM(d.eventos||[]); }catch(e){} }
+  function fmtD(iso){
+    if(!iso) return ""; const [y,m,d] = iso.split('-'); const dt = new Date(y,m-1,d);
+    const w = ["DOM","LUN","MAR","MIE","JUE","VIE","SAB"], ms = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+    return `${w[dt.getDay()]} ${d} de ${ms[m-1]} de ${y}`;
+  }
+
+  async function init(){ try{ const r=await fetch(API+'/eventos'), d=await r.json(); renderM(d.eventos||[]); }catch(e){ showT('Error de red','error'); } }
   
   function renderM(evs){ 
     const div=document.getElementById('mEvs'); div.innerHTML='<h3 style="font-family:Sora;margin-bottom:15px;font-size:16px;">Seleccionar Evento</h3>';
     evs.forEach(e=>{
-      const d=document.createElement('div'); d.style.cssText='padding:14px; border:1.5px solid var(--asv-light); border-radius:15px; margin-bottom:10px; cursor:pointer;';
-      d.innerHTML=`<div style="font-weight:700;font-size:14px;">${e.nombre}</div><div style="font-size:10px;color:var(--gray);">${e.fecha} · ${e.horas_acredita}h</div>`;
+      const d=document.createElement('div'); d.className='event-opt';
+      d.innerHTML=`<div style="font-weight:700;font-size:14px;">${e.nombre}</div><div class="meta" style="margin-top:4px;">${fmtD(e.fecha)} · ${e.horas_acredita}h</div>`;
       d.onclick=()=>select(e); div.appendChild(d);
     });
   }
 
   function select(e){
-    curId=e.id; curEv=e; document.getElementById('hEvName').textContent=e.nombre;
+    curId=e.id; curEv=e; paused=e.pausado; 
+    document.getElementById('hEvName').textContent=e.nombre; document.getElementById('hEvDate').textContent=fmtD(e.fecha);
+    document.getElementById('hEvTime').textContent=e.hora_inicio.slice(0,5)+' - '+e.hora_fin.slice(0,5);
     document.getElementById('eModal').style.display='none';
-    ['bIn','bOut'].forEach(id=>document.getElementById(id).style.opacity='1');
-    refresh(); if(poll) clearInterval(poll); poll=setInterval(refresh, 10000);
+    ['bIn','bOut','bPause'].forEach(id=>document.getElementById(id).style.opacity='1');
+    refresh(); if(poll) clearInterval(poll); poll=setInterval(refresh, 10000); 
+    updateUI(); if(!paused) setTimeout(()=>genQR('in'),300);
   }
   
+  async function genQR(m){
+    if(!curId){ showT('Selecciona evento','error'); openModal(); return; }
+    if(paused || isBusy) return; isBusy=true;
+    const tD=document.getElementById('tokenDisp'), qD=document.getElementById('qrcode');
+    tD.textContent="GENERANDO..."; qD.style.opacity='0.5';
+    try {
+      const r=await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
+      const d=await r.json(); if(!r.ok) throw new Error();
+      tD.textContent=d.token + (m==='out'?' (OUT)':' (IN)'); qD.innerHTML='';
+      setTimeout(()=>{ new QRCode(qD,{text:FRONT+'?t='+d.token+(m==='out'?'&mode=out':''),width:180,height:180,colorDark:m==='out'?'#d97706':'#0072bc',correctLevel:QRCode.CorrectLevel.M}); qD.style.opacity='1'; isBusy=false; },100);
+    } catch(e){ tD.textContent="ERROR"; isBusy=false; }
+  }
+
+  async function togglePause(){
+    if(!curId || isBusy) return; isBusy=true; const next=!paused;
+    try { await fetch(API+'/token/pause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId,pausado:next})});
+      paused=next; updateUI(); showT(paused?'Pausado':'Reanudado','success');
+      if(!paused) setTimeout(()=>{ isBusy=false; genQR('in'); },400); else isBusy=false;
+    } catch(e){ isBusy=false; }
+  }
+
+  function updateUI(){
+    const pB=document.getElementById('pBanner'), qD=document.getElementById('qrcode'), bP=document.getElementById('bPause');
+    pB.style.display=paused?'block':'none'; qD.style.opacity=paused?'0.2':'1';
+    bP.textContent=paused?'▶ REANUDAR CHECK-IN':'⏸ PAUSAR CHECK-IN';
+    bP.style.background=paused?'#dcfce7':'#fef2f2'; bP.style.color=paused?'#166534':'var(--error)';
+    if(paused){ document.getElementById('tokenDisp').textContent="OFFLINE"; qD.innerHTML='<div style="font-weight:800;color:var(--gray);margin-top:70px;">PAUSADO</div>'; }
+  }
+
   async function refresh(){
     if(!curId || isBusy) return;
     try {
       const [rA, rS] = await Promise.all([fetch(API+'/asistencias/'+curId), fetch(API+'/event-students/'+curId)]);
-      const dA=await rA.json(), dS=await rS.json(); 
-      const asis=dA.asistencias||[], stds=dS.estudiantes||[];
-      renderMon(stds, asis);
-      renderClose(stds, asis);
+      const dA=await rA.json(), dS=await rS.json(); const asis=dA.asistencias||[], stds=dS.estudiantes||[];
+      renderF(asis); renderMon(stds, asis); renderClose(stds, asis);
       document.getElementById('sIn').textContent=asis.filter(a=>!a.timestamp_salida).length;
       document.getElementById('sPending').textContent=Math.max(0, stds.length-asis.length);
       document.getElementById('sTotal').textContent=stds.length;
     } catch(e){}
   }
 
+  function renderF(asis){
+    const f=document.getElementById('fList'); f.innerHTML='';
+    if(!asis.length){ f.innerHTML='<div style="padding:30px;text-align:center;color:var(--gray);font-size:11px;">Esperando registros...</div>'; return; }
+    asis.slice().reverse().slice(0,6).forEach(a=>{
+      const ini=a.estudiantes.nombre_completo.split(' ').map(w=>w[0]).join('').slice(0,2);
+      const row=document.createElement('div'); row.className='log-item';
+      row.innerHTML=`<div class="avatar">${ini}</div><div class="name">${a.estudiantes.nombre_completo}</div><div class="meta">${new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} ✅</div>`;
+      f.appendChild(row);
+    });
+  }
+
   function renderMon(stds, asis){
-    const m=document.getElementById('mList'); m.innerHTML='';
+    const m=document.getElementById('mList'); m.innerHTML='<div style="display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;background:var(--surface);font-weight:800;font-size:8px;color:var(--asv-blue);text-transform:uppercase;"><div>ALUMNO</div><div>IN</div><div>OUT</div><div>TIEMPO</div><div>ACC</div></div>';
     stds.forEach(s=>{
-      const a=asis.find(x=>x.estudiante_id===s.id), now=new Date();
-      let tS="0.00h", col="var(--gray)", emo="⏳";
+      const a=asis.find(x=>x.estudiante_id===s.id), now=new Date(), meta=curEv.horas_acredita;
+      let eS="--:--", sS="--:--", tS="0.00h", col="var(--gray)", emo="⏳", btn=`<span style="opacity:0.3">⏳</span>`;
       if(a){
-        if(a.timestamp_salida){ tS=(a.horas_reales||0).toFixed(2)+"h"; col="var(--success)"; emo="✅"; } 
-        else { tS=(((now-new Date(a.timestamp_servidor))/(1000*60*60)).toFixed(2))+"h"; col="var(--asv-blue)"; emo="🐕"; }
+        const sT=new Date(a.timestamp_servidor); eS=sT.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        if(a.timestamp_salida){
+          sS=new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); const hrs=a.horas_reales||0;
+          tS=hrs.toFixed(2)+"h"; col=hrs>=meta?"var(--success)":"var(--error)"; emo="✅"; btn=`<span>✨</span>`;
+        } else {
+          const hrsV=parseFloat(((now-sT)/(1000*60*60)).toFixed(2)); tS=hrsV.toFixed(2) + "h";
+          col=hrsV>=meta?"#f59e0b":"var(--asv-blue)"; emo="🐕🐈‍"; btn=`<button onclick="fOut('${a.id}','${s.nombre_completo}')" style="border:none;background:none;font-size:16px;cursor:pointer;">🚪</button>`;
+        }
       }
-      const r=document.createElement('div'); r.className='log-item';
-      r.innerHTML=`<div class="name">${s.nombre_completo}</div><div style="color:${col};font-weight:800;font-size:12px;">${emo} ${tS}</div>`;
+      const r=document.createElement('div'); r.className='log-item'; r.style.cssText='display:grid;grid-template-columns:1.2fr 0.6fr 0.6fr 0.8fr 0.4fr;padding:12px 15px;font-size:11px;align-items:center;';
+      if(!a) r.style.opacity="0.5";
+      r.innerHTML=`<div style="font-weight:700;">${s.nombre_completo}</div><div style="text-align:center;">${eS}</div><div style="text-align:center;">${sS}</div><div style="color:${col};font-weight:800;text-align:right;">${emo} ${tS}</div><div style="text-align:center;">${btn}</div>`;
       m.appendChild(r);
     });
   }
@@ -182,43 +251,31 @@
       const tOut = s.hora_salida_esperada || curEv.hora_fin;
       const rIn = new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       const rOut = a.timestamp_salida ? new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--';
-      
       const div = document.createElement('div'); div.className = 'close-card';
-      div.innerHTML = `<div class="close-header"><div style="flex:1"><div style="font-weight:700;font-size:13px;">${s.nombre_completo}</div><div style="font-size:10px;color:var(--gray);margin-top:4px;"><b>Turno:</b> ${tIn.slice(0,5)}-${tOut.slice(0,5)} | <b>Real:</b> <span style="color:var(--asv-blue)">${rIn}-${rOut}</span></div></div><div><div style="font-size:8px;font-weight:800;color:var(--gray);margin-bottom:3px;text-align:center;">ACREDITAR</div><select class="hrs-select" data-id="${s.id}">${[...Array(11).keys()].slice(1).map(n=>`<option value="${n}" ${n==curEv.horas_acredita?'selected':''}>${n}h</option>`).join('')}</select></div></div>`;
+      div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div style="flex:1"><div style="font-weight:700; font-size:13px;">${s.nombre_completo}</div><div style="font-size:10px; color:var(--gray); margin-top:4px;"><b>Turno:</b> ${tIn.slice(0,5)}-${tOut.slice(0,5)} | <b>Real:</b> <span style="color:var(--asv-blue)">${rIn}-${rOut}</span></div></div><div><div style="font-size:8px; font-weight:800; color:var(--gray); margin-bottom:3px; text-align:center;">ACREDITAR</div><select class="hrs-select" data-id="${s.id}">${[...Array(11).keys()].slice(1).map(n=>`<option value="${n}" ${n==curEv.horas_acredita?'selected':''}>${n}h</option>`).join('')}</select></div></div>`;
       c.appendChild(div);
     });
   }
 
   async function finalizeEvent(){
-    if(!confirm('¿Enviar registros de esta brigada a Google Sheets?')) return;
-    isBusy = true; alert('Iniciando exportación... Espere la confirmación.');
+    if(!confirm('¿Enviar registros a Google Sheets?')) return;
+    showT('Sincronizando...', 'success');
     const selects = document.querySelectorAll('.hrs-select');
     for(const sel of selects){
       const sId = parseInt(sel.dataset.id);
-      const alumno = curEv.estudiantes.find(e=>e.id===sId);
-      const payload = {
-        estudiante: { nombre: alumno.nombre_completo, matricula: alumno.matricula, carrera: alumno.carrera, fecha_inicio_ss: alumno.fecha_inicio_ss },
-        evento: { fecha: curEv.fecha, nombre: curEv.nombre },
-        horas_acreditadas: parseFloat(sel.value)
-      };
+      const s = curEv.estudiantes.find(e=>e.id===sId);
+      const payload = { estudiante: { nombre: s.nombre_completo, matricula: s.matricula, carrera: s.carrera, fecha_inicio_ss: s.fecha_inicio_ss }, evento: { fecha: curEv.fecha, nombre: curEv.nombre }, horas_acreditadas: parseFloat(sel.value) };
       try { await fetch(WEBHOOK, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) }); } catch(e){}
     }
-    isBusy = false; alert('¡Proceso completado exitosamente!');
+    alert('¡Finalizado!');
   }
 
-  async function genQR(m){
-    const tD=document.getElementById('tokenDisp'), qD=document.getElementById('qrcode');
-    try {
-      const r=await fetch(API+'/token/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({evento_id:curId})});
-      const d=await r.json(); tD.textContent=d.token + (m==='out'?' (OUT)':' (IN)'); qD.innerHTML='';
-      new QRCode(qD,{text:FRONT+'?t='+d.token+(m==='out'?'&mode=out':''),width:180,height:180,colorDark:m==='out'?'#d97706':'#0072bc',correctLevel:QRCode.CorrectLevel.M});
-    } catch(e){}
-  }
-
+  async function fOut(id,n){ if(!confirm('¿Cerrar sesión de '+n+'?'))return; await fetch(API+'/checkout-manual',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({asistencia_id:id})}); refresh(); }
   function switchTab(t,el){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById('v-'+t).classList.add('active'); document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active')); el.classList.add('active'); }
   function openModal(){ document.getElementById('eModal').style.display='flex'; init(); }
   function closeModal(e){ if(e.target.id==='eModal') e.target.style.display='none'; }
-  function toggleTheme(){ const b=document.body, isD=b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme',isD?'light':'dark'); }
+  function toggleTheme(){ const b=document.body, btn=document.getElementById('themeBtn'), isD=b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme',isD?'light':'dark'); btn.textContent=isD?'🌙':'☀️'; }
+  function showT(m,t){ const el=document.getElementById('toast'); el.textContent=m; el.style.opacity='1'; setTimeout(()=>el.style.opacity='0',2800); }
   init();
 </script>
 </body>
