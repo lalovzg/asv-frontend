@@ -1,84 +1,397 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Registro · ASV MTY A.C.</title>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --asv-blue: #0072bc; --asv-navy: #004a7c; --success: #16a34a; --error: #dc2626;
-      --bg: #f1f5f9; --white: #ffffff;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-    header { width: 100%; background: linear-gradient(135deg, var(--asv-navy), var(--asv-blue)); padding: 25px 20px; text-align: center; color: white; }
-    .card-event { background: var(--white); width: calc(100% - 30px); max-width: 450px; border-radius: 18px; padding: 20px; margin-top: -20px; box-shadow: 0 10px 25px rgba(0,114,188,0.1); display: flex; align-items: center; gap: 15px; }
-    .form-container { width: 100%; max-width: 450px; padding: 30px 20px; }
-    .input-label { font-family: 'Sora'; font-size: 10px; font-weight: 800; color: var(--asv-blue); text-transform: uppercase; margin-bottom: 8px; display: block; }
-    .input-box { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 16px; transition: 0.3s; }
-    .input-box:focus { border-color: var(--asv-blue); }
-    .input-box.error { border-color: var(--error); background: #fef2f2; }
-    .btn-confirm { width: 100%; padding: 18px; border-radius: 14px; border: 2px solid var(--asv-blue); color: var(--asv-blue); background: transparent; font-family: 'Sora'; font-weight: 700; margin-top: 20px; cursor: pointer; transition: 0.3s; }
-    .btn-confirm:active:not(:disabled) { background: var(--asv-blue); color: white; }
-    .btn-confirm:disabled { opacity: 0.3; cursor: not-allowed; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#004a7c">
+<title>Registro · ASV MTY A.C.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --asv-blue:  #0072bc; 
+    --asv-light: #e6f1f8;
+    --asv-navy:  #004a7c; 
+    --bg:        #f1f5f9; 
+    --card:      #ffffff; 
+    --error:     #dc2626; 
+    --gray:      #64748b; 
+    --shadow:    0 10px 25px -5px rgba(0, 114, 188, 0.1);
+    --success:   #16a34a; 
+    --surface:   #f8fafc;
+    --text:      #0f172a;
+    --white:     #ffffff; 
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+  }
+
+  body { 
+    align-items: center; 
+    background: var(--bg); 
+    color: var(--text); 
+    display: flex; 
+    flex-direction: column; 
+    font-family: 'DM Sans', sans-serif; 
+    justify-content: flex-start; 
+    min-height: 100dvh; 
+    padding-bottom: 20px; 
+  }
+
+  header { 
+    background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); 
+    color: var(--white); 
+    overflow: hidden; 
+    padding: 20px 20px 30px; 
+    position: relative; 
+    text-align: center; 
+    width: 100%; 
+  }
+  
+  .logo-container { display: flex; justify-content: center; margin-bottom: 10px; width: 100%; }
+  .main-logo { background: var(--white); border-radius: 50%; box-shadow: 0 4px 12px rgba(0,0,0,0.15); height: 75px; padding: 2px; width: 75px; }
+  
+  .org-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .org-sub { color: rgba(255,255,255,0.9); font-size: 9px; font-style: italic; font-weight: 500; line-height: 1.2; margin: 0 auto; max-width: 260px; }
+
+  .event-card { align-items: center; background: var(--card); border: 1px solid rgba(0,114,188,0.08); border-radius: 16px; box-shadow: var(--shadow); display: flex; gap: 12px; margin: -20px 15px 0; max-width: 450px; padding: 15px 18px; width: calc(100% - 30px); z-index: 2; }
+  .icon-box { align-items: center; background: var(--asv-light); border-radius: 10px; display: flex; font-size: 20px; height: 40px; justify-content: center; width: 40px; }
+  .event-info { flex: 1; min-width: 0; }
+  .event-label { color: var(--asv-navy); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .event-date { color: var(--gray); font-size: 10px; font-weight: 600; }
+  .event-hours-wrapper { text-align: right; }
+  .event-hours-value { color: var(--asv-blue); font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 800; }
+  .event-hours-label { color: var(--gray); font-size: 8px; font-weight: 800; }
+
+  .form-wrap { max-width: 450px; padding: 25px 20px 0; width: 100%; }
+  .field-group { margin-bottom: 15px; }
+  .label { color: var(--asv-blue); display: block; font-family: 'Sora', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 6px; text-transform: uppercase; }
+  
+  .input-field { background: var(--white); border: 2px solid #e2e8f0; border-radius: 14px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 500; outline: none; padding: 14px; transition: 0.3s; width: 100%; }
+  .input-field:focus { border-color: var(--asv-blue); }
+  .input-field.valid { border-color: var(--success); }
+  .input-field.error { border-color: var(--error); }
+
+  .dropdown-wrapper { position: relative; }
+  .dropdown-field { align-items: center; background: var(--white); border: 2px solid #e2e8f0; border-radius: 14px; color: var(--asv-navy); cursor: pointer; display: flex; font-weight: 600; justify-content: space-between; padding: 14px; width: 100%; }
+  .dropdown-field.disabled { background: var(--surface); opacity: 0.4; pointer-events: none; }
+  .dropdown-list { background: var(--white); border: 2px solid var(--asv-blue); border-radius: 14px; box-shadow: 0 10px 30px rgba(0,114,188,0.15); display: none; margin-top: 5px; max-height: 200px; overflow-y: auto; position: absolute; width: 100%; z-index: 50; }
+  .dropdown-opt { border-bottom: 1px solid var(--bg); cursor: pointer; display: flex; font-size: 14px; justify-content: space-between; padding: 12px 16px; }
+  .dropdown-opt-matricula { color: var(--gray); font-size: 10px; }
+
+  .feedback-msg { color: var(--error); display: none; font-size: 10px; font-weight: 700; margin-top: 5px; }
+
+  .btn-submit { align-items: center; background: transparent; border-radius: 12px; cursor: pointer; display: flex; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; gap: 8px; justify-content: center; letter-spacing: 0.05em; margin-top: 5px; padding: 16px; text-transform: uppercase; transition: 0.3s; width: 100%; }
+  .btn-in { border: 2px solid var(--asv-blue); color: var(--asv-blue); }
+  .btn-in:hover:not(:disabled), .btn-in:active:not(:disabled) { background: var(--asv-blue); color: var(--white); }
+  .btn-out { border: 2px solid #fbbf24; color: #d97706; }
+  .btn-out:hover:not(:disabled), .btn-out:active:not(:disabled) { background: #fbbf24; color: var(--white); }
+  .btn-submit:disabled { border-color: var(--gray); color: var(--gray); opacity: 0.3; }
+
+  .screen { align-items: center; display: none; flex-direction: column; max-width: 450px; padding: 30px 20px; text-align: center; width: 100%; }
+  .status-circle { align-items: center; border-radius: 50%; box-shadow: 0 8px 20px rgba(0,0,0,0.05); display: flex; font-size: 34px; height: 75px; justify-content: center; margin-bottom: 20px; width: 75px; }
+  .status-circle.success { background: #f0fdf4; color: var(--success); }
+  .status-circle.error { background: #fef2f2; color: var(--error); }
+  
+  .screen-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; }
+  .screen-title.success { color: var(--asv-navy); }
+  .screen-subtitle { color: var(--gray); font-size: 14px; line-height: 1.4; margin: 10px 0 20px; }
+  .screen-icon { font-size: 50px; margin-bottom: 20px; }
+
+  .receipt-card { background: var(--white); border: 1px solid rgba(0,114,188,0.08); border-radius: 16px; box-shadow: var(--shadow); margin: 20px 0; padding: 18px; text-align: left; width: 100%; }
+  .receipt-row { border-bottom: 1px solid var(--bg); display: flex; font-size: 12px; justify-content: space-between; padding: 10px 0; }
+  .receipt-val { color: var(--asv-navy); font-weight: 700; }
+  .receipt-val.highlight { color: var(--asv-blue); }
+
+  .btn-action { background: var(--asv-navy); border: none; border-radius: 12px; color: var(--white); cursor: pointer; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; margin-top: 15px; padding: 16px; width: 100%; }
+  .btn-action.retry { background: var(--asv-blue); }
+</style>
 </head>
 <body>
-  <header>
-    <div style="font-family:'Sora'; font-size:12px; font-weight:800;">ÁNGELES SIN VOZ MONTERREY A.C.</div>
-  </header>
-  
-  <div class="card-event">
-    <div id="ev-icon" style="font-size:24px;">🐾</div>
-    <div style="flex:1">
-      <div id="ev-name" style="font-weight:800; color:var(--asv-navy);">Cargando evento...</div>
-      <div id="ev-date" style="font-size:11px; color:#64748b;">---</div>
+
+<header>
+  <div class="logo-container">
+    <img src="images/logo/ASV_AC_Black.png" alt="Logo ASV" class="main-logo">
+  </div>
+  <div class="org-name">ÁNGELES SIN VOZ MONTERREY A.C.</div>
+  <div class="org-sub">Alzando la voz y luchando... contra el maltrato animal.</div>
+</header>
+
+<div class="event-card">
+  <div class="icon-box" id="evIcon">🐶</div>
+  <div class="event-info">
+    <div class="event-label" id="evName">Verificando...</div>
+    <div class="event-date" id="evMeta">--- --- ----</div>
+  </div>
+  <div class="event-hours-wrapper">
+    <div class="event-hours-value" id="evHrs">0</div>
+    <div class="event-hours-label">HORAS</div>
+  </div>
+</div>
+
+<div class="form-wrap" id="formSection">
+  <div class="field-group">
+    <label class="label">Matrícula</label>
+    <input type="text" class="input-field" id="matricula" placeholder="Ej. SS001" autocomplete="off">
+    <div class="feedback-msg" id="matError">Matrícula no registrada para este evento</div>
+  </div>
+
+  <div class="field-group">
+    <label class="label">Confirma tu nombre completo</label>
+    <div class="dropdown-wrapper">
+      <div class="dropdown-field disabled" id="nameDrop">
+        <span id="dropText">Ingresa matrícula primero</span>
+        <span>▼</span>
+      </div>
+      <div class="dropdown-list" id="dropList"></div>
     </div>
+    <div class="feedback-msg" id="nameError">Los datos no coinciden, favor de revisarlos</div>
   </div>
 
-  <div class="form-container" id="form-ui">
-    <label class="input-label">Matrícula</label>
-    <input type="text" class="input-box" id="inp-mat" placeholder="Ej. SS001" oninput="validateMatricula()">
-    <p id="err-msg" style="color:var(--error); font-size:10px; margin-top:6px; display:none;">Matrícula no registrada para este evento.</p>
-    
-    <label class="input-label" style="margin-top:20px;">Nombre Completo</label>
-    <div id="display-name" style="padding:16px; background:#e2e8f0; border-radius:14px; font-weight:600; color:var(--asv-navy);">Ingresa tu matrícula primero</div>
-    
-    <button class="btn-confirm" id="btn-submit" disabled onclick="processRegistration()">Confirmar Asistencia</button>
+  <button class="btn-submit" id="btnConfirm" disabled>
+    Confirmar Registro →
+  </button>
+</div>
+
+<div class="screen" id="successScreen">
+  <div class="status-circle success">✓</div>
+  <h2 class="screen-title success">¡Registro Exitoso!</h2>
+  <div class="receipt-card">
+    <div class="receipt-row"><span>Nombre</span><span class="receipt-val" id="rNom">--</span></div>
+    <div class="receipt-row"><span>Matrícula</span><span class="receipt-val" id="rMat">--</span></div>
+    <div class="receipt-row"><span>Operación</span><span class="receipt-val" id="rOp">--</span></div>
+    <div class="receipt-row"><span>Hora Servidor</span><span class="receipt-val" id="rTime">--</span></div>
+    <div class="receipt-row"><span>Acreditación</span><span class="receipt-val highlight" id="rHrs">--</span></div>
   </div>
+  <button class="btn-action" id="btnFinishProcess">FINALIZAR PROCESO</button>
+</div>
 
-  <div id="success-ui" style="display:none; padding:40px 20px; text-align:center;">
-    <div style="font-size:60px; margin-bottom:20px;">✅</div>
-    <h2 style="font-family:'Sora'; margin-bottom:10px;">¡Registro Exitoso!</h2>
-    <p style="color:#64748b; font-size:14px;">Tu asistencia ha sido guardada. Toma captura de pantalla como comprobante.</p>
-  </div>
+<div class="screen" id="errorScreen">
+  <div class="status-circle error">✕</div>
+  <h2 class="screen-title">Atención</h2>
+  <p class="screen-subtitle" id="eSub"></p>
+  <button class="btn-action retry" id="btnRetry">CORREGIR Y REINTENTAR</button>
+</div>
 
-  <script>
-    // ─── LOGIC ───
-    const API = 'https://asv-backend.onrender.com/api';
-    let students = [], selectedStudent = null;
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('t');
+<div class="screen" id="doneScreen">
+  <div class="screen-icon" id="doneIcon">🔒</div>
+  <h2 class="screen-title">Sesión Finalizada</h2>
+  <p class="screen-subtitle" id="doneDesc"></p>
+</div>
 
-    function validateMatricula() {
-      const val = document.getElementById('inp-mat').value.trim().toUpperCase();
-      const student = students.find(s => s.matricula === val);
-      const btn = document.getElementById('btn-submit');
-      const err = document.getElementById('err-msg');
-      
-      if(student) {
-        selectedStudent = student;
-        document.getElementById('display-name').textContent = student.nombre_completo;
-        btn.disabled = false;
-        err.style.display = 'none';
-      } else {
-        selectedStudent = null;
-        document.getElementById('display-name').textContent = "Ingresa tu matrícula primero";
-        btn.disabled = true;
-        if(val.length >= 5) err.style.display = 'block';
-      }
+<script>
+  const API_URL = 'https://asv-backend.onrender.com/api';
+  let eventStudents = [];
+  let selectedStudent = null;
+  let currentEventData = null;
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventToken = urlParams.get('t');
+  const isCheckoutMode = urlParams.get('mode') === 'out';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeValidationListeners();
+    fetchEventDetails();
+  });
+
+  function initializeValidationListeners() {
+    document.getElementById('matricula').addEventListener('input', handleMatriculaInput);
+    document.getElementById('nameDrop').addEventListener('click', toggleDropdown);
+    document.getElementById('btnConfirm').addEventListener('click', processAttendance);
+    document.getElementById('btnFinishProcess').addEventListener('click', () => showFinalScreen('ok'));
+  }
+
+  async function fetchEventDetails() {
+    if (!eventToken) {
+      return displayErrorScreen('Token ausente', 'Usa un código QR válido.', false);
     }
-  </script>
+    
+    try {
+      const response = await fetch(`${API_URL}/event/${eventToken}`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        return displayErrorScreen(response.status === 410 ? 'Token ya usado' : 'Error', data.error, false);
+      }
+      
+      eventStudents = data.estudiantes;
+      currentEventData = data.evento;
+      
+      populateEventDetailsUI();
+    } catch (error) {
+      displayErrorScreen('Error de Conexión', 'Revisa tu internet.', true);
+    }
+  }
+
+  function populateEventDetailsUI() {
+    document.getElementById('evName').textContent = currentEventData.nombre;
+    document.getElementById('evHrs').textContent = currentEventData.horas_acredita;
+    
+    const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+    const [year, month, day] = currentEventData.fecha.split('-');
+    document.getElementById('evMeta').textContent = `${day} de ${months[parseInt(month) - 1]} de ${year}`;
+
+    const submitBtn = document.getElementById('btnConfirm');
+    
+    if (isCheckoutMode) {
+      document.getElementById('evIcon').textContent = '🏁';
+      submitBtn.textContent = 'Confirmar Salida →';
+      submitBtn.classList.add('btn-out');
+    } else {
+      submitBtn.classList.add('btn-in');
+    }
+  }
+
+  function handleMatriculaInput(event) {
+    const inputValue = event.target.value.trim().toUpperCase();
+    const matchedStudent = eventStudents.find(student => student.matricula === inputValue);
+    const inputElement = document.getElementById('matricula');
+    const dropdownTrigger = document.getElementById('nameDrop');
+    
+    inputElement.classList.remove('valid', 'error');
+    document.getElementById('matError').style.display = 'none';
+    document.getElementById('nameError').style.display = 'none';
+    
+    dropdownTrigger.classList.add('disabled');
+    document.getElementById('dropText').textContent = "Ingresa matrícula primero";
+    document.getElementById('btnConfirm').disabled = true;
+    
+    if (inputValue.length < 3) return;
+    
+    if (matchedStudent) {
+      inputElement.classList.add('valid');
+      dropdownTrigger.classList.remove('disabled');
+      document.getElementById('dropText').textContent = "Busca tu nombre en la lista";
+      renderStudentDropdown(matchedStudent);
+    } else if (inputValue.length >= 5) {
+      inputElement.classList.add('error');
+      document.getElementById('matError').style.display = 'block';
+    }
+  }
+
+  function renderStudentDropdown(matchedStudent) {
+    const listContainer = document.getElementById('dropList');
+    listContainer.innerHTML = '';
+    
+    const orderedStudents = [matchedStudent, ...eventStudents.filter(student => student.id !== matchedStudent.id)];
+    
+    orderedStudents.forEach(student => {
+      const optionElement = document.createElement('div');
+      optionElement.className = 'dropdown-opt';
+      optionElement.innerHTML = `<span>${student.nombre_completo}</span><span class="dropdown-opt-matricula">${student.matricula}</span>`;
+      
+      optionElement.addEventListener('click', () => {
+        selectedStudent = student;
+        document.getElementById('dropText').textContent = student.nombre_completo;
+        listContainer.style.display = 'none';
+        
+        const currentInputValue = document.getElementById('matricula').value.trim().toUpperCase();
+        const isValidMatch = (student.matricula === currentInputValue);
+        
+        document.getElementById('btnConfirm').disabled = !isValidMatch;
+        document.getElementById('nameError').style.display = isValidMatch ? 'none' : 'block';
+      });
+      
+      listContainer.appendChild(optionElement);
+    });
+  }
+
+  function toggleDropdown() {
+    const dropdownTrigger = document.getElementById('nameDrop');
+    if (!dropdownTrigger.classList.contains('disabled')) {
+      const listContainer = document.getElementById('dropList');
+      listContainer.style.display = listContainer.style.display === 'block' ? 'none' : 'block';
+    }
+  }
+
+  async function processAttendance() {
+    const submitBtn = document.getElementById('btnConfirm');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'PROCESANDO...';
+    
+    const endpoint = isCheckoutMode ? '/checkout' : '/checkin';
+    const payload = {
+      token: eventToken,
+      matricula: selectedStudent.matricula,
+      estudiante_id: selectedStudent.id
+    };
+
+    try {
+      const response = await fetch(API_URL + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const responseData = await response.json();
+      
+      if (!response.ok) {
+        const errorTitle = response.status === 409 ? 'Ya registrado' : 'Atención';
+        const shouldRetry = response.status === 409 || response.status === 404;
+        return displayErrorScreen(errorTitle, responseData.error, shouldRetry);
+      }
+      
+      displaySuccessScreen(responseData.asistencia);
+    } catch (error) {
+      displayErrorScreen('Error', 'Fallo en la comunicación con el servidor.', true);
+    }
+  }
+
+  function displaySuccessScreen(attendanceData) {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successScreen').style.display = 'flex';
+    
+    document.getElementById('rNom').textContent = attendanceData.nombre;
+    document.getElementById('rMat').textContent = attendanceData.matricula;
+    document.getElementById('rOp').textContent = isCheckoutMode ? "SALIDA BRIGADA" : "ENTRADA BRIGADA";
+    
+    const timestamp = attendanceData.timestamp ? new Date(attendanceData.timestamp) : new Date();
+    document.getElementById('rTime').textContent = timestamp.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+    
+    const accreditedHours = isCheckoutMode 
+      ? `${attendanceData.horas_reales} h` 
+      : `+${attendanceData.horas_acreditadas || currentEventData.horas_acredita} h`;
+      
+    document.getElementById('rHrs').textContent = accreditedHours;
+  }
+
+  function displayErrorScreen(title, message, allowRetry) {
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'flex';
+    document.getElementById('eSub').textContent = message;
+    
+    const retryBtn = document.getElementById('btnRetry');
+    
+    // Remove previous listeners
+    const newRetryBtn = retryBtn.cloneNode(true);
+    retryBtn.parentNode.replaceChild(newRetryBtn, retryBtn);
+    
+    if (allowRetry) {
+      newRetryBtn.textContent = "CORREGIR Y REINTENTAR";
+      newRetryBtn.addEventListener('click', () => window.location.reload());
+    } else {
+      newRetryBtn.textContent = "Entendido";
+      newRetryBtn.addEventListener('click', () => showFinalScreen('err'));
+    }
+  }
+
+  function showFinalScreen(statusType) {
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('errorScreen').style.display = 'none';
+    document.getElementById('doneScreen').style.display = 'flex';
+    
+    if (statusType === 'err') {
+      document.getElementById('doneIcon').textContent = '❌';
+      document.getElementById('doneDesc').textContent = 'Hubo un error con los datos. Escanea el código QR de nuevo.';
+    } else {
+      document.getElementById('doneDesc').textContent = 'Registro guardado con éxito. ¡Gracias por tu valioso apoyo!';
+    }
+  }
+</script>
 </body>
 </html>
