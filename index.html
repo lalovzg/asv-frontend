@@ -1,106 +1,642 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RAE Dashboard · ASV MTY A.C.</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    :root {
-      --asv-blue: #0072bc; --asv-navy: #004a7c; --asv-light: #e6f1f8;
-      --white: #ffffff; --gray: #64748b; --success: #16a34a; --error: #dc2626;
-      --bg: #f1f5f9; --card: #ffffff; --shadow: 0 10px 25px -5px rgba(0, 114, 188, 0.1);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: #0f172a; min-height: 100vh; }
-    header { background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 20px; text-align: center; color: white; position: relative; }
-    .logo-main { width: 75px; height: 75px; border-radius: 50%; background: white; padding: 2px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .org-title { font-family: 'Sora'; font-size: 13px; font-weight: 800; letter-spacing: 0.05em; }
-    .org-motto { font-size: 9px; opacity: 0.9; font-style: italic; margin-top: 4px; }
-    
-    main { padding: 20px 15px 100px; max-width: 500px; margin: 0 auto; }
-    .section-title { font-family: 'Sora'; font-size: 10px; font-weight: 800; color: var(--asv-blue); text-transform: uppercase; letter-spacing: 0.1em; margin: 20px 0 10px; }
-    
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .stat-card { background: var(--card); border-radius: 14px; padding: 12px; text-align: center; box-shadow: var(--shadow); border: 1px solid rgba(0,114,188,0.05); }
-    .stat-val { font-family: 'Sora'; font-size: 22px; font-weight: 800; color: var(--asv-blue); }
-    .stat-label { font-size: 9px; color: var(--gray); font-weight: 700; margin-top: 4px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RAE · ASV MTY A.C.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
-    .qr-container { background: var(--card); border-radius: 20px; padding: 25px; margin-top: 15px; text-align: center; box-shadow: var(--shadow); }
-    #qrcode { width: 180px; height: 180px; margin: 0 auto 15px; border: 3px solid var(--asv-light); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    
-    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .btn-asv { border: 2px solid var(--asv-blue); color: var(--asv-blue); background: transparent; padding: 14px; border-radius: 12px; font-family: 'Sora'; font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-    .btn-asv:active { background: var(--asv-blue); color: white; }
-    .btn-out { border-color: #fbbf24; color: #d97706; }
-    .btn-out:active { background: #fbbf24; color: white; }
+<style>
+  :root {
+    --asv-blue:  #0072bc; 
+    --asv-light: #e6f1f8;
+    --asv-navy:  #004a7c; 
+    --bg:        #f1f5f9; 
+    --card:      #ffffff; 
+    --error:     #dc2626;
+    --gray:      #64748b; 
+    --shadow:    0 10px 25px -5px rgba(0, 114, 188, 0.1);
+    --success:   #16a34a; 
+    --surface:   #f8fafc;
+    --text:      #0f172a;
+    --white:     #ffffff; 
+  }
+  
+  [data-theme="dark"] {
+    --bg: #030712; 
+    --card: #1e293b; 
+    --shadow: 0 10px 30px rgba(0,0,0,0.5);
+    --surface: #0f172a; 
+    --text: #f1f7ff; 
+  }
 
-    .list-card { background: var(--card); border-radius: 16px; border: 1px solid rgba(0,114,188,0.08); overflow: hidden; }
-    .list-item { display: grid; grid-template-columns: 1.2fr 0.6fr 0.8fr 0.4fr; padding: 12px; font-size: 11px; align-items: center; border-bottom: 1px solid var(--bg); }
-    
-    nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; border-top: 1px solid #e2e8f0; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
-    .nav-btn { flex: 1; padding: 16px; border: none; background: transparent; color: var(--gray); font-size: 9px; font-weight: 800; cursor: pointer; }
-    .nav-btn.active { color: var(--asv-blue); border-top: 3px solid var(--asv-blue); }
-  </style>
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100dvh; overflow-x: hidden; transition: 0.3s; }
+
+  header { background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); overflow: hidden; padding: 15px 20px 25px; position: relative; text-align: center; }
+  .logo-container { display: flex; justify-content: center; margin-bottom: 12px; width: 100%; }
+  .main-logo { background: var(--white); border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); height: 80px; padding: 1px; width: 80px; }
+  .org-name { color: var(--white); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .org-sub { color: rgba(255,255,255,0.9); font-size: 10px; font-style: italic; font-weight: 500; margin: 0 auto 15px; max-width: 300px; }
+
+  .header-actions { display: flex; gap: 8px; position: absolute; right: 15px; top: 15px; }
+  .icon-btn { align-items: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 10px; color: var(--white); cursor: pointer; display: flex; font-size: 16px; height: 34px; justify-content: center; width: 34px; }
+
+  .event-pill { align-items: center; backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; cursor: pointer; display: flex; justify-content: space-between; margin: 0 auto; max-width: 400px; padding: 12px 16px; }
+  .event-dot { animation: pulse 2s infinite; background: #4ade80; border-radius: 50%; height: 8px; margin-right: 10px; width: 8px; }
+  .event-name { color: var(--white); font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; text-align: left; }
+  .event-date-top { color: rgba(255,255,255,0.7); font-size: 9px; font-weight: 700; text-align: left; }
+  .event-meta { color: var(--white); font-size: 11px; }
+
+  main { margin: 0 auto; max-width: 480px; padding: 20px 16px 100px; }
+  .view { display: none; } 
+  .view.active { display: block; }
+  .section-title { color: var(--asv-blue); font-family: 'Sora', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; margin: 20px 0 10px; text-transform: uppercase; }
+
+  .stats-grid { display: grid; gap: 10px; grid-template-columns: 1fr 1fr 1fr; }
+  .stat-card { background: var(--card); border: 1px solid rgba(0,114,188,0.08); border-radius: 16px; box-shadow: var(--shadow); padding: 14px 8px; text-align: center; }
+  .stat-num { color: var(--asv-blue); font-family: 'Sora', sans-serif; font-size: 24px; font-weight: 800; }
+  .stat-label { font-size: 10px; }
+  .text-success { color: var(--success); }
+  .text-error { color: var(--error); }
+
+  .qr-card { background: var(--card); border: 1px solid rgba(0,114,188,0.05); border-radius: 24px; box-shadow: var(--shadow); margin-top: 15px; padding: 25px 20px; text-align: center; }
+  .qr-frame { align-items: center; background: var(--white); border: 3px solid var(--asv-light); border-radius: 16px; display: flex; height: 190px; justify-content: center; margin: 0 auto 15px; overflow: hidden; width: 190px; }
+  
+  .token-badge { align-items: center; background: var(--asv-light); border-radius: 10px; color: var(--asv-navy); display: inline-flex; font-family: 'Sora', monospace; font-size: 13px; font-weight: 800; gap: 8px; margin-bottom: 15px; padding: 8px 16px; }
+
+  .btn-group { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; margin-bottom: 10px; }
+  .btn-pro { align-items: center; background: transparent; border-radius: 14px; cursor: pointer; display: flex; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; gap: 6px; justify-content: center; opacity: 0.4; padding: 15px; transition: 0.3s; }
+  .btn-in { border: 2px solid var(--asv-blue); color: var(--asv-blue); }
+  .btn-in:hover { background: var(--asv-blue); color: var(--white); }
+  .btn-out { border: 2px solid #fbbf24; color: #d97706; }
+  .btn-out:hover { background: #fbbf24; color: var(--white); }
+  
+  .btn-pause { background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; color: var(--error); cursor: pointer; font-size: 10px; font-weight: 700; opacity: 0.4; padding: 12px; width: 100%; transition: 0.3s; }
+  .pause-banner { background: #fee2e2; border-radius: 12px; color: var(--error); display: none; font-size: 10px; font-weight: 800; margin-top: 15px; padding: 10px; }
+
+  .log-container { background: var(--card); border: 1px solid rgba(0,114,188,0.08); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+  .log-item { align-items: center; border-bottom: 1px solid var(--bg); display: flex; gap: 12px; padding: 12px 15px; }
+  .log-item-grid { align-items: center; display: grid; font-size: 11px; grid-template-columns: 1.2fr 0.6fr 0.6fr 0.8fr 0.4fr; padding: 12px 15px; }
+  .log-header { background: var(--surface); color: var(--asv-blue); font-size: 8px; font-weight: 800; text-transform: uppercase; }
+  
+  .avatar { align-items: center; background: var(--asv-blue); border-radius: 10px; color: var(--white); display: flex; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 700; height: 36px; justify-content: center; width: 36px; }
+  .name { color: var(--text); flex: 1; font-size: 13px; font-weight: 700; }
+  .log-meta { font-size: 11px; }
+
+  .close-card { background: var(--card); border-bottom: 1px solid var(--bg); display: flex; flex-direction: column; gap: 10px; padding: 15px; }
+  .close-card-inner { align-items: start; display: flex; justify-content: space-between; }
+  .close-card-details { flex: 1; }
+  .close-card-name { color: var(--text); font-size: 13px; font-weight: 700; }
+  .close-card-grid { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; margin-top: 6px; }
+  .close-label { color: var(--gray); font-size: 8px; font-weight: 800; text-transform: uppercase; }
+  .close-value-in { color: var(--asv-navy); font-size: 11px; font-weight: 700; }
+  .close-value-out { color: var(--asv-blue); font-size: 11px; font-weight: 700; }
+  
+  .hrs-select { border: 2px solid var(--asv-light); border-radius: 10px; color: var(--asv-navy); font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; outline: none; padding: 8px; width: 65px; }
+  
+  .btn-finalize { align-items: center; background: transparent; border: 2px solid var(--success); border-radius: 16px; color: var(--success); cursor: pointer; display: flex; font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; gap: 10px; justify-content: center; letter-spacing: 0.05em; margin-top: 20px; padding: 18px; text-transform: uppercase; transition: 0.3s; width: 100%; }
+  .btn-finalize:hover, .btn-finalize:active { background: var(--success); box-shadow: 0 6px 15px rgba(22,163,74,0.2); color: var(--white); }
+
+  nav { background: var(--card); border-top: 1px solid rgba(0,114,188,0.1); bottom: 0; display: flex; padding-bottom: env(safe-area-inset-bottom); position: fixed; width: 100%; z-index: 100; }
+  .nav-item { background: transparent; border: none; color: var(--gray); cursor: pointer; flex: 1; font-size: 10px; font-weight: 800; padding: 18px 10px; position: relative; text-align: center; }
+  .nav-item.active { color: var(--asv-blue); }
+  .nav-item.active::after { background: var(--asv-blue); border-radius: 0 0 4px 4px; content: ''; height: 4px; left: 50%; position: absolute; top: -1px; transform: translateX(-50%); width: 35px; }
+
+  .modal-overlay { align-items: flex-end; backdrop-filter: blur(8px); background: rgba(15, 23, 42, 0.8); display: none; inset: 0; position: fixed; z-index: 200; }
+  .modal-sheet { background: var(--card); border-radius: 25px 25px 0 0; max-height: 80vh; overflow-y: auto; padding: 20px; width: 100%; }
+  .modal-handle { background: var(--asv-light); border-radius: 10px; height: 5px; margin: 0 auto 20px; width: 40px; }
+  .modal-title { font-family: 'Sora', sans-serif; font-size: 16px; margin-bottom: 15px; }
+  .event-opt { border: 1.5px solid var(--asv-light); border-radius: 15px; cursor: pointer; margin-bottom: 10px; padding: 14px; }
+  .event-opt-title { font-size: 14px; font-weight: 700; }
+  .event-opt-meta { font-size: 11px; margin-top: 4px; }
+  
+  .toast { background: var(--asv-navy); border-radius: 14px; bottom: 100px; color: var(--white); font-size: 12px; font-weight: 700; left: 50%; opacity: 0; padding: 12px 24px; position: fixed; transform: translateX(-50%); transition: 0.3s; z-index: 999; }
+  
+  .btn-manual-out { background: none; border: none; cursor: pointer; font-size: 16px; }
+</style>
 </head>
-<body>
-  <header>
-    <img src="ASV_AC_Black.jpg" class="logo-main">
-    <div class="org-title">ÁNGELES SIN VOZ MONTERREY A.C.</div>
-    <div class="org-motto">Alzando la voz y luchando... contra el maltrato animal.</div>
-  </header>
+<body data-theme="light">
 
-  <main>
-    <div id="view-live" class="view active">
-      <div class="stats-grid" id="stats-summary">
-        <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-label">Inscritos</div></div>
-        <div class="stat-card"><div class="stat-val" id="s-in" style="color:var(--success)">0</div><div class="stat-label">Presentes</div></div>
-        <div class="stat-card"><div class="stat-val" id="s-out" style="color:var(--error)">0</div><div class="stat-label">Faltan</div></div>
-      </div>
-      <div class="qr-container">
-        <div id="qrcode"></div>
-        <div class="btn-group">
-          <button class="btn-asv" onclick="generateToken('in')">Entrada</button>
-          <button class="btn-asv btn-out" onclick="generateToken('out')">Salida</button>
-        </div>
+<header>
+  <div class="header-actions"><button class="icon-btn" id="themeBtn">🌙</button></div>
+  <div class="logo-container"><img src="images/logo/ASV_AC_Black.png" alt="Logo ASV" class="main-logo"></div>
+  <div class="org-name">ÁNGELES SIN VOZ MONTERREY A.C.</div>
+  <div class="org-sub">Alzando la voz y luchando... contra el maltrato animal.</div>
+
+  <div class="event-pill" id="eventPillSelector">
+    <div style="display:flex; align-items:center;">
+      <div class="event-dot"></div>
+      <div>
+        <div class="event-date-top" id="headerEventDate">SELECCIONA EVENTO</div>
+        <div class="event-name" id="headerEventName">Presiona para cargar</div>
       </div>
     </div>
-    <div id="view-monitor" class="view" style="display:none">
-      <div class="section-title">Monitor de Sesiones</div>
-      <div class="list-card" id="monitor-list"></div>
+    <div class="event-meta" id="headerEventTime">--:--</div>
+  </div>
+</header>
+
+<main>
+  <div class="view active" id="view-live">
+    <div class="section-title">Resumen de Brigada</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Inscritos</div></div>
+      <div class="stat-card"><div class="stat-num text-success" id="statIn">0</div><div class="stat-label">Presentes</div></div>
+      <div class="stat-card"><div class="stat-num text-error" id="statPending">0</div><div class="stat-label">Faltan</div></div>
     </div>
-  </main>
 
-  <nav>
-    <button class="nav-btn active" onclick="showTab('live', this)">EN VIVO</button>
-    <button class="nav-btn" onclick="showTab('monitor', this)">MONITOR</button>
-  </nav>
+    <div class="qr-card">
+      <div class="qr-frame" id="qrContainer"></div>
+      <div class="token-badge">🔑 <span id="tokenDisplay">----</span></div>
+      <div class="btn-group">
+        <button class="btn-pro btn-in" id="btnGenIn">📥 ENTRADA</button>
+        <button class="btn-pro btn-out" id="btnGenOut">📤 SALIDA</button>
+      </div>
+      <button class="btn-pause" id="btnTogglePause">⏸ PAUSAR CHECK-IN</button>
+      <div class="pause-banner" id="pauseBanner">⚠️ REGISTRO PAUSADO</div>
+    </div>
 
-  <script>
-    const API_URL = 'https://asv-backend.onrender.com/api';
-    let currentEventId = null;
+    <div class="section-title">Últimos Registros</div>
+    <div class="log-container" id="recentLogsList"></div>
+  </div>
 
-    async function generateToken(mode) {
-      if(!currentEventId) return alert("Selecciona un evento");
-      const res = await fetch(`${API_URL}/token/generate`, {
+  <div class="view" id="view-monitor">
+    <div class="section-title">Monitor Integral de Sesiones</div>
+    <div class="log-container" id="monitorList"></div>
+  </div>
+
+  <div class="view" id="view-close">
+    <div class="section-title">Acreditación de Horas</div>
+    <div class="log-container" id="closingList"></div>
+    <button class="btn-finalize" id="btnFinalizeSync">✅ FINALIZAR Y EXPORTAR</button>
+  </div>
+</main>
+
+<nav>
+  <button class="nav-item active" data-target="live">📷 EN VIVO</button>
+  <button class="nav-item" data-target="monitor">📊 SESIONES</button>
+  <button class="nav-item" data-target="close">📝 CIERRE</button>
+</nav>
+
+<div class="modal-overlay" id="eventModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modalEventList"></div>
+  </div>
+</div>
+<div class="toast" id="toastNotification"></div>
+
+<script>
+  const API_URL = 'https://asv-backend.onrender.com/api';
+  const FRONTEND_URL = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
+  const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx05cq-k_LuXCAEt3EnmPtguSQHl1KtbpC-kmeef4wv0gc8tVyK3Cx1Ja-RW5uCKAqR0Q/exec';
+  
+  let currentEventId = null;
+  let currentEventData = null;
+  let isRegistrationPaused = false;
+  let pollingInterval = null;
+  let isApplicationBusy = false;
+  const selectedAccreditationHours = {};
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
+    initializeData();
+  });
+
+  function setupEventListeners() {
+    document.getElementById('themeBtn').addEventListener('click', toggleApplicationTheme);
+    document.getElementById('eventPillSelector').addEventListener('click', openEventSelectionModal);
+    document.getElementById('eventModal').addEventListener('click', closeEventSelectionModal);
+    document.getElementById('btnGenIn').addEventListener('click', () => generateAttendanceQR('in'));
+    document.getElementById('btnGenOut').addEventListener('click', () => generateAttendanceQR('out'));
+    document.getElementById('btnTogglePause').addEventListener('click', toggleEventPauseStatus);
+    document.getElementById('btnFinalizeSync').addEventListener('click', finalizeAndExportEventData);
+
+    document.querySelectorAll('.nav-item').forEach(button => {
+      button.addEventListener('click', (event) => switchApplicationTab(event.target.dataset.target, event.target));
+    });
+    
+    // Configuración para el cierre de sesión manual en renderMon
+    document.getElementById('monitorList').addEventListener('click', async (event) => {
+      const button = event.target.closest('.btn-manual-out');
+      if (button) {
+        const attendanceId = button.dataset.id;
+        const studentName = button.dataset.name;
+        await processManualCheckout(attendanceId, studentName);
+      }
+    });
+    
+    // Guardado de horas seleccionadas
+    document.getElementById('closingList').addEventListener('change', (event) => {
+      if (event.target.classList.contains('hrs-select')) {
+        selectedAccreditationHours[event.target.dataset.id] = event.target.value;
+      }
+    });
+  }
+
+  const formatTo12Hour = (timeInput) => {
+    if (!timeInput) return "--:--";
+    let hours, minutes;
+    if (timeInput instanceof Date) {
+      hours = timeInput.getHours();
+      minutes = timeInput.getMinutes();
+    } else {
+      const parts = timeInput.split(':');
+      hours = parseInt(parts[0]);
+      minutes = parseInt(parts[1]);
+    }
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  function formatDateString(isoString) {
+    if (!isoString) return ""; 
+    const [year, month, day] = isoString.split('-'); 
+    const dateObj = new Date(year, month - 1, day);
+    const weekdays = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
+    const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+    return `${weekdays[dateObj.getDay()]} ${day} de ${months[month - 1]} de ${year}`;
+  }
+
+  async function initializeData() { 
+    try { 
+      const response = await fetch(`${API_URL}/eventos`); 
+      const data = await response.json(); 
+      renderEventSelectionModal(data.eventos || []); 
+    } catch (error) { 
+      displayToastNotification('Error de red', 'error'); 
+    } 
+  }
+  
+  function renderEventSelectionModal(eventsList) { 
+    const container = document.getElementById('modalEventList'); 
+    container.innerHTML = '<h3 class="modal-title">Seleccionar Evento</h3>';
+    
+    eventsList.forEach(eventData => {
+      const optionDiv = document.createElement('div'); 
+      optionDiv.className = 'event-opt';
+      optionDiv.innerHTML = `
+        <div class="event-opt-title">${eventData.nombre}</div>
+        <div class="event-opt-meta">${formatDateString(eventData.fecha)} · ${eventData.horas_acredita}h</div>`;
+      
+      optionDiv.addEventListener('click', () => selectActiveEvent(eventData)); 
+      container.appendChild(optionDiv);
+    });
+  }
+
+  function selectActiveEvent(eventData) {
+    currentEventId = eventData.id; 
+    currentEventData = eventData; 
+    isRegistrationPaused = eventData.pausado; 
+    
+    document.getElementById('headerEventName').textContent = eventData.nombre; 
+    document.getElementById('headerEventDate').textContent = formatDateString(eventData.fecha);
+    document.getElementById('headerEventTime').textContent = `${eventData.hora_inicio.slice(0, 5)} - ${eventData.hora_fin.slice(0, 5)}`;
+    document.getElementById('eventModal').style.display = 'none';
+    
+    ['btnGenIn', 'btnGenOut', 'btnTogglePause'].forEach(id => {
+      document.getElementById(id).style.opacity = '1';
+    });
+    
+    refreshEventDashboard(); 
+    if (pollingInterval) clearInterval(pollingInterval); 
+    pollingInterval = setInterval(refreshEventDashboard, 10000); 
+    
+    updatePauseInterface(); 
+    if (!isRegistrationPaused) setTimeout(() => generateAttendanceQR('in'), 300);
+  }
+  
+  async function generateAttendanceQR(mode) {
+    if (!currentEventId) { 
+      displayToastNotification('Selecciona evento', 'error'); 
+      openEventSelectionModal(); 
+      return; 
+    }
+    
+    if (isRegistrationPaused || isApplicationBusy) return; 
+    isApplicationBusy = true;
+    
+    const tokenDisplay = document.getElementById('tokenDisplay');
+    const qrContainer = document.getElementById('qrContainer');
+    
+    tokenDisplay.textContent = "GENERANDO..."; 
+    qrContainer.style.opacity = '0.5';
+    
+    try {
+      const response = await fetch(`${API_URL}/token/generate`, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ evento_id: currentEventId })
       });
-      const data = await res.json();
-      const qrUrl = `https://lalovzg.github.io/asv-frontend/asv-student.html?t=${data.token}${mode==='out'?'&mode=out':''}`;
-      document.getElementById('qrcode').innerHTML = '';
-      new QRCode(document.getElementById('qrcode'), { text: qrUrl, width: 160, height: 160 });
+      
+      const responseData = await response.json(); 
+      if (!response.ok) throw new Error();
+      
+      const modeText = mode === 'out' ? ' (OUT)' : ' (IN)';
+      tokenDisplay.textContent = responseData.token + modeText; 
+      qrContainer.innerHTML = '';
+      
+      setTimeout(() => { 
+        new QRCode(qrContainer, {
+          text: `${FRONTEND_URL}?t=${responseData.token}${mode === 'out' ? '&mode=out' : ''}`,
+          width: 180,
+          height: 180,
+          colorDark: mode === 'out' ? '#d97706' : '#0072bc',
+          correctLevel: QRCode.CorrectLevel.M
+        }); 
+        qrContainer.style.opacity = '1'; 
+        isApplicationBusy = false; 
+      }, 100);
+    } catch (error) { 
+      tokenDisplay.textContent = "ERROR"; 
+      isApplicationBusy = false; 
     }
+  }
 
-    function showTab(view, btn) {
-      document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-      document.getElementById(`view-${view}`).style.display = 'block';
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+  async function toggleEventPauseStatus() {
+    if (!currentEventId || isApplicationBusy) return; 
+    isApplicationBusy = true; 
+    const nextPauseState = !isRegistrationPaused;
+    
+    try { 
+      await fetch(`${API_URL}/token/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ evento_id: currentEventId, pausado: nextPauseState })
+      });
+      
+      isRegistrationPaused = nextPauseState; 
+      updatePauseInterface(); 
+      displayToastNotification(isRegistrationPaused ? 'Pausado' : 'Reanudado', 'success');
+      
+      if (!isRegistrationPaused) {
+        setTimeout(() => { isApplicationBusy = false; generateAttendanceQR('in'); }, 400); 
+      } else {
+        isApplicationBusy = false; 
+      }
+    } catch (error) { 
+      isApplicationBusy = false; 
     }
-  </script>
+  }
+
+  function updatePauseInterface() {
+    const pauseBanner = document.getElementById('pauseBanner');
+    const qrContainer = document.getElementById('qrContainer');
+    const btnPause = document.getElementById('btnTogglePause');
+    
+    pauseBanner.style.display = isRegistrationPaused ? 'block' : 'none'; 
+    qrContainer.style.opacity = isRegistrationPaused ? '0.2' : '1';
+    btnPause.textContent = isRegistrationPaused ? '▶ REANUDAR CHECK-IN' : '⏸ PAUSAR CHECK-IN';
+    btnPause.style.background = isRegistrationPaused ? '#dcfce7' : '#fef2f2'; 
+    btnPause.style.color = isRegistrationPaused ? '#166534' : 'var(--error)';
+    
+    if (isRegistrationPaused) { 
+      document.getElementById('tokenDisplay').textContent = "OFFLINE"; 
+      qrContainer.innerHTML = '<div style="font-weight:800;color:var(--gray);margin-top:70px;">PAUSADO</div>'; 
+    }
+  }
+
+  async function refreshEventDashboard() {
+    if (!currentEventId || isApplicationBusy) return;
+    try {
+      const [responseAttendance, responseStudents] = await Promise.all([
+        fetch(`${API_URL}/asistencias/${currentEventId}`), 
+        fetch(`${API_URL}/event-students/${currentEventId}`)
+      ]);
+      
+      const dataAttendance = await responseAttendance.json();
+      const dataStudents = await responseStudents.json(); 
+      
+      const attendanceRecords = dataAttendance.asistencias || [];
+      const enrolledStudents = dataStudents.estudiantes || [];
+      
+      renderRecentLogs(attendanceRecords); 
+      renderMonitorTable(enrolledStudents, attendanceRecords); 
+      renderClosingInterface(enrolledStudents, attendanceRecords);
+      
+      document.getElementById('statIn').textContent = attendanceRecords.filter(record => !record.timestamp_salida).length;
+      document.getElementById('statPending').textContent = Math.max(0, enrolledStudents.length - attendanceRecords.length);
+      document.getElementById('statTotal').textContent = enrolledStudents.length;
+    } catch (error) {
+      console.error("Dashboard refresh error:", error);
+    }
+  }
+
+  function renderRecentLogs(attendanceRecords) {
+    const listContainer = document.getElementById('recentLogsList'); 
+    listContainer.innerHTML = '';
+    
+    if (!attendanceRecords.length) { 
+      listContainer.innerHTML = '<div style="padding:30px;text-align:center;color:var(--gray);font-size:11px;">Esperando registros...</div>'; 
+      return; 
+    }
+    
+    attendanceRecords.slice().reverse().slice(0, 6).forEach(record => {
+      const nameInitials = record.estudiantes.nombre_completo.split(' ').map(word => word[0]).join('').slice(0, 2);
+      const rowDiv = document.createElement('div'); 
+      rowDiv.className = 'log-item';
+      rowDiv.innerHTML = `
+        <div class="avatar">${nameInitials}</div>
+        <div class="name">${record.estudiantes.nombre_completo}</div>
+        <div class="log-meta">${formatTo12Hour(new Date(record.timestamp_servidor))} ✅</div>`;
+      listContainer.appendChild(rowDiv);
+    });
+  }
+
+  function renderMonitorTable(enrolledStudents, attendanceRecords) {
+    const tableContainer = document.getElementById('monitorList');
+    
+    tableContainer.innerHTML = `
+      <div class="log-item-grid log-header">
+        <div>ALUMNO</div>
+        <div style="text-align:center;">IN</div>
+        <div style="text-align:center;">OUT</div>
+        <div style="text-align:right;">TIEMPO</div>
+        <div style="text-align:center;">ACC</div>
+      </div>`;
+
+    enrolledStudents.forEach(student => {
+      const attendanceRecord = attendanceRecords.find(record => record.estudiante_id === student.id);
+      const currentTime = new Date();
+      const requiredHours = currentEventData.horas_acredita;
+      
+      let entryTimeFormatted = "--:--";
+      let exitTimeFormatted = "--:--";
+      let totalTimeFormatted = "0.00h";
+      let statusColor = "var(--gray)";
+      let statusEmoji = "⏳";
+      let actionElement = `<span style="opacity:0.3">⏳</span>`;
+      
+      if (attendanceRecord) {
+        const entryDate = new Date(attendanceRecord.timestamp_servidor);
+        entryTimeFormatted = formatTo12Hour(entryDate);
+        
+        if (attendanceRecord.timestamp_salida) {
+          exitTimeFormatted = formatTo12Hour(new Date(attendanceRecord.timestamp_salida));
+          const completedHours = attendanceRecord.horas_reales || 0;
+          totalTimeFormatted = completedHours.toFixed(2) + "h"; 
+          statusColor = completedHours >= requiredHours ? "var(--success)" : "var(--error)"; 
+          statusEmoji = "✅"; 
+          actionElement = `<span>✨</span>`;
+        } else {
+          const currentElapsedHours = parseFloat(((currentTime - entryDate) / (1000 * 60 * 60)).toFixed(2));
+          totalTimeFormatted = currentElapsedHours.toFixed(2) + "h";
+          statusColor = currentElapsedHours >= requiredHours ? "#f59e0b" : "var(--asv-blue)";
+          statusEmoji = "🐕🐈‍";
+          actionElement = `<button class="btn-manual-out" data-id="${attendanceRecord.id}" data-name="${student.nombre_completo}">🚪</button>`;
+        }
+      }
+
+      const rowElement = document.createElement('div');
+      rowElement.className = 'log-item-grid';
+      if (!attendanceRecord) rowElement.style.opacity = "0.5";
+
+      rowElement.innerHTML = `
+        <div style="font-weight:700;">${student.nombre_completo}</div>
+        <div style="text-align:center;">${entryTimeFormatted}</div>
+        <div style="text-align:center;">${exitTimeFormatted}</div>
+        <div style="color:${statusColor};font-weight:800;text-align:right;">${statusEmoji} ${totalTimeFormatted}</div>
+        <div style="text-align:center;">${actionElement}</div>
+      `;
+      tableContainer.appendChild(rowElement);
+    });
+  }
+
+  function renderClosingInterface(enrolledStudents, attendanceRecords) {
+    const listContainer = document.getElementById('closingList');
+    listContainer.innerHTML = '';
+    
+    attendanceRecords.forEach(attendanceRecord => {
+      const studentData = enrolledStudents.find(student => student.id === attendanceRecord.estudiante_id);
+      if (!studentData) return;
+      
+      const expectedIn = formatTo12Hour(studentData.hora_entrada_esperada || currentEventData.hora_inicio);
+      const expectedOut = formatTo12Hour(studentData.hora_salida_esperada || currentEventData.hora_fin);
+      const actualIn = formatTo12Hour(new Date(attendanceRecord.timestamp_servidor));
+      const actualOut = attendanceRecord.timestamp_salida ? formatTo12Hour(new Date(attendanceRecord.timestamp_salida)) : '--:--';
+      
+      const preSelectedHours = selectedAccreditationHours[studentData.id] || currentEventData.horas_acredita;
+
+      const cardDiv = document.createElement('div'); 
+      cardDiv.className = 'close-card';
+      
+      const hoursOptions = [...Array(11).keys()].slice(1).map(hourVal => {
+        const isSelected = hourVal == preSelectedHours ? 'selected' : '';
+        return `<option value="${hourVal}" ${isSelected}>${hourVal}h</option>`;
+      }).join('');
+
+      cardDiv.innerHTML = `
+        <div class="close-card-inner">
+          <div class="close-card-details">
+            <div class="close-card-name">${studentData.nombre_completo}</div>
+            <div class="close-card-grid">
+              <div>
+                <div class="close-label">Turno Esperado</div>
+                <div class="close-value-in">${expectedIn} - ${expectedOut}</div>
+              </div>
+              <div>
+                <div class="close-label">Asistencia Real</div>
+                <div class="close-value-out">${actualIn} - ${actualOut}</div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right; margin-left:10px;">
+            <div class="close-label" style="margin-bottom:4px;">Acreditar</div>
+            <select class="hrs-select" data-id="${studentData.id}">
+              ${hoursOptions}
+            </select>
+          </div>
+        </div>`;
+      listContainer.appendChild(cardDiv);
+    });
+  }
+
+  async function processManualCheckout(attendanceId, studentName) { 
+    if (!confirm(`¿Cerrar sesión de ${studentName}?`)) return; 
+    await fetch(`${API_URL}/checkout-manual`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ asistencia_id: attendanceId })
+    }); 
+    refreshEventDashboard(); 
+  }
+
+  async function finalizeAndExportEventData() {
+    if (!confirm('¿Enviar registros a Google Sheets?')) return;
+    
+    displayToastNotification('Sincronizando...', 'success');
+    const selectElements = document.querySelectorAll('.hrs-select');
+    
+    for (const selectElement of selectElements) {
+      const studentId = parseInt(selectElement.dataset.id);
+      const studentData = currentEventData.estudiantes.find(student => student.id === studentId);
+      
+      const payloadData = { 
+        estudiante: { 
+          nombre: studentData.nombre_completo, 
+          matricula: studentData.matricula, 
+          carrera: studentData.carrera, 
+          fecha_inicio_ss: studentData.fecha_inicio_ss 
+        }, 
+        evento: { 
+          fecha: currentEventData.fecha, 
+          nombre: currentEventData.nombre 
+        }, 
+        horas_acreditadas: parseFloat(selectElement.value) 
+      };
+      
+      try { 
+        await fetch(WEBHOOK_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payloadData) }); 
+      } catch (error) {
+        console.error("Webhook sync error:", error);
+      }
+    }
+    alert('¡Sincronización Finalizada!');
+  }
+
+  function switchApplicationTab(targetTabId, activeButton) { 
+    document.querySelectorAll('.view').forEach(view => view.classList.remove('active')); 
+    document.getElementById(`view-${targetTabId}`).classList.add('active'); 
+    
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active')); 
+    activeButton.classList.add('active'); 
+  }
+
+  function openEventSelectionModal() { 
+    document.getElementById('eventModal').style.display = 'flex'; 
+    initializeData(); 
+  }
+  
+  function closeEventSelectionModal(event) { 
+    if (event.target.id === 'eventModal') {
+      event.target.style.display = 'none'; 
+    }
+  }
+
+  function toggleApplicationTheme() { 
+    const bodyElement = document.body; 
+    const themeBtn = document.getElementById('themeBtn'); 
+    const isDarkTheme = bodyElement.getAttribute('data-theme') === 'dark'; 
+    
+    bodyElement.setAttribute('data-theme', isDarkTheme ? 'light' : 'dark'); 
+    themeBtn.textContent = isDarkTheme ? '🌙' : '☀️'; 
+  }
+
+  function displayToastNotification(message, type) { 
+    const toastElement = document.getElementById('toastNotification'); 
+    toastElement.textContent = message; 
+    toastElement.style.opacity = '1'; 
+    setTimeout(() => toastElement.style.opacity = '0', 2800); 
+  }
+</script>
 </body>
 </html>
