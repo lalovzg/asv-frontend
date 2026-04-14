@@ -317,8 +317,6 @@
     document.querySelectorAll('.hrs-select').forEach(sel => {
       horasSeleccionadas[sel.dataset.id] = sel.value;
     });
-
-    c.innerHTML = `<div style="padding:10px 15px; background:var(--asv-light); color:var(--asv-navy); font-size:10px; font-weight:800; text-align:center; border-radius:10px; margin-bottom:15px;">GESTIÓN DE ACREDITACIONES</div>`;
     
     asis.forEach(a => {
       const s = stds.find(x => x.id === a.estudiante_id);
@@ -342,7 +340,7 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:6px;">
               <div>
                 <div style="font-size:8px; color:var(--gray); font-weight:800; text-transform:uppercase;">Turno Esperado</div>
-                <div style="font-size:11px; font-weight:700; color:var(--asv-navy);">${tIn.slice(0,5)} - ${tOut.slice(0,5)}</div>
+                <div style="font-size:11px; font-weight:700; color:var(--asv-navy);">${tIn} - ${tOut}</div>
               </div>
               <div>
                 <div style="font-size:8px; color:var(--gray); font-weight:800; text-transform:uppercase;">Asistencia Real</div>
