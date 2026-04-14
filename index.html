@@ -170,14 +170,18 @@
   // Convierte "15:00:00" o un objeto Date a "03:00 PM"
   const fmt12h = (t) => {
     if (!t) return "--:--";
-    if (t instanceof Date) return t.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-    
-    // Si viene como string "HH:mm:ss" desde la base de datos
-    let [h, m] = t.split(':');
-    h = parseInt(h);
+    let h, m;
+    if (t instanceof Date) {
+      h = t.getHours();
+      m = t.getMinutes();
+    } else {
+      let parts = t.split(':');
+      h = parseInt(parts[0]);
+      m = parseInt(parts[1]);
+    }
     const ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
-    return `${h.toString().padStart(2, '0')}:${m} ${ampm}`;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')} ${ampm}`;
   };
 
   function fmtD(iso){
@@ -313,16 +317,18 @@
   function renderClose(stds, asis){
     const c = document.getElementById('cList');
     
-    // GUARDAR: Memoria para no resetear los dropdowns cada 10s
+    // 1. GUARDAR: Memoria para los dropdowns
     document.querySelectorAll('.hrs-select').forEach(sel => {
       horasSeleccionadas[sel.dataset.id] = sel.value;
     });
+
+    // 2. LIMPIAR Y PONER EL TÍTULO (El '=' en lugar de '+=' limpia todo lo anterior)
+    c.innerHTML = `<div style="padding:10px 15px; background:var(--asv-light); color:var(--asv-navy); font-size:10px; font-weight:800; text-align:center; border-radius:10px; margin-bottom:15px;">GESTIÓN DE ACREDITACIONES</div>`;
     
     asis.forEach(a => {
       const s = stds.find(x => x.id === a.estudiante_id);
       if(!s) return;
       
-      // Intentamos leer el horario asignado desde el backend
       const tIn = fmt12h(s.hora_entrada_esperada || curEv.hora_inicio);
       const tOut = fmt12h(s.hora_salida_esperada || curEv.hora_fin);
       const rIn = fmt12h(new Date(a.timestamp_servidor));
@@ -332,7 +338,6 @@
 
       const div = document.createElement('div'); 
       div.className = 'close-card';
-      // Eliminamos la fecha/hora que robaba espacio abajo
       div.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:start;">
           <div style="flex:1">
@@ -350,7 +355,7 @@
           </div>
           <div style="text-align:right; margin-left:10px;">
             <div style="font-size:8px; font-weight:800; color:var(--gray); margin-bottom:4px; text-transform:uppercase;">Acreditar</div>
-            <select class="hrs-select" data-id="${s.id}" style="width:60px; font-size:12px;">
+            <select class="hrs-select" data-id="${s.id}" style="width:65px; font-size:12px;">
               ${[...Array(11).keys()].slice(1).map(n => `<option value="${n}" ${n == valorAcreditar ? 'selected' : ''}>${n}h</option>`).join('')}
             </select>
           </div>
