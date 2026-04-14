@@ -170,7 +170,7 @@
   // Convierte "15:00:00" o un objeto Date a "03:00 PM"
   const fmt12h = (t) => {
     if (!t) return "--:--";
-    if (t instanceof Date) return t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+    if (t instanceof Date) return t.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
     
     // Si viene como string "HH:mm:ss" desde la base de datos
     let [h, m] = t.split(':');
