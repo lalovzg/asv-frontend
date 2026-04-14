@@ -4,7 +4,7 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RAE · ASV MTY A.C.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.comcss2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root {
@@ -166,6 +166,7 @@
   const API = 'https://asv-backend.onrender.com/api', FRONT = 'https://lalovzg.github.io/asv-frontend/asv-student.html';
   const WEBHOOK = 'https://script.google.com/macros/s/AKfycbx05cq-k_LuXCAEt3EnmPtguSQHl1KtbpC-kmeef4wv0gc8tVyK3Cx1Ja-RW5uCKAqR0Q/exec';
   let curId=null, curEv=null, paused=false, poll=null, isBusy=false;
+  let horasSeleccionadas = {};
 
   function fmtD(iso){
     if(!iso) return ""; const [y,m,d] = iso.split('-'); const dt = new Date(y,m-1,d);
@@ -269,16 +270,51 @@
   }
 
   function renderClose(stds, asis){
-    const c = document.getElementById('cList'); c.innerHTML = '';
+    const c = document.getElementById('cList');
+    
+    // PASO A: Guardamos lo que el usuario ya seleccionó antes de borrar
+    document.querySelectorAll('.hrs-select').forEach(sel => {
+      horasSeleccionadas[sel.dataset.id] = sel.value;
+    });
+
+    c.innerHTML = `<div style="padding:10px 15px; background:var(--asv-light); color:var(--asv-navy); font-size:10px; font-weight:800; text-align:center; border-radius:10px; margin-bottom:15px;">HORARIO OFICIAL EVENTO: ${curEv.hora_inicio.slice(0,5)} - ${curEv.hora_fin.slice(0,5)}</div>`;
+    
     asis.forEach(a => {
       const s = stds.find(x => x.id === a.estudiante_id);
       if(!s) return;
+      
       const tIn = s.hora_entrada_esperada || curEv.hora_inicio;
       const tOut = s.hora_salida_esperada || curEv.hora_fin;
       const rIn = new Date(a.timestamp_servidor).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       const rOut = a.timestamp_salida ? new Date(a.timestamp_salida).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : '--:--';
-      const div = document.createElement('div'); div.className = 'close-card';
-      div.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:start;"><div style="flex:1"><div style="font-weight:700; font-size:13px;">${s.nombre_completo}</div><div style="font-size:10px; color:var(--gray); margin-top:4px;"><b>Turno:</b> ${tIn.slice(0,5)}-${tOut.slice(0,5)} | <b>Real:</b> <span style="color:var(--asv-blue)">${rIn}-${rOut}</span></div></div><div><div style="font-size:8px; font-weight:800; color:var(--gray); margin-bottom:3px; text-align:center;">ACREDITAR</div><select class="hrs-select" data-id="${s.id}">${[...Array(11).keys()].slice(1).map(n=>`<option value="${n}" ${n==curEv.horas_acredita?'selected':''}>${n}h</option>`).join('')}</select></div></div>`;
+      
+      // PASO B: Recuperamos la selección previa. Si no existe, usamos el valor oficial del evento.
+      const valorAcreditar = horasSeleccionadas[s.id] || curEv.horas_acredita;
+
+      const div = document.createElement('div'); 
+      div.className = 'close-card';
+      div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div style="flex:1">
+            <div style="font-weight:700; font-size:13px; color:var(--text);">${s.nombre_completo}</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:6px;">
+              <div>
+                <div style="font-size:8px; color:var(--gray); font-weight:800; text-transform:uppercase;">Turno Esperado</div>
+                <div style="font-size:11px; font-weight:700; color:var(--asv-navy);">${tIn.slice(0,5)} - ${tOut.slice(0,5)}</div>
+              </div>
+              <div>
+                <div style="font-size:8px; color:var(--gray); font-weight:800; text-transform:uppercase;">Asistencia Real</div>
+                <div style="font-size:11px; font-weight:700; color:var(--asv-blue);">${rIn} - ${rOut}</div>
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right; margin-left:15px;">
+            <div style="font-size:8px; font-weight:800; color:var(--gray); margin-bottom:4px; text-transform:uppercase;">Acreditar</div>
+            <select class="hrs-select" data-id="${s.id}" style="width:65px;">
+              ${[...Array(11).keys()].slice(1).map(n => `<option value="${n}" ${n == valorAcreditar ? 'selected' : ''}>${n}h</option>`).join('')}
+            </select>
+          </div>
+        </div>`;
       c.appendChild(div);
     });
   }
