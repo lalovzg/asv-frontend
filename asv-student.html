@@ -1,236 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#004a7c">
-<title>Registro · ASV MTY A.C.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-<style>
-  :root {
-    --asv-blue:  #0072bc; --asv-navy:  #004a7c; --asv-light: #e6f1f8;
-    --white:     #ffffff; --gray:      #64748b; --surface:   #f8fafc;
-    --success:   #16a34a; --error:     #dc2626; --text:      #0f172a;
-    --bg:        #f1f5f9; --card:      #ffffff; --shadow:    0 10px 25px -5px rgba(0, 114, 188, 0.1);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-bottom: 20px; }
-
-  /* ─── HEADER APK STYLE ─── */
-  header { width: 100%; background: linear-gradient(135deg, var(--asv-navy) 0%, var(--asv-blue) 100%); padding: 20px 20px 30px; position: relative; overflow: hidden; text-align: center; color: white; }
-  
-  .logo-container { width: 100%; display: flex; justify-content: center; margin-bottom: 10px; }
-  .main-logo { width: 75px; height: 75px; border-radius: 50%; background: white; padding: 2px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-  
-  .org-name { font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; margin-bottom: 3px; }
-  .org-sub { font-size: 9px; color: rgba(255,255,255,0.9); font-weight: 500; font-style: italic; max-width: 260px; margin: 0 auto; line-height: 1.2; }
-
-  /* ─── EVENT CHIP ─── */
-  .event-card { background: var(--card); border-radius: 16px; padding: 15px 18px; margin: -20px 15px 0; box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px; width: calc(100% - 30px); max-width: 450px; z-index: 2; border: 1px solid rgba(0,114,188,0.08); }
-  .icon-box { width: 40px; height: 40px; background: var(--asv-light); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .event-info { flex: 1; min-width: 0; }
-  .event-label { font-family: 'Sora'; font-weight: 800; font-size: 13px; color: var(--asv-navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .event-date { font-size: 10px; color: var(--gray); font-weight: 600; }
-
-  /* ─── FORM ─── */
-  .form-wrap { width: 100%; max-width: 450px; padding: 25px 20px 0; }
-  .field-group { margin-bottom: 15px; }
-  .label { font-family: 'Sora'; font-size: 9px; font-weight: 800; color: var(--asv-blue); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
-  
-  .input-field { width: 100%; background: white; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px; font-size: 16px; outline: none; transition: 0.3s; font-family: 'DM Sans'; font-weight: 500; }
-  .input-field:focus { border-color: var(--asv-blue); }
-  .input-field.valid { border-color: var(--success); }
-  .input-field.error { border-color: var(--error); }
-
-  .dropdown-field { width: 100%; background: white; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--asv-navy); }
-  .dropdown-field.disabled { opacity: 0.4; background: #f8fafc; }
-  .dropdown-list { position: absolute; background: white; border: 2px solid var(--asv-blue); border-radius: 14px; width: 100%; z-index: 50; display: none; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,114,188,0.15); margin-top: 5px; }
-  .dropdown-opt { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 14px; display: flex; justify-content: space-between; }
-
-  .feedback-msg { font-size: 10px; color: var(--error); margin-top: 5px; font-weight: 700; display: none; }
-
-  /* BOTONES "MENOS ES MÁS" */
-  .btn-submit { width: 100%; border-radius: 12px; padding: 16px; font-family: 'Sora'; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; background: transparent; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 5px; }
-  
-  .btn-in { border: 2px solid var(--asv-blue); color: var(--asv-blue); }
-  .btn-in:hover:not(:disabled), .btn-in:active:not(:disabled) { background: var(--asv-blue); color: white; }
-  
-  .btn-out { border: 2px solid #fbbf24; color: #d97706; }
-  .btn-out:hover:not(:disabled), .btn-out:active:not(:disabled) { background: #fbbf24; color: white; }
-
-  .btn-submit:disabled { opacity: 0.3; border-color: var(--gray); color: var(--gray); }
-
-  /* ─── SCREENS ─── */
-  .screen { display: none; flex-direction: column; align-items: center; padding: 30px 20px; text-align: center; width: 100%; max-width: 450px; }
-  .status-circle { width: 75px; height: 75px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 34px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-  .receipt-card { background: white; border-radius: 16px; padding: 18px; width: 100%; box-shadow: var(--shadow); margin: 20px 0; text-align: left; border: 1px solid rgba(0,114,188,0.08); }
-  .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
-  .receipt-val { font-weight: 700; color: var(--asv-navy); }
-
-  .btn-action { width: 100%; background: var(--asv-navy); color: white; border: none; border-radius: 12px; padding: 16px; font-family: 'Sora'; font-weight: 700; font-size: 12px; cursor: pointer; margin-top: 15px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Registro · ASV MTY A.C.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --asv-blue: #0072bc; --asv-navy: #004a7c; --success: #16a34a; --error: #dc2626;
+      --bg: #f1f5f9; --white: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+    header { width: 100%; background: linear-gradient(135deg, var(--asv-navy), var(--asv-blue)); padding: 25px 20px; text-align: center; color: white; }
+    .card-event { background: var(--white); width: calc(100% - 30px); max-width: 450px; border-radius: 18px; padding: 20px; margin-top: -20px; box-shadow: 0 10px 25px rgba(0,114,188,0.1); display: flex; align-items: center; gap: 15px; }
+    .form-container { width: 100%; max-width: 450px; padding: 30px 20px; }
+    .input-label { font-family: 'Sora'; font-size: 10px; font-weight: 800; color: var(--asv-blue); text-transform: uppercase; margin-bottom: 8px; display: block; }
+    .input-box { width: 100%; padding: 16px; border: 2px solid #e2e8f0; border-radius: 14px; font-size: 16px; transition: 0.3s; }
+    .input-box:focus { border-color: var(--asv-blue); }
+    .input-box.error { border-color: var(--error); background: #fef2f2; }
+    .btn-confirm { width: 100%; padding: 18px; border-radius: 14px; border: 2px solid var(--asv-blue); color: var(--asv-blue); background: transparent; font-family: 'Sora'; font-weight: 700; margin-top: 20px; cursor: pointer; transition: 0.3s; }
+    .btn-confirm:active:not(:disabled) { background: var(--asv-blue); color: white; }
+    .btn-confirm:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
 </head>
 <body>
-
-<header>
-  <div class="logo-container">
-    <img src="images/logo/ASV_AC_Black.png" alt="Logo ASV" class="main-logo">
-  </div>
-  <div class="org-name">ÁNGELES SIN VOZ MONTERREY A.C.</div>
-  <div class="org-sub">Alzando la voz y luchando... contra el maltrato animal.</div>
-</header>
-
-<div class="event-card">
-  <div class="icon-box" id="evIcon">🐶</div>
-  <div class="event-info">
-    <div class="event-label" id="evName">Verificando...</div>
-    <div class="event-date" id="evMeta">--- --- ----</div>
-  </div>
-  <div style="text-align:right">
-    <div style="font-family:'Sora';font-weight:800;color:var(--asv-blue);font-size:16px;" id="evHrs">0</div>
-    <div style="font-size:8px;color:var(--gray);font-weight:800;">HORAS</div>
-  </div>
-</div>
-
-<div class="form-wrap" id="formSection">
-  <div class="field-group">
-    <label class="label">Matrícula</label>
-    <input type="text" class="input-field" id="matricula" placeholder="Ej. SS001" oninput="onMatInput()" autocomplete="off">
-    <div class="feedback-msg" id="matError">Matrícula no registrada para este evento</div>
-  </div>
-
-  <div class="field-group">
-    <label class="label">Confirma tu nombre completo</label>
-    <div style="position:relative">
-      <div class="dropdown-field disabled" id="nameDrop" onclick="toggleDD()">
-        <span id="dropText">Ingresa matrícula primero</span>
-        <span>▼</span>
-      </div>
-      <div class="dropdown-list" id="dropList"></div>
+  <header>
+    <div style="font-family:'Sora'; font-size:12px; font-weight:800;">ÁNGELES SIN VOZ MONTERREY A.C.</div>
+  </header>
+  
+  <div class="card-event">
+    <div id="ev-icon" style="font-size:24px;">🐾</div>
+    <div style="flex:1">
+      <div id="ev-name" style="font-weight:800; color:var(--asv-navy);">Cargando evento...</div>
+      <div id="ev-date" style="font-size:11px; color:#64748b;">---</div>
     </div>
-    <div class="feedback-msg" id="nameError">Los datos no coinciden, favor de revisarlos</div>
   </div>
 
-  <button class="btn-submit" id="btnConfirm" disabled onclick="confirmAttendance()">
-    Confirmar Registro →
-  </button>
-</div>
-
-<div class="screen" id="successScreen">
-  <div class="status-circle" style="background:#f0fdf4;color:var(--success);">✓</div>
-  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;color:var(--asv-navy);">¡Registro Exitoso!</h2>
-  <div class="receipt-card">
-    <div class="receipt-row"><span>Nombre</span><span class="receipt-val" id="rNom">--</span></div>
-    <div class="receipt-row"><span>Matrícula</span><span class="receipt-val" id="rMat">--</span></div>
-    <div class="receipt-row"><span>Operación</span><span class="receipt-val" id="rOp">--</span></div>
-    <div class="receipt-row"><span>Hora Servidor</span><span class="receipt-val" id="rTime">--</span></div>
-    <div class="receipt-row"><span>Acreditación</span><span class="receipt-val" style="color:var(--asv-blue)" id="rHrs">--</span></div>
+  <div class="form-container" id="form-ui">
+    <label class="input-label">Matrícula</label>
+    <input type="text" class="input-box" id="inp-mat" placeholder="Ej. SS001" oninput="validateMatricula()">
+    <p id="err-msg" style="color:var(--error); font-size:10px; margin-top:6px; display:none;">Matrícula no registrada para este evento.</p>
+    
+    <label class="input-label" style="margin-top:20px;">Nombre Completo</label>
+    <div id="display-name" style="padding:16px; background:#e2e8f0; border-radius:14px; font-weight:600; color:var(--asv-navy);">Ingresa tu matrícula primero</div>
+    
+    <button class="btn-confirm" id="btn-submit" disabled onclick="processRegistration()">Confirmar Asistencia</button>
   </div>
-  <button class="btn-action" onclick="closePage('ok')">FINALIZAR PROCESO</button>
-</div>
 
-<div class="screen" id="errorScreen">
-  <div class="status-circle" style="background:#fef2f2;color:var(--error);">✕</div>
-  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;">Atención</h2>
-  <p style="color:var(--gray);margin:10px 0 20px;font-size:14px;line-height:1.4;" id="eSub"></p>
-  <button class="btn-action" id="btnRetry" style="background:var(--asv-blue)">CORREGIR Y REINTENTAR</button>
-</div>
+  <div id="success-ui" style="display:none; padding:40px 20px; text-align:center;">
+    <div style="font-size:60px; margin-bottom:20px;">✅</div>
+    <h2 style="font-family:'Sora'; margin-bottom:10px;">¡Registro Exitoso!</h2>
+    <p style="color:#64748b; font-size:14px;">Tu asistencia ha sido guardada. Toma captura de pantalla como comprobante.</p>
+  </div>
 
-<div class="screen" id="doneScreen">
-  <div style="font-size:50px;margin-bottom:20px;" id="doneIcon">🔒</div>
-  <h2 style="font-family:'Sora';font-size:20px;font-weight:800;">Sesión Finalizada</h2>
-  <p style="color:var(--gray);margin-top:8px;font-size:14px;" id="doneDesc"></p>
-</div>
+  <script>
+    // ─── LOGIC ───
+    const API = 'https://asv-backend.onrender.com/api';
+    let students = [], selectedStudent = null;
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('t');
 
-<script>
-  const API = 'https://asv-backend.onrender.com/api';
-  let students = [], selected = null, eventData = null;
-  const params = new URLSearchParams(location.search), token = params.get('t'), isOut = params.get('mode') === 'out';
-
-  (async () => {
-    if(!token) return showErr('Token ausente','Usa un código QR válido.', false);
-    try {
-      const res = await fetch(`${API}/event/${token}`), data = await res.json();
-      if(!res.ok) return showErr(res.status === 410 ? 'Token ya usado' : 'Error', data.error, false);
-      students = data.estudiantes; eventData = data.evento;
-      document.getElementById('evName').textContent = eventData.nombre;
-      document.getElementById('evHrs').textContent = eventData.horas_acredita;
+    function validateMatricula() {
+      const val = document.getElementById('inp-mat').value.trim().toUpperCase();
+      const student = students.find(s => s.matricula === val);
+      const btn = document.getElementById('btn-submit');
+      const err = document.getElementById('err-msg');
       
-      const ms = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
-      const [y, m, d] = eventData.fecha.split('-'); document.getElementById('evMeta').textContent = `${d} de ${ms[parseInt(m)-1]} de ${y}`;
-
-      const btn = document.getElementById('btnConfirm');
-      if(isOut){
-        document.getElementById('evIcon').textContent = '🏁';
-        btn.textContent = 'Confirmar Salida →'; btn.classList.add('btn-out');
+      if(student) {
+        selectedStudent = student;
+        document.getElementById('display-name').textContent = student.nombre_completo;
+        btn.disabled = false;
+        err.style.display = 'none';
       } else {
-        btn.classList.add('btn-in');
+        selectedStudent = null;
+        document.getElementById('display-name').textContent = "Ingresa tu matrícula primero";
+        btn.disabled = true;
+        if(val.length >= 5) err.style.display = 'block';
       }
-    } catch(e){ showErr('Error de Conexión','Revisa tu internet.', true); }
-  })();
-
-  function onMatInput(){
-    const val = document.getElementById('matricula').value.trim().toUpperCase();
-    const match = students.find(s => s.matricula === val);
-    const input = document.getElementById('matricula'), drop = document.getElementById('nameDrop');
-    input.classList.remove('valid', 'error'); document.getElementById('matError').style.display = 'none';
-    document.getElementById('nameError').style.display = 'none';
-    drop.classList.add('disabled'); document.getElementById('dropText').textContent = "Ingresa matrícula primero";
-    if(val.length < 3) return;
-    if(match){ input.classList.add('valid'); drop.classList.remove('disabled'); document.getElementById('dropText').textContent = "Busca tu nombre en la lista"; renderDD(match); }
-    else if(val.length >= 5){ input.classList.add('error'); document.getElementById('matError').style.display = 'block'; }
-  }
-
-  function renderDD(m){
-    const list = document.getElementById('dropList'); list.innerHTML = '';
-    [m, ...students.filter(s => s.id !== m.id)].forEach(s => {
-      const d = document.createElement('div'); d.className = 'dropdown-opt';
-      d.innerHTML = `<span>${s.nombre_completo}</span><span style="color:var(--gray);font-size:10px">${s.matricula}</span>`;
-      d.onclick = () => {
-        selected = s;
-        document.getElementById('dropText').textContent = s.nombre_completo;
-        list.style.display = 'none';
-        const isMatch = (s.matricula === document.getElementById('matricula').value.trim().toUpperCase());
-        document.getElementById('btnConfirm').disabled = !isMatch;
-        document.getElementById('nameError').style.display = isMatch ? 'none' : 'block';
-      };
-      list.appendChild(d);
-    });
-  }
-
-  function toggleDD(){ if(!document.getElementById('nameDrop').classList.contains('disabled')) { const l = document.getElementById('dropList'); l.style.display = l.style.display==='block'?'none':'block'; } }
-
-  async function confirmAttendance(){
-    const btn = document.getElementById('btnConfirm'); btn.disabled = true; btn.textContent = 'PROCESANDO...';
-    try {
-      const r = await fetch(API + (isOut?'/checkout':'/checkin'), { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({token, matricula:selected.matricula, estudiante_id:selected.id}) });
-      const d = await r.json();
-      if(!r.ok) return showErr(r.status === 409 ? 'Ya registrado' : 'Atención', d.error, (r.status === 409 || r.status === 404));
-      document.getElementById('formSection').style.display = 'none'; document.getElementById('successScreen').style.display = 'flex';
-      document.getElementById('rNom').textContent = d.asistencia.nombre; document.getElementById('rMat').textContent = d.asistencia.matricula;
-      document.getElementById('rOp').textContent = isOut ? "SALIDA BRIGADA" : "ENTRADA BRIGADA";
-      const ts = d.asistencia.timestamp ? new Date(d.asistencia.timestamp) : new Date();
-      document.getElementById('rTime').textContent = ts.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-      document.getElementById('rHrs').textContent = isOut ? d.asistencia.horas_reales+" h" : "+"+(d.asistencia.horas_acreditadas||eventData.horas_acredita)+" h";
-    } catch(e){ showErr('Error','Fallo en el servidor.', true); }
-  }
-
-  function showErr(t, s, retry){
-    document.getElementById('formSection').style.display = 'none'; document.getElementById('errorScreen').style.display = 'flex';
-    document.getElementById('eSub').textContent = s; const btn = document.getElementById('btnRetry');
-    if(retry) btn.onclick = () => location.reload();
-    else { btn.textContent = "Entendido"; btn.onclick = () => closePage('err'); }
-  }
-
-  function closePage(type){
-    document.getElementById('successScreen').style.display = 'none'; document.getElementById('errorScreen').style.display = 'none';
-    const s = document.getElementById('doneScreen'); s.style.display = 'flex';
-    if(type==='err'){ document.getElementById('doneIcon').textContent = '❌'; document.getElementById('doneDesc').textContent = 'Hubo un error con los datos. Escanea el QR de nuevo.'; }
-    else { document.getElementById('doneDesc').textContent = 'Registro guardado con éxito. ¡Gracias por tu apoyo!'; }
-  }
-</script>
+    }
+  </script>
 </body>
 </html>
