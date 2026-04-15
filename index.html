@@ -548,7 +548,11 @@
               </div>
             </div>
           </div>
-          <div style="text-align:right; margin-left:10px;">
+          <div style="text-align:right; margin-left:10px; display:flex; flex-direction:column; align-items:flex-end;">
+            <label style="font-size:9px; font-weight:700; color:var(--asv-blue); margin-bottom:5px; cursor:pointer;">
+              <input type="checkbox" class="sync-check" data-id="${studentData.id}" checked style="transform: scale(1.2); margin-right:4px;">
+              SYNC
+            </label>
             <div class="close-label" style="margin-bottom:4px;">Acreditar</div>
             <select class="hrs-select" data-id="${studentData.id}">
               ${hoursOptions}
@@ -577,6 +581,11 @@
     
     for (const selectElement of selectElements) {
       const studentId = selectElement.dataset.id;
+      
+      // BUSCAMOS EL CHECKBOX DE ESTE ESTUDIANTE. Si no está marcado, lo saltamos y vamos al siguiente.
+      const isChecked = document.querySelector(`.sync-check[data-id="${studentId}"]`).checked;
+      if (!isChecked) continue; 
+
       const studentData = currentEnrolledStudents.find(student => String(student.id) === String(studentId));
       
       const payloadData = { 
@@ -589,7 +598,7 @@
         evento: { 
           fecha: currentEventData.fecha, 
           nombre: currentEventData.nombre,
-          hora_inicio: currentEventData.hora_inicio // <-- ¡Agrega esta línea!
+          hora_inicio: currentEventData.hora_inicio 
         }, 
         horas_acreditadas: parseFloat(selectElement.value) 
       };
