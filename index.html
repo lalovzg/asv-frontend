@@ -201,6 +201,7 @@
   
   let currentEventId = null;
   let currentEventData = null;
+  let currentEnrolledStudents = [];
   let isRegistrationPaused = false;
   let pollingInterval = null;
   let isApplicationBusy = false;
@@ -224,7 +225,6 @@
       button.addEventListener('click', (event) => switchApplicationTab(event.target.dataset.target, event.target));
     });
     
-    // Configuración para el cierre de sesión manual en renderMon
     document.getElementById('monitorList').addEventListener('click', async (event) => {
       const button = event.target.closest('.btn-manual-out');
       if (button) {
@@ -234,7 +234,6 @@
       }
     });
     
-    // Guardado de horas seleccionadas
     document.getElementById('closingList').addEventListener('change', (event) => {
       if (event.target.classList.contains('hrs-select')) {
         selectedAccreditationHours[event.target.dataset.id] = event.target.value;
@@ -330,6 +329,7 @@
     
     tokenDisplay.textContent = "GENERANDO..."; 
     qrContainer.style.opacity = '0.5';
+    qrContainer.innerHTML = '';
     
     try {
       const response = await fetch(`${API_URL}/token/generate`, {
@@ -343,7 +343,6 @@
       
       const modeText = mode === 'out' ? ' (OUT)' : ' (IN)';
       tokenDisplay.textContent = responseData.token + modeText; 
-      qrContainer.innerHTML = '';
       
       setTimeout(() => { 
         new QRCode(qrContainer, {
@@ -416,16 +415,16 @@
       const dataAttendance = await responseAttendance.json();
       const dataStudents = await responseStudents.json(); 
       
+      currentEnrolledStudents = dataStudents.estudiantes || [];
       const attendanceRecords = dataAttendance.asistencias || [];
-      const enrolledStudents = dataStudents.estudiantes || [];
       
       renderRecentLogs(attendanceRecords); 
-      renderMonitorTable(enrolledStudents, attendanceRecords); 
-      renderClosingInterface(enrolledStudents, attendanceRecords);
+      renderMonitorTable(currentEnrolledStudents, attendanceRecords); 
+      renderClosingInterface(currentEnrolledStudents, attendanceRecords);
       
       document.getElementById('statIn').textContent = attendanceRecords.filter(record => !record.timestamp_salida).length;
-      document.getElementById('statPending').textContent = Math.max(0, enrolledStudents.length - attendanceRecords.length);
-      document.getElementById('statTotal').textContent = enrolledStudents.length;
+      document.getElementById('statPending').textContent = Math.max(0, currentEnrolledStudents.length - attendanceRecords.length);
+      document.getElementById('statTotal').textContent = currentEnrolledStudents.length;
     } catch (error) {
       console.error("Dashboard refresh error:", error);
     }
@@ -578,7 +577,7 @@
     
     for (const selectElement of selectElements) {
       const studentId = parseInt(selectElement.dataset.id);
-      const studentData = currentEventData.estudiantes.find(student => student.id === studentId);
+      const studentData = currentEnrolledStudents.find(student => student.id === studentId);
       
       const payloadData = { 
         estudiante: { 
