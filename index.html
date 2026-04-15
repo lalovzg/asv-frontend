@@ -576,8 +576,8 @@
     const selectElements = document.querySelectorAll('.hrs-select');
     
     for (const selectElement of selectElements) {
-      const studentId = parseInt(selectElement.dataset.id);
-      const studentData = currentEnrolledStudents.find(student => student.id === studentId);
+      const studentId = selectElement.dataset.id;
+      const studentData = currentEnrolledStudents.find(student => String(student.id) === String(studentId));
       
       const payloadData = { 
         estudiante: { 
