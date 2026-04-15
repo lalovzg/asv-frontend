@@ -206,6 +206,7 @@
   let pollingInterval = null;
   let isApplicationBusy = false;
   const selectedAccreditationHours = {};
+  const selectedSyncStatus = {};
 
   document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
@@ -237,6 +238,9 @@
     document.getElementById('closingList').addEventListener('change', (event) => {
       if (event.target.classList.contains('hrs-select')) {
         selectedAccreditationHours[event.target.dataset.id] = event.target.value;
+      }
+      if (event.target.classList.contains('sync-check')) {
+        selectedSyncStatus[event.target.dataset.id] = event.target.checked;
       }
     });
   }
@@ -524,6 +528,9 @@
       const actualOut = attendanceRecord.timestamp_salida ? formatTo12Hour(new Date(attendanceRecord.timestamp_salida)) : '--:--';
       
       const preSelectedHours = selectedAccreditationHours[studentData.id] || currentEventData.horas_acredita;
+      
+      // Evaluamos el estado guardado. Si no existe registro, es 'true' (checked) por defecto.
+      const isChecked = selectedSyncStatus[studentData.id] !== false ? 'checked' : '';
 
       const cardDiv = document.createElement('div'); 
       cardDiv.className = 'close-card';
@@ -550,7 +557,7 @@
           </div>
           <div style="text-align:right; margin-left:10px; display:flex; flex-direction:column; align-items:flex-end;">
             <label style="font-size:9px; font-weight:700; color:var(--asv-blue); margin-bottom:5px; cursor:pointer;">
-              <input type="checkbox" class="sync-check" data-id="${studentData.id}" checked style="transform: scale(1.2); margin-right:4px;">
+              <input type="checkbox" class="sync-check" data-id="${studentData.id}" ${isChecked} style="transform: scale(1.2); margin-right:4px;">
               SYNC
             </label>
             <div class="close-label" style="margin-bottom:4px;">Acreditar</div>
